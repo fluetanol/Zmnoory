@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://cdn-icons-png.flaticon.com/512/3978/3978575.png" alt="ZMNNOORY Logo" width="150px" />
+  <img src="./static/ZMNNOORY.png" alt="ZMNNOORY Logo" width="100%" />
   <h1 align="center">즈믄누리 (ZMNNOORY)</h1>
   <p align="center">
     <strong>"1000개의 얼굴, 1000개의 세계"</strong>
