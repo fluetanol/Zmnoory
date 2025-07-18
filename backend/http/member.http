@@ -1,0 +1,18 @@
+### create member
+POST http://localhost:8080/api/member/sign-up
+Content-Type: application/json
+
+{
+  "email" : "test@test.com",
+  "password": "123123123",
+  "gender": "mail"
+}
+
+### login
+POST http://localhost:8080/api/member/login
+Content-Type: application/json
+
+{
+  "email" : "test@test.com",
+  "password" : "123123123"
+}
