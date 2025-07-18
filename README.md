@@ -26,14 +26,10 @@
 5.  [**디렉토리 구조**](#5-디렉토리-구조)
 6.  [**로컬 환경 설정**](#6-로컬-환경-설정)
 7.  [**개발 문화 및 협업 규칙**](#7-개발-문화-및-협업-규칙)
-    - [7.1. Jira 프로젝트 관리](#71-jira-프로젝트-관리)
-    - [7.2. Git 브랜치 전략](#72-git-브랜치-전략)
-    - [7.3. Git 커밋 컨벤션](#73-git-커밋-컨벤션)
-    - [7.4. Merge Request 절차](#74-merge-request-절차)
-    - [7.5. 코드 컨벤션](#75-코드-컨벤션)
 8.  [**주간 공지 및 일정**](#8-주간-공지-및-일정)
 9.  [**프로젝트 마일스톤**](#9-프로젝트-마일스톤)
 10. [**팀원 소개**](#10-팀원-소개)
+11. [**참고 문서**](#11-참고-문서)
 
 ---
 
@@ -129,10 +125,10 @@
 
 ```bash
 # 1. 원격 저장소를 복제합니다.
-$ git clone [https://lab.ssafy.com/s11-webmobile1-sub2/S11P12C206.git](https://lab.ssafy.com/s11-webmobile1-sub2/S11P12C206.git)
+$ git clone [https://lab.ssafy.com/s13-webmobile1-sub1/S13P11A302.git](https://lab.ssafy.com/s13-webmobile1-sub1/S13P11A302.git)
 
 # 2. 프로젝트 디렉토리로 이동합니다.
-$ cd S11P12C206
+$ cd S13P11A302
 
 # 3. develop 브랜치를 생성하고 이동합니다.
 $ git checkout -b develop
@@ -143,131 +139,45 @@ $ git pull origin develop
 # 5. 프론트엔드/백엔드 디렉토리에서 필요한 패키지를 설치합니다.
 # (각 디렉토리의 README 참조)
 $ npm install # or yarn install
-$ ./gradlew build
+$ ./gradlew build # 빌드는 예시
 
 # 6. 프로젝트를 실행합니다.
 $ npm run serve # or yarn serve
-$ ./gradlew bootRun
+$ ./gradlew bootRun # 빌드는 예시
 ```
 
 ---
 
 ## 7. 개발 문화 및 협업 규칙
 
-우리 팀은 투명한 소통과 체계적인 관리를 통해 개발 효율성을 극대화하는 것을 목표로 합니다.
+우리 팀은 효율적이고 일관된 협업을 위해 다양한 개발 컨벤션을 수립하여 Notion에 정리하고 있습니다.  
+모든 팀원은 아래 문서를 참조하여 규칙을 준수해 주세요.
 
-### 7.1. Jira 프로젝트 관리
+### 📚 컨벤션 문서 모음 (Notion)
 
--   **스프린트 주기**: 프로젝트는 **1주일 단위의 스프린트**로 운영됩니다.
-    -   **계획 (월요일 오전)**: 해당 주차의 프로젝트 목표와 결과물을 정의하고, 역할 분담, 우선순위 정리, 팀원별 작업 할당을 진행합니다.
-    -   **시작 (월요일 오후)**: 계획된 작업을 바탕으로 스프린트를 시작합니다.
-    -   **종료**: 일요일에 스프린트를 종료하고, 다음 스프린트를 준비합니다.
--   **업무 계층 구조**: 모든 업무는 `Epic` > `Story` > `Task` 의 계층 구조로 관리하여 목표와 작업을 명확히 합니다.
-    -   **`에픽 (Epic)`**: 큰 목표나 주제를 대표하는 가장 상위 단계의 이슈입니다.
-    -   **`스토리 (Story)`**: 사용자의 관점에서 기능이나 요구사항을 서술합니다.
-    -   **`작업 (Task)`**: 실제 개발자가 수행하는 구체적인 기술 업무입니다.
--   **작업 관리 및 규칙**:
-    -   모든 Task는 **'해야 할 일'**, **'진행 중'**, **'완료'** 상태로 관리합니다.
-    -   팀원 개인의 업무 과부하를 방지하고 집중력을 높이기 위해, **`진행 중` 상태의 Task는 1~2개를 유지하는 것을 권장합니다**.
-    -   **매일 종례 전, 당일 진행한 업무 내용을 반드시 Jira에 기록하여 공유합니다.**
--   **작업량 산정**: 작업의 난이도와 소요 시간은 피보나치 수열 기반의 **스토리 포인트**로 산정합니다. 이는 번다운 차트를 통해 팀의 진행 속도를 측정하는 데 사용됩니다.
+| 문서명 | 링크 |
+|--------|------|
+| 🧾 Git 커밋 컨벤션 | [Notion 링크](https://wirehaired-objective-39b.notion.site/232232dbe36c808fa470c28265e36c2c?pvs=143) |
+| ☕ 자바 코드 컨벤션 | [Notion 링크](https://wirehaired-objective-39b.notion.site/232232dbe36c80aab3d8e4c1a45a8a44?source=copy_link) |
+| 📌 Jira 컨벤션 | [Notion 링크](https://wirehaired-objective-39b.notion.site/233232dbe36c80d08fe2da9b02b9eb1d?source=copy_link) |
+| 🗂 Vue 디렉토리 컨벤션 | [Notion 링크](https://wirehaired-objective-39b.notion.site/Vue-233232dbe36c809c81aadbdfc5851858?source=copy_link) |
+| 📜 자바스크립트 컨벤션 | [Notion 링크](https://wirehaired-objective-39b.notion.site/234232dbe36c808695a3c95425936eac?source=copy_link) |
 
-### 7.2. Git 브랜치 전략
+> 🔗 최신 문서는 항상 Notion에서 확인해주세요. README는 요약 정보만 제공됩니다.
 
-브랜치 관리는 Git-flow를 기반으로 단순화하여 적용합니다.
-
--   **주요 브랜치**:
-    -   `master`: 배포 가능한 안정 버전의 코드만 관리합니다.
-    -   `develop`: 개발이 완료된 기능들이 통합되는 메인 개발 브랜치입니다.
--   **보조 브랜치**:
-    -   `feature/{Jira 이슈 번호}-{기능}`: 새로운 기능 개발을 위한 브랜치입니다. (예: `feature/47-login-api`)
-    -   `hotfix/{수정 내용}`: 긴급한 버그 수정을 위한 브랜치입니다.
--   **브랜치 생성**:
-    ```bash
-    # develop 브랜치에서 최신 내용을 반영합니다.
-    $ git pull origin develop
-
-    # 새 기능 브랜치를 생성하고 이동합니다.
-    $ git checkout -b feature/47-login-api
-    ```
--   **금지 명령어**:
-    > ⚠️ `git stash` 명령어는 코드 유실 및 충돌의 원인이 될 수 있으므로 **사용을 금지**합니다.
-
-### 7.3. Git 커밋 컨벤션
-
-모든 커밋 메시지는 추적이 용이하도록 다음 규칙을 엄격히 따릅니다.
-
--   **커밋 메시지 구조**:
-    ```
-    Type: 제목 (첫 글자 대문자, 50자 이내)
-
-    본문 (어떻게 보다는 '무엇을', '왜' 변경했는지 상세히 서술, 72자마다 줄바꿈)
-
-    꼬리말 (Jira 이슈 번호 명시, 예: resolves: #47)
-    ```
--   **커밋 유형 (Type)**
-
-| 유형 | 설명 |
-| :--- | :--- |
-| `feat` | 새로운 기능 추가 |
-| `fix` | 버그 수정 |
-| `design`| CSS 등 사용자 UI 디자인 변경 |
-| `style` | 코드 포매팅, 세미콜론 누락 등 (코드 자체의 변경이 없는 경우) |
-| `refactor`| 코드 리팩토링 |
-| `docs` | README 등 문서 수정 |
-| `comment` | 필요한 주석 추가 및 변경 |
-| `test` | 테스트 코드 추가 및 수정 |
-| `chore` | 빌드, 패키지 매니저 설정 등 기타 수정 |
-| `!HOTFIX`| 급하게 치명적인 버그를 수정하는 경우 |
-
--   **커밋 예시**:
-    ```
-    feat: 네이버 소셜 로그인 기능 구현
-
-    - Passport.js를 사용하여 네이버 OAuth 2.0 인증 전략을 추가함.
-    - 인증 성공 시 사용자 정보를 DB에 저장하고 JWT를 발급하는 로직 구현.
-    - 환경 변수 설정을 통해 클라이언트 ID와 시크릿 키를 안전하게 관리하도록 변경.
-
-    resolves: #47
-    ref: #5, #22
-    ```
-
-### 7.4. Merge Request 절차
-
-1.  **로컬 브랜치 Push**: 기능 개발 완료 후, 원격 저장소에 브랜치를 push합니다.
-    ```bash
-    $ git push origin feature/47-login-api
-    ```
-2.  **Merge Request (MR) 생성**: GitLab에서 `New merge request`를 생성합니다.
-3.  **MR 설정**:
-    -   **Source branch**: `feature/47-login-api` (본인 브랜치)
-    -   **Target branch**: `develop` (항상 develop 브랜치로)
-    -   **Title**: 핵심 커밋 메시지를 제목으로 작성합니다.
-    -   **Assignee / Reviewer**: FE/BE 리더 또는 지정된 동료를 선택하여 코드 리뷰를 요청합니다.
-4.  **코드 리뷰 및 Merge**: Reviewer는 코드 리뷰 후 `Approve`를 하고, 문제가 없으면 Merge를 진행합니다.
-
-### 7.5. 코드 컨벤션
-
--   문자열은 쌍따옴표(`"`)를 사용합니다.
--   문장의 끝에는 항상 세미콜론(`;`)을 붙입니다.
--   함수와 변수명은 `camelCase`로 작성합니다.
--   생성자 함수명은 `PascalCase`로 작성합니다.
--   연산자 사이(`a + b`)와 콤마 다음(`[1, 2, 3]`)에는 공백을 추가하여 가독성을 높입니다.
--   주석은 설명하려는 구문에 맞춰 동일하게 들여쓰기합니다.
 
 ---
 
 ## 8. 주간 공지 및 일정
 
-> 💡 **Note:** 본 섹션은 팀의 빠른 정보 공유를 위해 마련되었습니다. 최신 정보는 팀 노션 페이지 또는 슬랙 채널을 확인해주세요.
+> 💡 **Note:** 본 섹션은 팀의 빠른 정보 공유를 위해 마련되었습니다. 최신 정보는 팀 노션 페이지 또는 메타모스트 채널을 확인해주세요.
 
 -   **금주 주요 일정**:
-    -   `2025-07-21 (월)`: 3주차 스프린트 계획 회의 (오전 10시)
-    -   `2025-07-23 (수)`: 중간 코드 리뷰 및 기능 통합
-    -   `2025-07-25 (금)`: 주간 회고 및 차주 계획 논의 (오후 5시)
+    -   `2025-07-14 (월)`: 2주차 스프린트 계획 회의 (오전 10시)
+    -   `2025-07-16 (수)`: 아이디어 구체화 및 MVP 설계 시작
+    -   `2025-07-18 (금)`: 주간 회고 및 차주 계획 논의 (오후 5시)
 -   **공지 사항**:
-    -   7월 21일(월)부터 데이터 수집 스테이지 기능 개발에 집중합니다. 관련 API 명세서를 확인해주세요.
-    -   백엔드 DB 스키마에 `rewards` 테이블이 추가되었습니다. 로컬 DB를 동기화해주세요.
+    -   `2025-07-21 (월)`부터는 본격적인 개발이 시작될 예정입니다. FE, BE에 맞춰서 API 설계 부탁드립니다.
 
 ---
 
@@ -275,20 +185,44 @@ $ ./gradlew bootRun
 
 | 주차 | 목표 |
 | :--: | :--- |
-| **1주차** | 프로젝트 기획 구체화, 기술 스택 확정 및 환경 설정, Jira 및 Git 컨벤션 정립 |
-| **2주차** | DB 설계 및 핵심 API 구현 (사용자 인증, 데이터 수집), 기본 UI 레이아웃 구성 |
-| **3~4주차**| 데이터 수집 스테이지 기능 개발, 프론트-백엔드 기능 연동 |
-| **5주차** | 리워드 및 추천인 시스템 개발, 1차 통합 테스트 및 버그 수정 |
-| **6주차** | 최종 테스트, 리팩토링 및 성능 개선, 배포 준비 및 발표 자료 제작 |
+| **1주차** | AI 부트캠프 (공통 교육 및 프로젝트 준비) |
+| **2주차** | 아이디어 확정 및 MVP 설계 (컨벤션 정립, 아이디어 구체화 포함) |
+| **3주차** | MVP 구현 |
+| **4주차** | 기획 산출물 정리 및 MVP 구현 지속 |
+| **5주차** | MVP를 포함한 서비스 기능 고도화 |
+| **6주차** | 서비스 발표 준비 |
+| **7주차** | 발표 및 피드백 |
 
 ---
 
+
 ## 10. 팀원 소개
 
-| 이름 | 전공 | 학번 | 연락처 | 이메일 |
-| :--- | :--- | :--- | :--- | :--- |
-| **이우진** | 컴퓨터학부 | 13478850 | 010-9140-1421 | lebind12@naver.com |
-| **정태승** | 컴퓨터공학부 | 13409040 | 010-9097-1762 | etanolfly98@gmail.com |
-| **김정규** | 통계학과 | 13440900 | 010-4941-1070 | regular.jk.kim@gmail.com |
-| **손동현** | 전자공학과 | 13401700 | 010-2053-2994 | as8542994@gmail.com |
-| **김광현** | 통계학과 | 13406810 | 010-3708-6014 | kyn06114@gmail.com |
+### 🧠 Backend
+
+|  | 이름 | 역할 | 주요 담당 업무 | GitHub |
+|:-:|:---:|:---:|:---|:---:|
+| <img src="https://github.com/lebind12.png" width="60" height="60" /> | **이우진** | 백엔드 |  | [@lebind12](https://github.com/lebind12) |
+| <img src="https://github.com/kimregular.png" width="60" height="60" /> | **김정규** | 백엔드 |  | [@kimregular](https://github.com/kimregular) |
+| <img src="https://github.com/kimgwang-hyeon.png" width="60" height="60" /> | **김광현** | 백엔드 |  | [@kimgwang-hyeon](https://github.com/kimgwang-hyeon) |
+
+
+### 🎨 Frontend
+
+|  | 이름 | 역할 | 주요 담당 업무 | GitHub |
+|:-:|:---:|:---:|:---|:---:|
+| <img src="https://github.com/fluetanol.png" width="60" height="60" /> | **정태승** | 프론트엔드 |  | [@fluetanol](https://github.com/fluetanol) |
+| <img src="https://github.com/SonDongHyeon.png" width="60" height="60" /> | **손동현** | 프론트엔드 |  | [@SonDongHyeon](https://github.com/SonDongHyeon) |
+| <img src="https://github.com/psiudo.png" width="60" height="60" /> | **박시우** | 프론트엔드 |  | [@psiudo](https://github.com/psiudo) |
+
+
+---
+
+## 11. 참고 문서
+
+| 문서명 | 설명 | 링크 |
+|--------|------|------|
+| 📋 요구사항 명세서 | 주요 기능 요구사항 정의서 | [바로가기](https://wirehaired-objective-39b.notion.site/233232dbe36c8059ac4ed98899365a91?source=copy_link) |
+| 🖼️ 와이어프레임 | 서비스 화면 구성 시안 | [바로가기](https://wirehaired-objective-39b.notion.site/233232dbe36c8027906beb040b217b5a?source=copy_link) |
+| 🔌 API 명세서 | 백엔드 API 엔드포인트 명세 | [바로가기](https://wirehaired-objective-39b.notion.site/BE-API-234232dbe36c8069b9e8c6ed428045fb?source=copy_link) |
+
