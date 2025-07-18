@@ -1,0 +1,41 @@
+networks:
+  infra_network:
+    driver: bridge # 기본 드라이버인 bridge 사용
+
+volumes:
+  redis_data:
+  postgres_data:
+
+services:
+  # redis stack service
+  redis:
+    image: redis/redis-stack:latest
+    container_name: redis-stack
+    ports:
+      - "6379:6379"
+      - "8001:8001"
+    volumes:
+      - redis_data:/data
+    networks:
+      - infra_network
+
+  # postgres service
+  postgres:
+    image: postgres:latest
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: q1w2e3r4t5
+      POSTGRES_DB: development_db
+    ports:
+      - "5432:5432"
+    volumes:
+        # 1. 데이터는 'postgres_data'라는 이름의 명명된 볼륨으로 관리
+        - postgres_data:/var/lib/postgresql/datadocker volume ls
+
+        # 2. 호스트의 설정 파일들을 컨테이너의 임시 경로에 마운트
+        - ./postgres_conf:/tmp/postgres_conf
+        # 3. 초기화 스크립트를 공식 경로에 마운트
+        - ./init:/docker-entrypoint-initdb.d
+    networks:
+      - infra_network
