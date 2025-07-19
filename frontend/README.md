@@ -40,3 +40,8 @@ git clone https://lab.ssafy.com/s13-webmobile1-sub1/S13P11A302.git
 ```
 
 ![alt text](readme_image/image2.png)
+
+### 주의사항
+빈 폴더 구조 아무리 만들어도 깃에서 추적 안해줍니다.
+
+빈 폴더 구조를 만들었다면 .gitkeep파일을 생성하거나 그냥 빈 텍스트 파일이라도 만들어놓으세용
