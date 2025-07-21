@@ -34,7 +34,7 @@ build_assets:
       - front/zmnoory/dist/
       
   rules:
-    - if: '$CI_COMMIT_BRANCH == "front-dev" || $CI_COMMIT_BRANCH == "front-prod"'
+    - if: '$CI_COMMIT_BRANCH == "frontend-dev" || $CI_COMMIT_BRANCH == "frontend-prod"'
 
 # 2. 배포 단계 (개발 환경)
 deploy_dev:
@@ -52,7 +52,7 @@ deploy_dev:
     url: $DEV_SITE_URL
   
   rules:
-    - if: '$CI_COMMIT_BRANCH == "front-dev"'
+    - if: '$CI_COMMIT_BRANCH == "frontend-dev"'
 
 # 3. 배포 단계 (운영 환경)
 deploy_prod:
@@ -70,6 +70,6 @@ deploy_prod:
     url: $PROD_SITE_URL
   
   rules:
-    - if: '$CI_COMMIT_BRANCH == "front-prod"'
+    - if: '$CI_COMMIT_BRANCH == "frontend-prod"'
       when: manual # 실수로 인한 운영 배포를 막기 위한 안전장치입니다.
 
