@@ -39,6 +39,7 @@ dependencies {
 
     // db
     runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'org.postgresql:postgresql'
 
     // test
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
