@@ -1,5 +1,6 @@
 package com.gradation.zmnnoory.domain.member.entity;
 
+import com.gradation.zmnnoory.common.entity.BaseEntity;
 import com.gradation.zmnnoory.domain.member.dto.SignUpRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -11,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Table(name = "members") // db 예약어 member 충돌 방지
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member {
+public class Member extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
