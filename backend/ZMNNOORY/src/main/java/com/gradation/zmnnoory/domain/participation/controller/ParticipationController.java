@@ -1,12 +1,13 @@
 package com.gradation.zmnnoory.domain.participation.controller;
 
+import com.gradation.zmnnoory.common.dto.BaseResponse;
 import com.gradation.zmnnoory.domain.participation.dto.ParticipationResponse;
 import com.gradation.zmnnoory.domain.participation.dto.StartParticipationRequest;
 import com.gradation.zmnnoory.domain.participation.dto.UpdateParticipationRequest;
 import com.gradation.zmnnoory.domain.participation.entity.Participation;
 import com.gradation.zmnnoory.domain.participation.service.ParticipationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -19,46 +20,61 @@ public class ParticipationController {
     private final ParticipationService participationService;
 
     @PostMapping("/start")
-    public ResponseEntity<ParticipationResponse> startParticipation(
+    public BaseResponse<ParticipationResponse> startParticipation(
             @RequestBody StartParticipationRequest request) {
         
         Participation participation = participationService.startParticipation(
                 request.getMemberId(), request.getStageId());
-        return ResponseEntity.ok(ParticipationResponse.from(participation));
+        return BaseResponse.<ParticipationResponse>builder()
+                .status(HttpStatus.CREATED)
+                .data(ParticipationResponse.from(participation))
+                .build();
     }
 
     @PutMapping("/{participationId}/end")
-    public ResponseEntity<ParticipationResponse> endParticipation(
+    public BaseResponse<ParticipationResponse> endParticipation(
             @PathVariable UUID participationId) {
         
         Participation participation = participationService.endParticipation(participationId);
-        return ResponseEntity.ok(ParticipationResponse.from(participation));
+        return BaseResponse.<ParticipationResponse>builder()
+                .status(HttpStatus.OK)
+                .data(ParticipationResponse.from(participation))
+                .build();
     }
 
     @PutMapping("/{participationId}")
-    public ResponseEntity<ParticipationResponse> updateParticipation(
+    public BaseResponse<ParticipationResponse> updateParticipation(
             @PathVariable UUID participationId,
             @RequestBody UpdateParticipationRequest request) {
         
         Participation participation = participationService.updateParticipation(
                 participationId, request);
-        return ResponseEntity.ok(ParticipationResponse.from(participation));
+        return BaseResponse.<ParticipationResponse>builder()
+                .status(HttpStatus.OK)
+                .data(ParticipationResponse.from(participation))
+                .build();
     }
 
     @GetMapping("/check-first")
-    public ResponseEntity<Boolean> isFirstParticipation(
+    public BaseResponse<Boolean> isFirstParticipation(
             @RequestParam Long memberId,
             @RequestParam Long stageId) {
         
         boolean isFirst = participationService.isFirstParticipation(memberId, stageId);
-        return ResponseEntity.ok(isFirst);
+        return BaseResponse.<Boolean>builder()
+                .status(HttpStatus.OK)
+                .data(isFirst)
+                .build();
     }
 
     @GetMapping("/{participationId}")
-    public ResponseEntity<ParticipationResponse> getParticipation(
+    public BaseResponse<ParticipationResponse> getParticipation(
             @PathVariable UUID participationId) {
         
         Participation participation = participationService.getParticipation(participationId);
-        return ResponseEntity.ok(ParticipationResponse.from(participation));
+        return BaseResponse.<ParticipationResponse>builder()
+                .status(HttpStatus.OK)
+                .data(ParticipationResponse.from(participation))
+                .build();
     }
 }
