@@ -19,4 +19,6 @@ public class SignUpRequest {
 
     @NotBlank(message = "성별은 필수 값입니다.")
     private final String gender;
+
+    // nickname, birthday
 }
