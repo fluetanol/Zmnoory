@@ -15,7 +15,7 @@ cache:
 # 1. 빌드 단계: 정적 파일을 생성하는 작업
 build_assets:
   stage: build
-  image: node:18-alpine
+  image: node:22-alpine
   
   # 프론트엔드 프로젝트 디렉터리로 이동합니다.
   before_script:
