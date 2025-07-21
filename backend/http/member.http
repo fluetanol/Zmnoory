@@ -1,18 +1,53 @@
-### create member
+### create member1
 POST http://localhost:8080/api/member/sign-up
 Content-Type: application/json
 
 {
-  "email" : "test@test.com",
+  "email" : "test1@test.com",
   "password": "123123123",
-  "gender": "mail"
+  "gender": "male"
 }
 
-### login
+### create member2
+POST http://localhost:8080/api/member/sign-up
+Content-Type: application/json
+
+{
+  "email" : "test2@test.com",
+  "password": "123123123",
+  "gender": "male"
+}
+
+### login fail
 POST http://localhost:8080/api/member/login
 Content-Type: application/json
 
 {
-  "email" : "test@test.com",
+  "email" : "fail@test.com",
   "password" : "123123123"
 }
+
+### login success
+POST http://localhost:8080/api/member/login
+Content-Type: application/json
+
+{
+  "email" : "test1@test.com",
+  "password" : "123123123"
+}
+
+> {%
+    // Authorization 헤더 값을 가져와 전역 변수에 저장
+    client.global.set("auth", response.body.body.data);
+%}
+
+
+### response test1
+GET http://localhost:8080/api/member/1
+Content-Type: application/json
+Authorization: Bearer {{auth}}
+
+### response test2
+GET http://localhost:8080/api/member/members
+Content-Type: application/json
+Authorization: Bearer {{auth}}

@@ -1,6 +1,5 @@
 package com.gradation.zmnnoory.domain.member.entity;
 
-import com.gradation.zmnnoory.domain.member.dto.SignUpRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
