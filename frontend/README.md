@@ -14,7 +14,6 @@ git clone https://lab.ssafy.com/s13-webmobile1-sub1/S13P11A302.git
 
 3. VS code 디렉토리는 ```\frontend\zmnoory``` 로 맞춰놓으면 됨.
 
-
 ### 프로젝트 실행 테스트
 1. VS code의 디렉토리를 \ZMNOORY로 맞추고
 2. VS code 터미널을 킨 뒤 (Ctrl + `)
@@ -42,6 +41,12 @@ git clone https://lab.ssafy.com/s13-webmobile1-sub1/S13P11A302.git
 ![alt text](readme_image/image2.png)
 
 ### 주의사항
-빈 폴더 구조 아무리 만들어도 깃에서 추적 안해줍니다.
+1. 빈 폴더 구조 아무리 만들어도 깃에서 추적 안해줍니다.
 
 빈 폴더 구조를 만들었다면 .gitkeep파일을 생성하거나 그냥 빈 텍스트 파일이라도 만들어놓으세용
+
+2. 혹시나 절대 경로 표시 @가 인지를 못하거나, config 파일들에 에러가 뜬다면
+
+https://www.notion.so/import-235232dbe36c80498ed3cf48eef4f00a?source=copy_link
+
+해당 링크 내용을 참고해주세요

@@ -1,0 +1,75 @@
+# .gitlab-ci.yml
+
+stages:
+  - build
+  - deploy
+
+# 캐시 설정을 통해 빌드 속도를 향상시킵니다.
+cache:
+  key:
+    files:
+      - frontend/zmnoory/package-lock.json
+  paths:
+    - frontend/zmnoory/node_modules/
+
+# 1. 빌드 단계: 정적 파일을 생성하는 작업
+build_assets:
+  stage: build
+  image: node:22-alpine
+  
+  # 프론트엔드 프로젝트 디렉터리로 이동합니다.
+  before_script:
+    - cd frontend/zmnoory
+  
+  script:
+    - echo "Navigated to $(pwd)"
+    - echo "Starting build process..."
+    - npm install
+    - npm run build
+    - echo "Build successful."
+  
+  # 빌드 결과물(dist 폴더)을 다음 단계로 전달합니다.
+  artifacts:
+    paths:
+      - frontend/zmnoory/dist/
+      
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "frontend-dev" || $CI_COMMIT_BRANCH == "frontend-prod"'
+
+# 2. 배포 단계 (개발 환경)
+deploy_dev:
+  stage: deploy
+  image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
+  
+  script:
+    - echo "Deploying to Development S3 Bucket..."
+    # dist 폴더의 내용을 개발용 S3 버킷에 동기화합니다.
+    - aws s3 sync ./frontend/zmnoory/dist s3://$DEV_S3_BUCKET --delete
+    - echo "Deployment to Development S3 successful."
+  
+  environment:
+    name: development
+    url: $DEV_SITE_URL
+  
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "frontend-dev"'
+
+# 3. 배포 단계 (운영 환경)
+deploy_prod:
+  stage: deploy
+  image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
+  
+  script:
+    - echo "Deploying to Production S3 Bucket..."
+    # dist 폴더의 내용을 운영용 S3 버킷에 동기화합니다.
+    - aws s3 sync ./frontend/zmnoory/dist s3://$PROD_S3_BUCKET --delete
+    - echo "Deployment to Production S3 successful."
+  
+  environment:
+    name: production
+    url: $PROD_SITE_URL
+  
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "frontend-prod"'
+      when: manual # 실수로 인한 운영 배포를 막기 위한 안전장치입니다.
+
