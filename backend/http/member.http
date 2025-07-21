@@ -1,4 +1,34 @@
+### create member fail 1
+POST http://localhost:8080/api/member/sign-up
+Content-Type: application/json
+
+{
+  "email" : "test1stest.com",
+  "password": "123123123",
+  "gender": "male"
+}
+
+### create member fail 2
+POST http://localhost:8080/api/member/sign-up
+Content-Type: application/json
+
+{
+  "email" : "",
+  "password": "",
+  "gender": "male"
+}
+
 ### create member1
+POST http://localhost:8080/api/member/sign-up
+Content-Type: application/json
+
+{
+  "email" : "test1@test.com",
+  "password": "123123123",
+  "gender": "male"
+}
+
+### create member fail - duplicated
 POST http://localhost:8080/api/member/sign-up
 Content-Type: application/json
 
