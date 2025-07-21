@@ -1,4 +1,4 @@
-package com.gradation.zmnnoory.domain.member.dto;
+package com.gradation.zmnnoory.domain.member.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
