@@ -8,9 +8,9 @@ stages:
 cache:
   key:
     files:
-      - front/zmnoory/package-lock.json
+      - frontend/zmnoory/package-lock.json
   paths:
-    - front/zmnoory/node_modules/
+    - frontend/zmnoory/node_modules/
 
 # 1. 빌드 단계: 정적 파일을 생성하는 작업
 build_assets:
@@ -19,7 +19,7 @@ build_assets:
   
   # 프론트엔드 프로젝트 디렉터리로 이동합니다.
   before_script:
-    - cd front/zmnoory
+    - cd frontend/zmnoory
   
   script:
     - echo "Navigated to $(pwd)"
@@ -31,7 +31,7 @@ build_assets:
   # 빌드 결과물(dist 폴더)을 다음 단계로 전달합니다.
   artifacts:
     paths:
-      - front/zmnoory/dist/
+      - frontend/zmnoory/dist/
       
   rules:
     - if: '$CI_COMMIT_BRANCH == "frontend-dev" || $CI_COMMIT_BRANCH == "frontend-prod"'
@@ -44,7 +44,7 @@ deploy_dev:
   script:
     - echo "Deploying to Development S3 Bucket..."
     # dist 폴더의 내용을 개발용 S3 버킷에 동기화합니다.
-    - aws s3 sync ./front/zmnoory/dist s3://$DEV_S3_BUCKET --delete
+    - aws s3 sync ./frontend/zmnoory/dist s3://$DEV_S3_BUCKET --delete
     - echo "Deployment to Development S3 successful."
   
   environment:
@@ -62,7 +62,7 @@ deploy_prod:
   script:
     - echo "Deploying to Production S3 Bucket..."
     # dist 폴더의 내용을 운영용 S3 버킷에 동기화합니다.
-    - aws s3 sync ./front/zmnoory/dist s3://$PROD_S3_BUCKET --delete
+    - aws s3 sync ./frontend/zmnoory/dist s3://$PROD_S3_BUCKET --delete
     - echo "Deployment to Production S3 successful."
   
   environment:
