@@ -23,4 +23,11 @@ public class BaseResponse<T> {
         this.status = status;
         this.data = data;
     }
+
+    public static <T> BaseResponse<T> fail(T e, HttpStatus status) {
+        return BaseResponse.<T>builder()
+                .status(status)
+                .data(e)
+                .build();
+    }
 }

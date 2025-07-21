@@ -6,6 +6,7 @@ import com.gradation.zmnnoory.domain.member.dto.response.MemberResponse;
 import com.gradation.zmnnoory.domain.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/sign-up")
-    public BaseResponse<MemberResponse> signUp(@RequestBody SignUpRequest signUpRequest) {
+    public BaseResponse<MemberResponse> signUp(@RequestBody @Validated SignUpRequest signUpRequest) {
         return BaseResponse.<MemberResponse>builder()
                 .status(HttpStatus.CREATED)
                 .data(memberService.createMember(signUpRequest))
