@@ -6,8 +6,12 @@ import com.gradation.zmnnoory.domain.participation.dto.StartParticipationRequest
 import com.gradation.zmnnoory.domain.participation.dto.UpdateParticipationRequest;
 import com.gradation.zmnnoory.domain.participation.entity.Participation;
 import com.gradation.zmnnoory.domain.participation.service.ParticipationService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -15,13 +19,14 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/participations")
+@Validated
 public class ParticipationController {
 
     private final ParticipationService participationService;
 
     @PostMapping("/start")
     public BaseResponse<ParticipationResponse> startParticipation(
-            @RequestBody StartParticipationRequest request) {
+            @Valid @RequestBody StartParticipationRequest request) {
         
         Participation participation = participationService.startParticipation(
                 request.getMemberId(), request.getStageId());
@@ -33,7 +38,7 @@ public class ParticipationController {
 
     @PutMapping("/{participationId}/end")
     public BaseResponse<ParticipationResponse> endParticipation(
-            @PathVariable UUID participationId) {
+            @PathVariable @NotNull UUID participationId) {
         
         Participation participation = participationService.endParticipation(participationId);
         return BaseResponse.<ParticipationResponse>builder()
@@ -44,8 +49,8 @@ public class ParticipationController {
 
     @PutMapping("/{participationId}")
     public BaseResponse<ParticipationResponse> updateParticipation(
-            @PathVariable UUID participationId,
-            @RequestBody UpdateParticipationRequest request) {
+            @PathVariable @NotNull UUID participationId,
+            @Valid @RequestBody UpdateParticipationRequest request) {
         
         Participation participation = participationService.updateParticipation(
                 participationId, request);
@@ -57,8 +62,8 @@ public class ParticipationController {
 
     @GetMapping("/check-first")
     public BaseResponse<Boolean> isFirstParticipation(
-            @RequestParam Long memberId,
-            @RequestParam Long stageId) {
+            @RequestParam @NotNull @Positive Long memberId,
+            @RequestParam @NotNull @Positive Long stageId) {
         
         boolean isFirst = participationService.isFirstParticipation(memberId, stageId);
         return BaseResponse.<Boolean>builder()
@@ -69,7 +74,7 @@ public class ParticipationController {
 
     @GetMapping("/{participationId}")
     public BaseResponse<ParticipationResponse> getParticipation(
-            @PathVariable UUID participationId) {
+            @PathVariable @NotNull UUID participationId) {
         
         Participation participation = participationService.getParticipation(participationId);
         return BaseResponse.<ParticipationResponse>builder()
