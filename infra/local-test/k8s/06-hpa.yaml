@@ -1,0 +1,53 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: zmnnoory-hpa
+  namespace: zmnnoory
+  labels:
+    app: zmnnoory-backend
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: zmnnoory-backend
+  
+  # 로컬 테스트용 Pod 수 설정 (리소스 절약)
+  minReplicas: 1     # 최소 1개 유지
+  maxReplicas: 3     # 최대 3개까지 확장 (원본: 10개)
+  
+  # 스케일링 정책 (로컬 환경에 맞게 조정)
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 60   # 1분 안정화 (원본: 5분)
+      policies:
+      - type: Percent
+        value: 50
+        periodSeconds: 60
+    scaleUp:
+      stabilizationWindowSeconds: 30   # 30초 안정화 (원본: 1분)
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 60
+      - type: Pods
+        value: 1         # 1개씩 추가 (원본: 2개)
+        periodSeconds: 60
+      selectPolicy: Max
+  
+  # 메트릭 기반 스케일링 (로컬 환경에 맞게 조정)
+  metrics:
+  # CPU 사용률 기반 (더 민감하게)
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 60  # CPU 60% 초과 시 확장 (원본: 70%)
+  
+  # 메모리 사용률 기반 (더 민감하게)
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 70  # 메모리 70% 초과 시 확장 (원본: 80%) 

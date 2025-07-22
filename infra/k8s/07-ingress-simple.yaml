@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: zmnnoory-ingress
+  namespace: zmnnoory
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: zmnnoory.local  # minikube에서 사용할 로컬 호스트명
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: zmnnoory-service
+            port:
+              number: 8080
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: zmnnoory-service
+            port:
+              number: 8080 

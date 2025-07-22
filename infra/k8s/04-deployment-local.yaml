@@ -1,0 +1,163 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zmnnoory-backend
+  namespace: zmnnoory
+  labels:
+    app: zmnnoory-backend
+    version: v1
+spec:
+  replicas: 3  # 초기 replica 수
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: zmnnoory-backend
+  template:
+    metadata:
+      labels:
+        app: zmnnoory-backend
+        version: v1
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      serviceAccountName: default
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+      
+      # 호스트 네트워크 접근을 위한 설정
+      hostNetwork: false
+      dnsPolicy: ClusterFirst
+      
+      containers:
+      - name: backend
+        image: zmnnoory-backend:latest  # 로컬 빌드 이미지
+        imagePullPolicy: Never  # 로컬 이미지 사용
+        
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        
+        # 환경변수 설정 (ConfigMap과 Secret에서 가져오기)
+        env:
+        # ConfigMap에서 가져오는 환경변수들
+        - name: SPRING_PROFILES_ACTIVE
+          valueFrom:
+            configMapKeyRef:
+              name: zmnnoory-config
+              key: spring.profiles.active
+        
+        - name: SERVER_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: zmnnoory-config
+              key: server.port
+        
+        # Secret에서 가져오는 민감한 환경변수들
+        - name: JWT_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: zmnnoory-secret
+              key: jwt.secret
+        
+        - name: JWT_ISSUER
+          valueFrom:
+            secretKeyRef:
+              name: zmnnoory-secret
+              key: jwt.issuer
+        
+        - name: JWT_EXPIRATION
+          valueFrom:
+            configMapKeyRef:
+              name: zmnnoory-config
+              key: jwt.expiration
+        
+        - name: JWT_PREFIX
+          valueFrom:
+            configMapKeyRef:
+              name: zmnnoory-config
+              key: jwt.prefix
+        
+        - name: JWT_HEADER
+          valueFrom:
+            configMapKeyRef:
+              name: zmnnoory-config
+              key: jwt.header
+        
+        # 헬스체크 설정
+        livenessProbe:
+          httpGet:
+            path: /actuator/health/liveness
+            port: 8080
+          initialDelaySeconds: 90
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3
+          successThreshold: 1
+        
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+          successThreshold: 1
+        
+        # 리소스 제한 설정
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        
+        # 보안 컨텍스트
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: false
+          runAsNonRoot: true
+          runAsUser: 1000
+          capabilities:
+            drop:
+              - ALL
+        
+        # 볼륨 마운트 (로그용)
+        volumeMounts:
+        - name: tmp-volume
+          mountPath: /tmp
+      
+      # 볼륨 정의
+      volumes:
+      - name: tmp-volume
+        emptyDir: {}
+      
+      # Pod 스케줄링 설정
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - zmnnoory-backend
+              topologyKey: kubernetes.io/hostname
+      
+      # 재시작 정책
+      restartPolicy: Always
+      
+      # 종료 시간 설정
+      terminationGracePeriodSeconds: 30 
