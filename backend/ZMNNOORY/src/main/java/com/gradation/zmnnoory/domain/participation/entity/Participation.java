@@ -1,0 +1,68 @@
+package com.gradation.zmnnoory.domain.participation.entity;
+
+import com.gradation.zmnnoory.common.entity.BaseEntity;
+import com.gradation.zmnnoory.domain.member.entity.Member;
+import com.gradation.zmnnoory.domain.stage.entity.Stage;
+import com.gradation.zmnnoory.domain.participation.status.ParticipationStatus;
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.time.LocalDate;
+import java.util.UUID;
+
+@Entity
+@Getter
+@Table(name = "participations")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Participation extends BaseEntity {
+
+    @Id
+    @GeneratedValue
+    private UUID id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "stage_id", nullable = false)
+    private Stage stage;
+
+    private LocalDate startedAt;
+    private LocalDate endedAt;
+
+    @Enumerated(EnumType.STRING)
+    private ParticipationStatus status;
+
+    @Setter private Integer frameCount;
+    @Setter private String videoUrl;
+    @Setter private String thumbnailUrl;
+
+    public void updateMediaInfo(Integer frameCount, String videoUrl, String thumbnailUrl) {
+        if (frameCount != null) this.frameCount = frameCount;
+        if (videoUrl != null) this.videoUrl = videoUrl;
+        if (thumbnailUrl != null) this.thumbnailUrl = thumbnailUrl;
+    }
+
+    public void complete() {
+        if (this.status != ParticipationStatus.IN_PROGRESS) {
+            throw new IllegalStateException("진행 중인 participation이 아닙니다.");
+        }
+        this.status = ParticipationStatus.COMPLETED;
+        this.endedAt = LocalDate.now();
+    }
+
+    @Builder
+    public Participation(Member member, Stage stage, LocalDate startedAt, 
+                        LocalDate endedAt, ParticipationStatus status, 
+                        Integer frameCount, String videoUrl, String thumbnailUrl) {
+        this.member = member;
+        this.stage = stage;
+        this.startedAt = startedAt;
+        this.endedAt = endedAt;
+        this.status = status;
+        this.frameCount = frameCount;
+        this.videoUrl = videoUrl;
+        this.thumbnailUrl = thumbnailUrl;
+    }
+}
