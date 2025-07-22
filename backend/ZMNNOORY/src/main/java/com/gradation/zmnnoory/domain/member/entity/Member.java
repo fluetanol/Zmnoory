@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Entity
 @Getter
 @Table(name = "members") // db 예약어 member 충돌 방지
@@ -19,12 +21,25 @@ public class Member extends BaseEntity {
 
     private String email;
     private String password;
-    private String gender;
+
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+
+    private String nickname;
+
+    private LocalDate birthday;
 
     @Builder
-    private Member(String email, String password, String gender) {
+    private Member(String email,
+                   String password,
+                   Gender gender,
+                   String nickname,
+                   LocalDate birthday
+    ) {
         this.email = email;
         this.password = password;
         this.gender = gender;
+        this.nickname = nickname;
+        this.birthday = birthday;
     }
 }

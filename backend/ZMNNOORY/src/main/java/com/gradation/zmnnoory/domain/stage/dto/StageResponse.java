@@ -2,9 +2,9 @@ package com.gradation.zmnnoory.domain.stage.dto;
 
 import com.gradation.zmnnoory.domain.stage.entity.Stage;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class StageResponse {
     private Long id;
     private String title;

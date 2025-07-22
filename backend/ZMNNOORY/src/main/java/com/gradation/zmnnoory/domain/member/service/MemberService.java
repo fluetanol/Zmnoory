@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -24,21 +23,21 @@ public class MemberService {
 
     @Transactional
     public MemberResponse createMember(SignUpRequest signUpRequest) {
-        if (memberRepository.existsByEmail(signUpRequest.getEmail())) {
+        if (memberRepository.existsByEmail(signUpRequest.email())) {
             throw new DuplicatedEmailException();
         }
 
         Member newMember = memberCreateHandler.createMemberWith(signUpRequest);
         memberRepository.save(newMember);
-        return new MemberResponse(newMember.getEmail(), newMember.getGender());
+        return MemberResponse.of(newMember);
     }
 
     public MemberResponse findById(Long id) {
         Member foundMember = memberRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("No User Found"));
-        return new MemberResponse(foundMember.getEmail(), foundMember.getGender());
+        return MemberResponse.of(foundMember);
     }
 
     public List<MemberResponse> findAll() {
-        return memberRepository.findAll().stream().map(m -> new MemberResponse(m.getEmail(), m.getGender())).toList();
+        return memberRepository.findAll().stream().map(MemberResponse::of).toList();
     }
 }
