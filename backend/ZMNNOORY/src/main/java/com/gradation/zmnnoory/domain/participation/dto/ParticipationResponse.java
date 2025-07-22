@@ -3,13 +3,12 @@ package com.gradation.zmnnoory.domain.participation.dto;
 import com.gradation.zmnnoory.domain.participation.entity.Participation;
 import com.gradation.zmnnoory.domain.participation.status.ParticipationStatus;
 import lombok.Builder;
-import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Data
+
 public class ParticipationResponse {
     private UUID id;
     private Long memberId;

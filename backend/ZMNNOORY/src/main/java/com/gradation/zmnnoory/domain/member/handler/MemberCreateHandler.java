@@ -14,9 +14,11 @@ public class MemberCreateHandler {
 
     public Member createMemberWith(SignUpRequest signUpRequest) {
         return Member.builder()
-                .email(signUpRequest.getEmail())
-                .password(passwordEncoder.encode(signUpRequest.getPassword()))
-                .gender(signUpRequest.getGender())
+                .email(signUpRequest.email())
+                .password(passwordEncoder.encode(signUpRequest.password()))
+                .nickname(signUpRequest.nickname())
+
+                .gender(signUpRequest.gender())
                 .build();
     }
 }
