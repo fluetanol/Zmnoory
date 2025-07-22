@@ -39,7 +39,7 @@ public class SecurityConfig {
                                 "/actuator/health/**",
                                 "/actuator/info",
                                 "/actuator/metrics",
-                                "/actuator/prometheus"
+                                "/actuator/prometheus",
                                 "/swagger-ui/**",
                                 "/api-docs/**",
                         ).permitAll() // 해당 주소는 아무나 접근 가능
