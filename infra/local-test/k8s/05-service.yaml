@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: zmnnoory-service
+  namespace: zmnnoory
+  labels:
+    app: zmnnoory-backend
+spec:
+  type: ClusterIP  # 내부 클러스터 전용 (ELB 사용 불가)
+  selector:
+    app: zmnnoory-backend
+  ports:
+  - name: http
+    port: 8080        # 내부 서비스 포트
+    targetPort: 8080  # Pod 내부 포트
+    protocol: TCP
+  
+  # 세션 어피니티 설정 (필요한 경우)
+  sessionAffinity: None
+  
+---
+# ClusterIP Service (내부 통신용, 추가 옵션)
+apiVersion: v1
+kind: Service
+metadata:
+  name: zmnnoory-service-internal
+  namespace: zmnnoory
+  labels:
+    app: zmnnoory-backend
+spec:
+  type: ClusterIP
+  selector:
+    app: zmnnoory-backend
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+    protocol: TCP 

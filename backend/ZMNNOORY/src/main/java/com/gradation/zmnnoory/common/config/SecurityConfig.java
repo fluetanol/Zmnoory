@@ -33,9 +33,15 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
+                                "/",
+                                "/h2-console/**",
+                                "/actuator/health",
+                                "/actuator/health/**",
+                                "/actuator/info",
+                                "/actuator/metrics",
+                                "/actuator/prometheus",
                                 "/swagger-ui/**",
-                                "/api-docs/**",
-                                "/h2-console/**"
+                                "/api-docs/**"
                         ).permitAll() // 해당 주소는 아무나 접근 가능
                         .requestMatchers(
                                 "/api/members/sign-up"
