@@ -1,27 +1,21 @@
 package com.gradation.zmnnoory.domain.stage.dto;
 
 import com.gradation.zmnnoory.domain.stage.entity.Stage;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
+@Builder
+@AllArgsConstructor
 public class StageResponse {
-    private Long id;
-    private String title;
-    private String description;
-    private String difficulty;
-    private Integer rewardTotal;
 
-    @Builder
-    public StageResponse(Long id, String title, String description, String difficulty, Integer rewardTotal) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.difficulty = difficulty;
-        this.rewardTotal = rewardTotal;
-    }
+    private final Long id;
+    private final String title;
+    private final String description;
+    private final String difficulty;
+    private final Integer rewardTotal;
 
-    // Entity → DTO
     public static StageResponse from(Stage stage) {
         return StageResponse.builder()
                 .id(stage.getId())

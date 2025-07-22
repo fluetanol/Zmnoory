@@ -1,10 +1,12 @@
 package com.gradation.zmnnoory.domain.participation.dto;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-@Data
+@Getter
+@AllArgsConstructor
 public class UpdateParticipationRequest {
-    private Integer frameCount;
-    private String videoUrl;
-    private String thumbnailUrl;
+    private final Integer frameCount;
+    private final String videoUrl;
+    private final String thumbnailUrl;
 }

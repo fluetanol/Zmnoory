@@ -2,49 +2,32 @@ package com.gradation.zmnnoory.domain.participation.dto;
 
 import com.gradation.zmnnoory.domain.participation.entity.Participation;
 import com.gradation.zmnnoory.domain.participation.status.ParticipationStatus;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Data
+@Getter
+@Builder
+@AllArgsConstructor
 public class ParticipationResponse {
-    private UUID id;
-    private Long memberId;
-    private String memberEmail;
-    private Long stageId;
-    private String stageTitle;
-    private LocalDate startedAt;
-    private LocalDate endedAt;
-    private ParticipationStatus status;
-    private Integer frameCount;
-    private String videoUrl;
-    private String thumbnailUrl;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
-    @Builder
-    public ParticipationResponse(UUID id, Long memberId, String memberEmail, 
-                               Long stageId, String stageTitle, LocalDate startedAt, 
-                               LocalDate endedAt, ParticipationStatus status, 
-                               Integer frameCount, String videoUrl, String thumbnailUrl,
-                               LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.id = id;
-        this.memberId = memberId;
-        this.memberEmail = memberEmail;
-        this.stageId = stageId;
-        this.stageTitle = stageTitle;
-        this.startedAt = startedAt;
-        this.endedAt = endedAt;
-        this.status = status;
-        this.frameCount = frameCount;
-        this.videoUrl = videoUrl;
-        this.thumbnailUrl = thumbnailUrl;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
+    private final UUID id;
+    private final Long memberId;
+    private final String memberEmail;
+    private final Long stageId;
+    private final String stageTitle;
+    private final LocalDate startedAt;
+    private final LocalDate endedAt;
+    private final ParticipationStatus status;
+    private final Integer frameCount;
+    private final String videoUrl;
+    private final String thumbnailUrl;
+    private final LocalDateTime createdAt;
+    private final LocalDateTime updatedAt;
 
     public static ParticipationResponse from(Participation participation) {
         return ParticipationResponse.builder()
