@@ -29,15 +29,15 @@ public class MemberService {
 
         Member newMember = memberCreateHandler.createMemberWith(signUpRequest);
         memberRepository.save(newMember);
-        return new MemberResponse(newMember.getEmail(), newMember.getGender());
+        return MemberResponse.of(newMember);
     }
 
     public MemberResponse findById(Long id) {
         Member foundMember = memberRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("No User Found"));
-        return new MemberResponse(foundMember.getEmail(), foundMember.getGender());
+        return MemberResponse.of(foundMember);
     }
 
     public List<MemberResponse> findAll() {
-        return memberRepository.findAll().stream().map(m -> new MemberResponse(m.getEmail(), m.getGender())).toList();
+        return memberRepository.findAll().stream().map(MemberResponse::of).toList();
     }
 }

@@ -16,6 +16,8 @@ public class MemberCreateHandler {
         return Member.builder()
                 .email(signUpRequest.email())
                 .password(passwordEncoder.encode(signUpRequest.password()))
+                .nickname(signUpRequest.nickname())
+
                 .gender(signUpRequest.gender())
                 .build();
     }
