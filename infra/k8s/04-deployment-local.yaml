@@ -53,44 +53,44 @@ spec:
           valueFrom:
             configMapKeyRef:
               name: zmnnoory-config
-              key: spring.profiles.active
+              key: SPRING_PROFILES_ACTIVE
         
         - name: SERVER_PORT
           valueFrom:
             configMapKeyRef:
               name: zmnnoory-config
-              key: server.port
+              key: SERVER_PORT
         
         # Secret에서 가져오는 민감한 환경변수들
         - name: JWT_SECRET_KEY
           valueFrom:
             secretKeyRef:
               name: zmnnoory-secret
-              key: jwt.secret
+              key: JWT_SECRET_KEY
         
         - name: JWT_ISSUER
           valueFrom:
-            secretKeyRef:
-              name: zmnnoory-secret
-              key: jwt.issuer
+            configMapKeyRef:
+              name: zmnnoory-config
+              key: JWT_ISSUER
         
         - name: JWT_EXPIRATION
           valueFrom:
             configMapKeyRef:
               name: zmnnoory-config
-              key: jwt.expiration
+              key: JWT_EXPIRATION
         
         - name: JWT_PREFIX
           valueFrom:
             configMapKeyRef:
               name: zmnnoory-config
-              key: jwt.prefix
+              key: JWT_PREFIX
         
         - name: JWT_HEADER
           valueFrom:
             configMapKeyRef:
               name: zmnnoory-config
-              key: jwt.header
+              key: JWT_HEADER
         
         # 헬스체크 설정
         livenessProbe:
