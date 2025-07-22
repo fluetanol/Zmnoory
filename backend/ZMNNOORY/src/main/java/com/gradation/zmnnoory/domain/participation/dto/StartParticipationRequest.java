@@ -1,8 +1,8 @@
 package com.gradation.zmnnoory.domain.participation.dto;
 
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class StartParticipationRequest {
     private Long memberId;
     private Long stageId;

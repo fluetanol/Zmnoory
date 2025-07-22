@@ -3,9 +3,8 @@ package com.gradation.zmnnoory.domain.stage.dto;
 
 import com.gradation.zmnnoory.domain.stage.entity.Stage;
 import lombok.Builder;
-import lombok.Data;
 
-@Data
+
 public class StageRequest {
     private String title;
     private String description;
