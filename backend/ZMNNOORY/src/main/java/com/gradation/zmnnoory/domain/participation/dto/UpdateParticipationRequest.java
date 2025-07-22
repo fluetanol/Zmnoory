@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class UpdateParticipationRequest {
-    private Integer frameCount;
-    private String videoUrl;
-    private String thumbnailUrl;
+    private final Integer frameCount;
+    private final String videoUrl;
+    private final String thumbnailUrl;
 }

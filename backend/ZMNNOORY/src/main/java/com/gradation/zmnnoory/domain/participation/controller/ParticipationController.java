@@ -27,7 +27,7 @@ public class ParticipationController {
                 request.getMemberId(), request.getStageId());
         return BaseResponse.<ParticipationResponse>builder()
                 .status(HttpStatus.CREATED)
-                .data(ParticipationResponse.from(participation))
+                .data(ParticipationResponse.of(participation))
                 .build();
     }
 
@@ -38,7 +38,7 @@ public class ParticipationController {
         Participation participation = participationService.endParticipation(participationId);
         return BaseResponse.<ParticipationResponse>builder()
                 .status(HttpStatus.OK)
-                .data(ParticipationResponse.from(participation))
+                .data(ParticipationResponse.of(participation))
                 .build();
     }
 
@@ -51,7 +51,7 @@ public class ParticipationController {
                 participationId, request);
         return BaseResponse.<ParticipationResponse>builder()
                 .status(HttpStatus.OK)
-                .data(ParticipationResponse.from(participation))
+                .data(ParticipationResponse.of(participation))
                 .build();
     }
 
@@ -74,7 +74,7 @@ public class ParticipationController {
         Participation participation = participationService.getParticipation(participationId);
         return BaseResponse.<ParticipationResponse>builder()
                 .status(HttpStatus.OK)
-                .data(ParticipationResponse.from(participation))
+                .data(ParticipationResponse.of(participation))
                 .build();
     }
 }

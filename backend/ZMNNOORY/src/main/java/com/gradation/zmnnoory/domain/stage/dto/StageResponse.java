@@ -6,25 +6,22 @@ import lombok.Getter;
 
 @Getter
 public class StageResponse {
-    private Long id;
-    private String title;
-    private String description;
-    private String difficulty;
-    private Integer rewardTotal;
+
+    private final String title;
+    private final String description;
+    private final String difficulty;
+    private final Integer rewardTotal;
 
     @Builder
-    public StageResponse(Long id, String title, String description, String difficulty, Integer rewardTotal) {
-        this.id = id;
+    private StageResponse(String title, String description, String difficulty, Integer rewardTotal) {
         this.title = title;
         this.description = description;
         this.difficulty = difficulty;
         this.rewardTotal = rewardTotal;
     }
 
-    // Entity → DTO
-    public static StageResponse from(Stage stage) {
+    public static StageResponse of(Stage stage) {
         return StageResponse.builder()
-                .id(stage.getId())
                 .title(stage.getTitle())
                 .description(stage.getDescription())
                 .difficulty(stage.getDifficulty())
