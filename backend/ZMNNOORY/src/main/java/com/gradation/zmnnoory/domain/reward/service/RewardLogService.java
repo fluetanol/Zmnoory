@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,7 +40,6 @@ public class RewardLogService {
                 .member(participation.getMember())
                 .stage(participation.getStage())
                 .point(rewardPoint)
-                .earnedAt(LocalDate.now())
                 .build();
 
         return rewardLogRepository.save(rewardLog);

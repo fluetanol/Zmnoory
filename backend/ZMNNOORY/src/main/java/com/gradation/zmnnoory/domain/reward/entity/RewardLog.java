@@ -9,7 +9,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -33,14 +32,10 @@ public class RewardLog extends BaseEntity {
     @Column(nullable = false)
     private int point;
 
-    @Column(name = "earned_at", nullable = false)
-    private LocalDate earnedAt;
-
     @Builder
-    public RewardLog(Member member, Stage stage, int point, LocalDate earnedAt) {
+    public RewardLog(Member member, Stage stage, int point) {
         this.member = member;
         this.stage = stage;
         this.point = point;
-        this.earnedAt = earnedAt;
     }
 }

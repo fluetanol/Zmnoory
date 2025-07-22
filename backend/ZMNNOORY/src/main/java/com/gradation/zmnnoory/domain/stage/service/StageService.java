@@ -30,20 +30,20 @@ public class StageService {
 
         // 2. 코드가 짧지만 어려운 방법
         return stageRepository.findAll().stream()
-                .map(StageResponse::from)
+                .map(StageResponse::of)
                 .toList();
     }
 
     // 특정 스테이지 조회
     public StageResponse getStageById(Long id) {
         Stage stage = stageRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("해당 스테이지가 없습니다."));
-        return StageResponse.from(stage);
+        return StageResponse.of(stage);
     }
 
     // 새 스테이지 생성 (관리자용)
     public StageResponse createStage(StageRequest request) {
         Stage stage = request.toEntity();
         Stage savedStage = stageRepository.save(stage);
-        return StageResponse.from(savedStage);
+        return StageResponse.of(savedStage);
     }
 }

@@ -30,16 +30,16 @@ public class RewardLogController {
         
         return BaseResponse.<RewardLogResponse>builder()
                 .status(HttpStatus.CREATED)
-                .data(RewardLogResponse.from(rewardLog))
+                .data(RewardLogResponse.of(rewardLog))
                 .build();
     }
 
     @GetMapping("/member/{memberId}")
     public BaseResponse<List<RewardLogResponse>> getRewardLogsByMember(
-            @PathVariable @NotNull @Positive Long memberId) {
+            @PathVariable Long memberId) {
         List<RewardLog> rewardLogs = rewardLogService.getRewardLogsByMember(memberId);
         List<RewardLogResponse> responses = rewardLogs.stream()
-                .map(RewardLogResponse::from)
+                .map(RewardLogResponse::of)
                 .toList();
         
         return BaseResponse.<List<RewardLogResponse>>builder()
@@ -50,8 +50,8 @@ public class RewardLogController {
 
     @GetMapping("/check-reward")
     public BaseResponse<Boolean> hasReceivedReward(
-            @RequestParam @NotNull @Positive Long memberId,
-            @RequestParam @NotNull @Positive Long stageId) {
+            @RequestParam Long memberId,
+            @RequestParam Long stageId) {
         
         boolean hasReceived = rewardLogService.hasReceivedReward(memberId, stageId);
         
@@ -62,12 +62,12 @@ public class RewardLogController {
     }
 
     @GetMapping("/{rewardId}")
-    public BaseResponse<RewardLogResponse> getRewardLog(@PathVariable @NotNull UUID rewardId) {
+    public BaseResponse<RewardLogResponse> getRewardLog(@PathVariable UUID rewardId) {
         RewardLog rewardLog = rewardLogService.findById(rewardId);
         
         return BaseResponse.<RewardLogResponse>builder()
                 .status(HttpStatus.OK)
-                .data(RewardLogResponse.from(rewardLog))
+                .data(RewardLogResponse.of(rewardLog))
                 .build();
     }
 
@@ -75,7 +75,7 @@ public class RewardLogController {
     public BaseResponse<List<RewardLogResponse>> getAllRewardLogs() {
         List<RewardLog> rewardLogs = rewardLogService.findAll();
         List<RewardLogResponse> responses = rewardLogs.stream()
-                .map(RewardLogResponse::from)
+                .map(RewardLogResponse::of)
                 .toList();
         
         return BaseResponse.<List<RewardLogResponse>>builder()
