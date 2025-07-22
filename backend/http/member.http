@@ -1,55 +1,63 @@
 ### create member fail 1
-POST http://localhost:8080/api/member/sign-up
+POST http://localhost:8080/api/members/sign-up
 Content-Type: application/json
 
 {
   "email" : "test1stest.com",
   "password": "123123123",
-  "gender": "male"
+  "gender": "bird",
+  "nickname": "tester",
+  "birthday": "2000-01-01"
 }
 
 ### create member fail 2
-POST http://localhost:8080/api/member/sign-up
+POST http://localhost:8080/api/members/sign-up
 Content-Type: application/json
 
 {
   "email" : "",
   "password": "",
-  "gender": "male"
+  "gender": "MALE"
 }
 
 ### create member1
-POST http://localhost:8080/api/member/sign-up
+POST http://localhost:8080/api/members/sign-up
 Content-Type: application/json
 
 {
   "email" : "test1@test.com",
   "password": "123123123",
-  "gender": "male"
+  "gender": "MALE",
+  "nickname" : "tester",
+  "birthday": "2000-01-01"
 }
 
 ### create member fail - duplicated
-POST http://localhost:8080/api/member/sign-up
+POST http://localhost:8080/api/members/sign-up
 Content-Type: application/json
 
 {
   "email" : "test1@test.com",
   "password": "123123123",
-  "gender": "male"
+  "gender": "MALE",
+  "nickname" : "tester",
+  "birthday": "2000-01-01"
 }
 
 ### create member2
-POST http://localhost:8080/api/member/sign-up
+POST http://localhost:8080/api/members/sign-up
 Content-Type: application/json
 
 {
   "email" : "test2@test.com",
   "password": "123123123",
-  "gender": "male"
+  "gender": "MALE",
+  "nickname" : "tester",
+  "birthday": "2000-01-01"
 }
 
 ### login fail
-POST http://localhost:8080/api/member/login
+POST http://localhost:8080/api/members/login
 Content-Type: application/json
 
 {
@@ -58,7 +66,7 @@ Content-Type: application/json
 }
 
 ### login success
-POST http://localhost:8080/api/member/login
+POST http://localhost:8080/api/members/login
 Content-Type: application/json
 
 {
@@ -73,11 +81,11 @@ Content-Type: application/json
 
 
 ### response test1
-GET http://localhost:8080/api/member/1
+GET http://localhost:8080/api/members/1
 Content-Type: application/json
 Authorization: Bearer {{auth}}
 
 ### response test2
-GET http://localhost:8080/api/member/members
+GET http://localhost:8080/api/members/memberss
 Content-Type: application/json
 Authorization: Bearer {{auth}}

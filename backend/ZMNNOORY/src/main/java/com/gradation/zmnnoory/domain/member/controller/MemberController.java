@@ -4,6 +4,8 @@ import com.gradation.zmnnoory.common.dto.BaseResponse;
 import com.gradation.zmnnoory.domain.member.dto.request.SignUpRequest;
 import com.gradation.zmnnoory.domain.member.dto.response.MemberResponse;
 import com.gradation.zmnnoory.domain.member.service.MemberService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -16,12 +18,14 @@ import java.util.List;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/member")
+@RequestMapping("/api/members")
+@Tag(name = "사용자 API", description = "사용자 관련 API")
 public class MemberController {
 
     private final MemberService memberService;
 
     @PostMapping("/sign-up")
+    @Operation(summary = "회원가입", description = "회원가입 API")
     public BaseResponse<MemberResponse> signUp(@RequestBody @Validated SignUpRequest signUpRequest) {
         return BaseResponse.<MemberResponse>builder()
                 .status(HttpStatus.CREATED)
@@ -37,7 +41,7 @@ public class MemberController {
                 .build();
     }
 
-    @GetMapping("/members")
+    @GetMapping
     public BaseResponse<List<MemberResponse>> getMembers() {
         return BaseResponse.<List<MemberResponse>>builder()
                 .status(HttpStatus.ACCEPTED)
