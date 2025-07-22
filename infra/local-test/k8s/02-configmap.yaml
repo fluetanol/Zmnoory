@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: zmnnoory-config
+  namespace: zmnnoory
+  labels:
+    app: zmnnoory-backend
+data:
+  # Spring Boot 프로파일 설정
+  SPRING_PROFILES_ACTIVE: "k8s"
+  
+  # 서버 설정
+  SERVER_PORT: "8080"
+  
+  # 데이터베이스 설정 (Minikube에서 호스트 Docker 컨테이너 접근)
+  DB_HOST: "host.minikube.internal"  # Minikube 전용
+  DB_PORT: "5432"
+  DB_NAME: "development_db"
+  DB_USERNAME: "root"
+  
+  # Redis 설정 (Minikube에서 호스트 Docker 컨테이너 접근)
+  REDIS_HOST: "host.minikube.internal"  # Minikube 전용
+  REDIS_PORT: "6379"
+  
+  # JWT 설정 (비밀정보가 아닌 것들)
+  JWT_ISSUER: "ZMNNOORY"
+  JWT_EXPIRATION: "3h"
+  JWT_PREFIX: "Bearer "
+  JWT_HEADER: "Authorization"
+  
+  # JPA 설정 (로컬 테스트용)
+  DDL_AUTO: "create-drop"  # 테스트용으로 create-drop
+  SHOW_SQL: "true"         # 로컬에서는 SQL 로그 활성화
+  FORMAT_SQL: "true"
+  HIGHLIGHT_SQL: "true"
+  
+  # 로깅 설정 (로컬 테스트용)
+  SQL_LOG_LEVEL: "debug"
+  SQL_TRACE_LEVEL: "trace"
+  APP_LOG_LEVEL: "debug"
+  
+  # 서버 최적화 설정 (로컬 테스트용으로 리소스 절약)
+  MAX_THREADS: "50"
+  MIN_THREADS: "5"
+  CONNECTION_TIMEOUT: "20000"
+  MAX_CONNECTIONS: "1000" 

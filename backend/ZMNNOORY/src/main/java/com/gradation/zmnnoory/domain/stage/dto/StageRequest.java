@@ -9,16 +9,16 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class StageRequest {
-    
+
     @NotBlank(message = "제목은 필수 값입니다.")
     private final String title;
-    
+
     @NotBlank(message = "설명은 필수 값입니다.")
     private final String description;
-    
+
     @NotBlank(message = "난이도는 필수 값입니다.")
     private final String difficulty;
-    
+
     @NotNull(message = "총 리워드는 필수 값입니다.")
     private final Integer rewardTotal;
 

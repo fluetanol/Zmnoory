@@ -1,0 +1,166 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zmnnoory-backend
+  namespace: zmnnoory
+  labels:
+    app: zmnnoory-backend
+    version: v1
+spec:
+  # 로컬 테스트용으로 1개 인스턴스로 시작
+  replicas: 1
+  
+  # 무중단 배포 전략 (Rolling Update)
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0    # 최소 1개 Pod 유지
+      maxSurge: 1          # 최대 1개 Pod 추가 생성
+  
+  selector:
+    matchLabels:
+      app: zmnnoory-backend
+  
+  template:
+    metadata:
+      labels:
+        app: zmnnoory-backend
+        version: v1
+    spec:
+      # 호스트 네트워크 접근을 위한 설정
+      hostNetwork: false
+      dnsPolicy: ClusterFirst
+      
+      containers:
+      - name: backend
+        image: zmnnoory-local:latest  # Minikube에서 빌드한 로컬 이미지
+        imagePullPolicy: Never        # 로컬 이미지 사용, 외부에서 pull하지 않음
+        
+        ports:
+        - containerPort: 8080
+          name: http
+          protocol: TCP
+        
+        # 환경변수 설정 (ConfigMap과 Secret에서 가져오기)
+        env:
+        # ConfigMap에서 가져오는 환경변수들
+        - name: SPRING_PROFILES_ACTIVE
+          valueFrom:
+            configMapKeyRef:
+              name: zmnnoory-config
+              key: SPRING_PROFILES_ACTIVE
+        - name: SERVER_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: zmnnoory-config
+              key: SERVER_PORT
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: zmnnoory-config
+              key: DB_HOST
+        - name: DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: zmnnoory-config
+              key: DB_PORT
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: zmnnoory-config
+              key: DB_NAME
+        - name: DB_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: zmnnoory-config
+              key: DB_USERNAME
+        - name: REDIS_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: zmnnoory-config
+              key: REDIS_HOST
+        - name: REDIS_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: zmnnoory-config
+              key: REDIS_PORT
+        - name: JWT_ISSUER
+          valueFrom:
+            configMapKeyRef:
+              name: zmnnoory-config
+              key: JWT_ISSUER
+        - name: JWT_EXPIRATION
+          valueFrom:
+            configMapKeyRef:
+              name: zmnnoory-config
+              key: JWT_EXPIRATION
+        - name: DDL_AUTO
+          valueFrom:
+            configMapKeyRef:
+              name: zmnnoory-config
+              key: DDL_AUTO
+        - name: SHOW_SQL
+          valueFrom:
+            configMapKeyRef:
+              name: zmnnoory-config
+              key: SHOW_SQL
+        
+        # Secret에서 가져오는 민감한 환경변수들
+        - name: JWT_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: zmnnoory-secret
+              key: JWT_SECRET_KEY
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: zmnnoory-secret
+              key: DB_PASSWORD
+        
+        # 리소스 제한 설정 (로컬 테스트용으로 줄임)
+        resources:
+          requests:
+            memory: "256Mi"    # 원본: 512Mi
+            cpu: "100m"        # 원본: 250m
+          limits:
+            memory: "512Mi"    # 원본: 1Gi
+            cpu: "250m"        # 원본: 500m
+        
+        # Liveness Probe: 컨테이너가 살아있는지 확인
+        livenessProbe:
+          httpGet:
+            path: /actuator/health/liveness
+            port: 8080
+          initialDelaySeconds: 30  # 로컬에서는 빠르게 시작
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+          successThreshold: 1
+        
+        # Readiness Probe: 트래픽을 받을 준비가 되었는지 확인
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: 8080
+          initialDelaySeconds: 15  # 로컬에서는 빠르게 준비
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+          successThreshold: 1
+        
+        # Startup Probe: 애플리케이션 시작 완료 확인
+        startupProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 6      # 최대 60초까지 시작 대기
+          successThreshold: 1
+      
+      # Pod 재시작 정책
+      restartPolicy: Always
+      
+      # Pod 종료 시 graceful shutdown 대기 시간
+      terminationGracePeriodSeconds: 30 

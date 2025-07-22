@@ -2,10 +2,13 @@ package com.gradation.zmnnoory.domain.participation.entity;
 
 import com.gradation.zmnnoory.common.entity.BaseEntity;
 import com.gradation.zmnnoory.domain.member.entity.Member;
-import com.gradation.zmnnoory.domain.stage.entity.Stage;
 import com.gradation.zmnnoory.domain.participation.status.ParticipationStatus;
+import com.gradation.zmnnoory.domain.stage.entity.Stage;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -34,9 +37,9 @@ public class Participation extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ParticipationStatus status;
 
-    @Setter private Integer frameCount;
-    @Setter private String videoUrl;
-    @Setter private String thumbnailUrl;
+    private Integer frameCount;
+    private String videoUrl;
+    private String thumbnailUrl;
 
     public void updateMediaInfo(Integer frameCount, String videoUrl, String thumbnailUrl) {
         if (frameCount != null) this.frameCount = frameCount;
