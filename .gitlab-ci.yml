@@ -69,6 +69,7 @@ build_backend:
   image: gradle:jdk24
   before_script:
     - cd backend/ZMNNOORY
+    - chmod +x ./gradlew  # gradlew 실행 권한 부여
   script:
     - echo "Building Spring Boot application..."
     - ./gradlew clean build -x test --info
