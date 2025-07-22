@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -24,7 +23,7 @@ public class MemberService {
 
     @Transactional
     public MemberResponse createMember(SignUpRequest signUpRequest) {
-        if (memberRepository.existsByEmail(signUpRequest.getEmail())) {
+        if (memberRepository.existsByEmail(signUpRequest.email())) {
             throw new DuplicatedEmailException();
         }
 

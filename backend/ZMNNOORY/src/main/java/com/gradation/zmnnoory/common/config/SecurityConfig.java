@@ -31,11 +31,12 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/",
+                                "/swagger-ui/**",
+                                "/api-docs/**",
                                 "/h2-console/**"
                         ).permitAll() // 해당 주소는 아무나 접근 가능
                         .requestMatchers(
-                                "/api/member/sign-up"
+                                "/api/members/sign-up"
                         ).anonymous() // 해당 주소는 로그인 안 한 사람만 접근 가능
                         .anyRequest()
                         .authenticated() // 그외 주소는 로그인 해야만 접근 가능
