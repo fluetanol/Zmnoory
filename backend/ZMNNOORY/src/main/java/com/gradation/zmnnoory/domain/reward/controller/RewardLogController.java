@@ -27,7 +27,7 @@ public class RewardLogController {
     public BaseResponse<RewardLogResponse> giveReward(@Valid @RequestBody RewardLogRequest request) {
         return BaseResponse.<RewardLogResponse>builder()
                 .status(HttpStatus.CREATED)
-                .data(rewardLogService.giveReward(request.getParticipationId()))
+                .data(rewardLogService.giveReward(request.participationId()))
                 .build();
     }
 
