@@ -1,0 +1,115 @@
+version: '3.8'
+
+networks:
+  test_network:
+    driver: bridge
+
+volumes:
+  redis_data:
+  postgres_data:
+
+services:
+  # PostgreSQL 데이터베이스
+  postgres:
+    image: postgres:latest
+    container_name: test_postgres_db
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: q1w2e3r4t5
+      POSTGRES_DB: development_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../postgres_conf:/tmp/postgres_conf
+      - ../init:/docker-entrypoint-initdb.d
+    networks:
+      - test_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root -d development_db"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis 캐시
+  redis:
+    image: redis/redis-stack:latest
+    container_name: test_redis_stack
+    ports:
+      - "6379:6379"
+      - "8001:8001"
+    volumes:
+      - redis_data:/data
+    networks:
+      - test_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Spring Boot 애플리케이션 (단일 인스턴스)
+  zmnnoory-app:
+    build:
+      context: ../../
+      dockerfile: Dockerfile
+    container_name: test_zmnnoory_app
+    ports:
+      - "8080:8080"
+    environment:
+      # Spring Boot 프로파일
+      SPRING_PROFILES_ACTIVE: local
+      
+      # 데이터베이스 설정
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: development_db
+      DB_USERNAME: root
+      DB_PASSWORD: q1w2e3r4t5
+      
+      # Redis 설정
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      
+      # JWT 설정 (테스트용)
+      JWT_SECRET_KEY: em1ubm9ycnltZW1iZXJzY2FuZ2V0YWpvYnRoYXR0aGV5d2FudGlzdXJlZm9ydGhhdHNzYWZ5d291bGRoZWxwdXNmb3J0aGF0Y29tZXRydWU=
+      JWT_ISSUER: ZMNNOORY
+      JWT_EXPIRATION: 3h
+      JWT_PREFIX: "Bearer "
+      JWT_HEADER: Authorization
+      
+      # JPA 설정
+      DDL_AUTO: create-drop
+      SHOW_SQL: true
+      FORMAT_SQL: true
+      
+      # 로깅 설정
+      SQL_LOG_LEVEL: debug
+      APP_LOG_LEVEL: debug
+      
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - test_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # NGINX 로드밸런서 (선택사항 - 다중 인스턴스 테스트용)
+  nginx-lb:
+    image: nginx:alpine
+    container_name: test_nginx_lb
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx-test.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - zmnnoory-app
+    networks:
+      - test_network 

@@ -4,7 +4,6 @@ import com.gradation.zmnnoory.common.dto.BaseResponse;
 import com.gradation.zmnnoory.domain.participation.dto.ParticipationResponse;
 import com.gradation.zmnnoory.domain.participation.dto.StartParticipationRequest;
 import com.gradation.zmnnoory.domain.participation.dto.UpdateParticipationRequest;
-import com.gradation.zmnnoory.domain.participation.entity.Participation;
 import com.gradation.zmnnoory.domain.participation.service.ParticipationService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -28,42 +27,37 @@ public class ParticipationController {
     public BaseResponse<ParticipationResponse> startParticipation(
             @Valid @RequestBody StartParticipationRequest request) {
         
-        Participation participation = participationService.startParticipation(
-                request.getMemberId(), request.getStageId());
         return BaseResponse.<ParticipationResponse>builder()
                 .status(HttpStatus.CREATED)
-                .data(ParticipationResponse.from(participation))
+                .data(participationService.startParticipation(request.getMemberId(), request.getStageId()))
                 .build();
     }
 
     @PutMapping("/{participationId}/end")
     public BaseResponse<ParticipationResponse> endParticipation(
-            @PathVariable @NotNull UUID participationId) {
+            @PathVariable UUID participationId) {
         
-        Participation participation = participationService.endParticipation(participationId);
         return BaseResponse.<ParticipationResponse>builder()
                 .status(HttpStatus.OK)
-                .data(ParticipationResponse.from(participation))
+                .data(participationService.endParticipation(participationId))
                 .build();
     }
 
     @PutMapping("/{participationId}")
     public BaseResponse<ParticipationResponse> updateParticipation(
-            @PathVariable @NotNull UUID participationId,
+            @PathVariable UUID participationId,
             @Valid @RequestBody UpdateParticipationRequest request) {
         
-        Participation participation = participationService.updateParticipation(
-                participationId, request);
         return BaseResponse.<ParticipationResponse>builder()
                 .status(HttpStatus.OK)
-                .data(ParticipationResponse.from(participation))
+                .data(participationService.updateParticipation(participationId, request))
                 .build();
     }
 
     @GetMapping("/check-first")
     public BaseResponse<Boolean> isFirstParticipation(
-            @RequestParam @NotNull @Positive Long memberId,
-            @RequestParam @NotNull @Positive Long stageId) {
+            @RequestParam Long memberId,
+            @RequestParam Long stageId) {
         
         boolean isFirst = participationService.isFirstParticipation(memberId, stageId);
         return BaseResponse.<Boolean>builder()
@@ -74,12 +68,11 @@ public class ParticipationController {
 
     @GetMapping("/{participationId}")
     public BaseResponse<ParticipationResponse> getParticipation(
-            @PathVariable @NotNull UUID participationId) {
+            @PathVariable UUID participationId) {
         
-        Participation participation = participationService.getParticipation(participationId);
         return BaseResponse.<ParticipationResponse>builder()
                 .status(HttpStatus.OK)
-                .data(ParticipationResponse.from(participation))
+                .data(participationService.getParticipation(participationId))
                 .build();
     }
 }

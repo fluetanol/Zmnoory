@@ -1,9 +1,11 @@
 package com.gradation.zmnnoory.domain.member.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.gradation.zmnnoory.domain.member.entity.Gender;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
@@ -19,8 +21,8 @@ public record SignUpRequest(
         String password,
 
         @Schema(description = "성별 (예: MALE, FEMALE)", example = "MALE")
-        @NotBlank(message = "성별은 필수 값입니다.")
-        String gender,
+        @NotNull(message = "성별은 필수 값입니다.")
+        Gender gender,
 
         @Schema(description = "사용자 닉네임", example = "johnny")
         @NotBlank(message = "닉네임은 필수값입니다.")

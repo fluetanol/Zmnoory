@@ -1,8 +1,31 @@
-# .gitlab-ci.yml
+# =================================================================
+# ZMNNOORY GitLab CI/CD Pipeline
+# Frontend (Vue.js) + Backend (Spring Boot) 병행 배포
+# =================================================================
 
 stages:
   - build
+  - docker
   - deploy
+  - verify
+
+variables:
+  # Backend 설정
+  BACKEND_APP_NAME: "zmnnoory-backend"
+  BACKEND_VERSION: "$CI_COMMIT_SHORT_SHA"
+  
+  # Docker 설정
+  DOCKER_IMAGE: "$CI_REGISTRY_IMAGE/backend"
+  DOCKER_TAG: "$CI_COMMIT_SHORT_SHA"
+  DOCKER_LATEST: "$CI_REGISTRY_IMAGE/backend:latest"
+  
+  # Kubernetes 설정
+  KUBE_NAMESPACE: "zmnnoory"
+  DEPLOYMENT_NAME: "zmnnoory-backend"
+  
+  # Gradle 설정
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+  GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
 
 # 캐시 설정을 통해 빌드 속도를 향상시킵니다.
 cache:
@@ -12,8 +35,10 @@ cache:
   paths:
     - frontend/zmnoory/node_modules/
 
-# 1. 빌드 단계: 정적 파일을 생성하는 작업
-build_assets:
+# =================================================================
+# Frontend Build Stage: Vue.js 애플리케이션 빌드
+# =================================================================
+build_frontend:
   stage: build
   image: node:22-alpine
   
@@ -23,10 +48,10 @@ build_assets:
   
   script:
     - echo "Navigated to $(pwd)"
-    - echo "Starting build process..."
+    - echo "Starting frontend build process..."
     - npm install
     - npm run build
-    - echo "Build successful."
+    - echo "Frontend build successful."
   
   # 빌드 결과물(dist 폴더)을 다음 단계로 전달합니다.
   artifacts:
@@ -34,42 +59,316 @@ build_assets:
       - frontend/zmnoory/dist/
       
   rules:
-    - if: '$CI_COMMIT_BRANCH == "frontend-dev" || $CI_COMMIT_BRANCH == "frontend-prod"'
+    - if: '$CI_COMMIT_BRANCH == "frontend-dev" || $CI_COMMIT_BRANCH == "frontend-prod" || $CI_COMMIT_BRANCH == "master"'
 
-# 2. 배포 단계 (개발 환경)
-deploy_dev:
+# =================================================================
+# Backend Build Stage: Spring Boot 애플리케이션 빌드 및 테스트
+# =================================================================
+build_backend:
+  stage: build
+  image: gradle:jdk24
+  before_script:
+    - cd backend/ZMNNOORY
+    - chmod +x ./gradlew  # gradlew 실행 권한 부여
+  script:
+    - echo "Building Spring Boot application..."
+    - ./gradlew clean build -x test --info
+    - echo "Running tests..."
+    - ./gradlew test --info
+  artifacts:
+    when: always
+    paths:
+      - backend/ZMNNOORY/build/libs/*.jar
+      - backend/ZMNNOORY/build/reports/tests/
+    expire_in: 1 hour
+    reports:
+      junit:
+        - backend/ZMNNOORY/build/test-results/test/TEST-*.xml
+  cache:
+    key: "$CI_COMMIT_REF_SLUG-backend"
+    paths:
+      - backend/ZMNNOORY/.gradle/
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "backend-dev" || $CI_COMMIT_BRANCH == "backend-prod" || $CI_COMMIT_BRANCH == "master"'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+
+# =================================================================
+# Docker Stage: Backend Docker 이미지 빌드 및 레지스트리 푸시
+# =================================================================
+docker_backend:
+  stage: docker
+  image: docker:24
+  services:
+    - name: docker:24-dind
+      alias: docker
+      command: ["--tls=false"]
+  variables:
+    # Docker 연결 설정 (TLS 비활성화)
+    DOCKER_HOST: tcp://docker:2375
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_DRIVER: overlay2
+  before_script:
+    - echo "Waiting for Docker daemon..."
+    - until docker info >/dev/null 2>&1; do echo "Waiting for docker daemon..."; sleep 1; done
+    - echo "Docker daemon is ready!"
+    - echo "Logging into GitLab Container Registry..."
+    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
+  script:
+    - echo "Building Docker image..."
+    - docker build -t $DOCKER_IMAGE:$DOCKER_TAG .
+    - docker tag $DOCKER_IMAGE:$DOCKER_TAG $DOCKER_IMAGE:latest
+    
+    - echo "Pushing Docker image to registry..."
+    - docker push $DOCKER_IMAGE:$DOCKER_TAG
+    - docker push $DOCKER_IMAGE:latest
+    
+    - echo "Docker image pushed:"
+    - echo "  $DOCKER_IMAGE:$DOCKER_TAG"
+    - echo "  $DOCKER_IMAGE:latest"
+  after_script:
+    - docker logout $CI_REGISTRY
+  dependencies:
+    - build_backend
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "backend-dev" || $CI_COMMIT_BRANCH == "backend-prod"'
+
+# =================================================================
+# Frontend Deploy Stages: S3 배포
+# =================================================================
+
+# Frontend 개발 환경 배포
+deploy_frontend_dev:
   stage: deploy
   image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
   
   script:
-    - echo "Deploying to Development S3 Bucket..."
+    - echo "Deploying frontend to Development S3 Bucket..."
     # dist 폴더의 내용을 개발용 S3 버킷에 동기화합니다.
     - aws s3 sync ./frontend/zmnoory/dist s3://$DEV_S3_BUCKET --delete
-    - echo "Deployment to Development S3 successful."
+    - echo "Frontend deployment to Development S3 successful."
   
   environment:
     name: development
     url: $DEV_SITE_URL
   
+  dependencies:
+    - build_frontend
+  
   rules:
     - if: '$CI_COMMIT_BRANCH == "frontend-dev"'
 
-# 3. 배포 단계 (운영 환경)
-deploy_prod:
+# Frontend 운영 환경 배포
+deploy_frontend_prod:
   stage: deploy
   image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
   
   script:
-    - echo "Deploying to Production S3 Bucket..."
+    - echo "Deploying frontend to Production S3 Bucket..."
     # dist 폴더의 내용을 운영용 S3 버킷에 동기화합니다.
     - aws s3 sync ./frontend/zmnoory/dist s3://$PROD_S3_BUCKET --delete
-    - echo "Deployment to Production S3 successful."
+    - echo "Frontend deployment to Production S3 successful."
   
   environment:
     name: production
     url: $PROD_SITE_URL
   
+  dependencies:
+    - build_frontend
+  
   rules:
     - if: '$CI_COMMIT_BRANCH == "frontend-prod"'
       when: manual # 실수로 인한 운영 배포를 막기 위한 안전장치입니다.
+
+# =================================================================
+# Backend Deploy Stages: Kubernetes 무중단 배포
+# =================================================================
+
+# Backend 개발 환경 배포
+deploy_backend_dev:
+  stage: deploy
+  image: 
+    name: bitnami/kubectl:latest
+    entrypoint: ['']
+  variables:
+    KUBE_CONFIG: $KUBECONFIG_DEV_CONTENT
+    KUBE_NAMESPACE: "zmnnoory-dev"
+  before_script:
+    - echo "Setting up kubectl for development..."
+    - mkdir -p ~/.kube
+    - echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
+    - kubectl version --client
+    - kubectl cluster-info
+  script:
+    - echo "Deploying backend to Development Kubernetes..."
+    
+    # ConfigMap 및 Secret 업데이트
+    - echo "Updating ConfigMaps and Secrets..."
+    - kubectl apply -f infra/k8s/02-configmap.yaml
+    - kubectl apply -f infra/k8s/03-secret.yaml
+    
+    # 새 이미지로 Deployment 업데이트
+    - echo "Updating deployment with new image..."
+    - kubectl set image deployment/$DEPLOYMENT_NAME backend=$DOCKER_IMAGE:$DOCKER_TAG -n $KUBE_NAMESPACE
+    
+    # 배포 상태 확인
+    - echo "Waiting for rollout to complete..."
+    - kubectl rollout status deployment/$DEPLOYMENT_NAME -n $KUBE_NAMESPACE --timeout=300s
+    
+    # 배포 정보 출력
+    - echo "Backend development deployment completed successfully!"
+    - kubectl get pods -n $KUBE_NAMESPACE -l app=$BACKEND_APP_NAME
+    - kubectl get service -n $KUBE_NAMESPACE
+  after_script:
+    - rm -f ~/.kube/config
+  dependencies:
+    - docker_backend
+  environment:
+    name: kubernetes-development
+    url: $DEV_BACKEND_URL
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "backend-dev"'
+
+# Backend 운영 환경 배포
+deploy_backend_prod:
+  stage: deploy
+  image: 
+    name: bitnami/kubectl:latest
+    entrypoint: ['']
+  variables:
+    KUBE_CONFIG: $KUBECONFIG_PROD_CONTENT
+    KUBE_NAMESPACE: "zmnnoory"
+  before_script:
+    - echo "Setting up kubectl for production..."
+    - mkdir -p ~/.kube
+    - echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
+    - kubectl version --client
+    - kubectl cluster-info
+  script:
+    - echo "Deploying backend to Production Kubernetes..."
+    
+    # ConfigMap 및 Secret 업데이트
+    - echo "Updating ConfigMaps and Secrets..."
+    - kubectl apply -f infra/k8s/02-configmap.yaml
+    - kubectl apply -f infra/k8s/03-secret.yaml
+    
+    # 새 이미지로 Deployment 업데이트
+    - echo "Updating deployment with new image..."
+    - kubectl set image deployment/$DEPLOYMENT_NAME backend=$DOCKER_IMAGE:$DOCKER_TAG -n $KUBE_NAMESPACE
+    
+    # 배포 상태 확인
+    - echo "Waiting for rollout to complete..."
+    - kubectl rollout status deployment/$DEPLOYMENT_NAME -n $KUBE_NAMESPACE --timeout=300s
+    
+    # 배포 정보 출력
+    - echo "Backend production deployment completed successfully!"
+    - kubectl get pods -n $KUBE_NAMESPACE -l app=$BACKEND_APP_NAME
+    - kubectl get service -n $KUBE_NAMESPACE
+  after_script:
+    - rm -f ~/.kube/config
+  dependencies:
+    - docker_backend
+  environment:
+    name: kubernetes-production
+    url: $PROD_BACKEND_URL
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "backend-prod"'
+      when: manual
+
+# =================================================================
+# Verify Stage: Backend 배포 검증 및 헬스체크
+# =================================================================
+verify_backend_dev:
+  stage: verify
+  image: curlimages/curl:latest
+  variables:
+    APP_URL: "$DEV_BACKEND_URL"
+  script:
+    - echo "Verifying backend development deployment..."
+    - sleep 30  # 애플리케이션 시작 대기
+    
+    # 헬스체크 엔드포인트 확인
+    - echo "Checking health endpoint..."
+    - curl -f "$APP_URL/actuator/health" || exit 1
+    
+    # API 응답 테스트
+    - echo "Testing API endpoints..."
+    - curl -f "$APP_URL/api/test" || echo "API test endpoint not available"
+    
+    - echo "Backend development deployment verification completed successfully!"
+  dependencies:
+    - deploy_backend_dev
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "backend-dev"'
+  when: on_success
+
+verify_backend_prod:
+  stage: verify
+  image: curlimages/curl:latest
+  variables:
+    APP_URL: "$PROD_BACKEND_URL"
+  script:
+    - echo "Verifying backend production deployment..."
+    - sleep 30  # 애플리케이션 시작 대기
+    
+    # 헬스체크 엔드포인트 확인
+    - echo "Checking health endpoint..."
+    - curl -f "$APP_URL/actuator/health" || exit 1
+    
+    # API 응답 테스트
+    - echo "Testing API endpoints..."
+    - curl -f "$APP_URL/api/test" || echo "API test endpoint not available"
+    
+    - echo "Backend production deployment verification completed successfully!"
+  dependencies:
+    - deploy_backend_prod
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "backend-prod"'
+  when: on_success
+
+# =================================================================
+# Rollback Job: Backend 배포 실패 시 이전 버전으로 롤백
+# =================================================================
+rollback_backend_dev:
+  stage: deploy
+  image: 
+    name: bitnami/kubectl:latest
+    entrypoint: ['']
+  variables:
+    KUBE_CONFIG: $KUBECONFIG_DEV_CONTENT
+    KUBE_NAMESPACE: "zmnnoory-dev"
+  before_script:
+    - mkdir -p ~/.kube
+    - echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
+  script:
+    - echo "Rolling back backend development deployment..."
+    - kubectl rollout undo deployment/$DEPLOYMENT_NAME -n $KUBE_NAMESPACE
+    - kubectl rollout status deployment/$DEPLOYMENT_NAME -n $KUBE_NAMESPACE --timeout=300s
+    - echo "Backend development rollback completed!"
+  after_script:
+    - rm -f ~/.kube/config
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "backend-dev"'
+  when: manual
+
+rollback_backend_prod:
+  stage: deploy
+  image: 
+    name: bitnami/kubectl:latest
+    entrypoint: ['']
+  variables:
+    KUBE_CONFIG: $KUBECONFIG_PROD_CONTENT
+    KUBE_NAMESPACE: "zmnnoory"
+  before_script:
+    - mkdir -p ~/.kube
+    - echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
+  script:
+    - echo "Rolling back backend production deployment..."
+    - kubectl rollout undo deployment/$DEPLOYMENT_NAME -n $KUBE_NAMESPACE
+    - kubectl rollout status deployment/$DEPLOYMENT_NAME -n $KUBE_NAMESPACE --timeout=300s
+    - echo "Backend production rollback completed!"
+  after_script:
+    - rm -f ~/.kube/config
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "backend-prod"'
+  when: manual
 

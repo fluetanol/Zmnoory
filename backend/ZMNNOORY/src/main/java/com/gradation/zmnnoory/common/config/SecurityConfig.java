@@ -4,6 +4,7 @@ import com.gradation.zmnnoory.common.filter.JwtAuthenticationFilter;
 import com.gradation.zmnnoory.common.filter.JwtLoginFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -18,9 +19,10 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter, JwtLoginFilter jwtLoginFilter) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable); // scrf 무효화
+        http.csrf(AbstractHttpConfigurer::disable); // csrf 무효화
         http.formLogin(AbstractHttpConfigurer::disable); // formLogin 무효화
         http.httpBasic(AbstractHttpConfigurer::disable); // basic 로그인 무효화
+        http.cors(Customizer.withDefaults());
         http.headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)); // H2 콘솔 iframe 허용
 
         http
@@ -31,9 +33,15 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
+                                "/",
+                                "/h2-console/**",
+                                "/actuator/health",
+                                "/actuator/health/**",
+                                "/actuator/info",
+                                "/actuator/metrics",
+                                "/actuator/prometheus",
                                 "/swagger-ui/**",
-                                "/api-docs/**",
-                                "/h2-console/**"
+                                "/api-docs/**"
                         ).permitAll() // 해당 주소는 아무나 접근 가능
                         .requestMatchers(
                                 "/api/members/sign-up"

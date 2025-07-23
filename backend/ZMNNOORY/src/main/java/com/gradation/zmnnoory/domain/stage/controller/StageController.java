@@ -33,7 +33,7 @@ public class StageController {
 
     // GET /api/stages/{id} - 특정 스테이지 조회
     @GetMapping("/{id}")
-    public BaseResponse<StageResponse> getStageById(@PathVariable @NotNull @Positive Long id){
+    public BaseResponse<StageResponse> getStageById(@PathVariable Long id){
         return BaseResponse.<StageResponse>builder()
                 .status(HttpStatus.OK)
                 .data(stageService.getStageById(id))

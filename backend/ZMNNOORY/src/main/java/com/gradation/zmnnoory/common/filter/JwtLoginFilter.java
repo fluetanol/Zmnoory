@@ -34,7 +34,7 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
         super.setAuthenticationManager(authenticationManager);
         this.objectMapper = objectMapper;
         this.jwtProvider = jwtProvider;
-        setFilterProcessesUrl("/api/member/login");
+        setFilterProcessesUrl("/api/members/login");
     }
 
     @Override
@@ -85,6 +85,7 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
         BaseResponse<String> baseResponse = BaseResponse.<String>builder()
                 .status(HttpStatus.UNAUTHORIZED)
                 .data("Invalid username or password")
+                .message(failed.getMessage())
                 .build();
 
         ResponseEntity<BaseResponse<?>> responseEntity = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(baseResponse);
