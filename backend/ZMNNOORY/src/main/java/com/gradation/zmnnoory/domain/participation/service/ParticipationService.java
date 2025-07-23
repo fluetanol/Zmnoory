@@ -2,6 +2,7 @@ package com.gradation.zmnnoory.domain.participation.service;
 
 import com.gradation.zmnnoory.domain.member.entity.Member;
 import com.gradation.zmnnoory.domain.member.repository.MemberRepository;
+import com.gradation.zmnnoory.domain.participation.dto.ParticipationResponse;
 import com.gradation.zmnnoory.domain.participation.dto.UpdateParticipationRequest;
 import com.gradation.zmnnoory.domain.participation.entity.Participation;
 import com.gradation.zmnnoory.domain.participation.repository.ParticipationRepository;
@@ -24,7 +25,7 @@ public class ParticipationService {
     private final MemberRepository memberRepository;
     private final StageRepository stageRepository;
 
-    public Participation startParticipation(Long memberId, Long stageId) {
+    public ParticipationResponse startParticipation(Long memberId, Long stageId) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
         
@@ -38,31 +39,37 @@ public class ParticipationService {
                 .status(ParticipationStatus.IN_PROGRESS)
                 .build();
 
-        return participationRepository.save(participation);
+        Participation savedParticipation = participationRepository.save(participation);
+        return ParticipationResponse.of(savedParticipation);
     }
 
-    public Participation endParticipation(UUID participationId) {
-        Participation participation = getParticipation(participationId);
+    public ParticipationResponse endParticipation(UUID participationId) {
+        Participation participation = findParticipationById(participationId);
         participation.complete();
-        return participation;
+        return ParticipationResponse.of(participation);
     }
 
     public boolean isFirstParticipation(Long memberId, Long stageId) {
         return !participationRepository.existsByMemberIdAndStageId(memberId, stageId);
     }
 
-    public Participation getParticipation(UUID participationId) {
+    public ParticipationResponse getParticipation(UUID participationId) {
+        Participation participation = findParticipationById(participationId);
+        return ParticipationResponse.of(participation);
+    }
+
+    private Participation findParticipationById(UUID participationId) {
         return participationRepository.findById(participationId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 participation입니다."));
     }
 
-    public Participation updateParticipation(UUID participationId, UpdateParticipationRequest request) {
-        Participation participation = getParticipation(participationId);
+    public ParticipationResponse updateParticipation(UUID participationId, UpdateParticipationRequest request) {
+        Participation participation = findParticipationById(participationId);
         participation.updateMediaInfo(
                 request.getFrameCount(),
                 request.getVideoUrl(),
                 request.getThumbnailUrl()
         );
-        return participation;
+        return ParticipationResponse.of(participation);
     }
 }

@@ -2,6 +2,7 @@ package com.gradation.zmnnoory.domain.reward.service;
 
 import com.gradation.zmnnoory.domain.participation.entity.Participation;
 import com.gradation.zmnnoory.domain.participation.repository.ParticipationRepository;
+import com.gradation.zmnnoory.domain.reward.dto.RewardLogResponse;
 import com.gradation.zmnnoory.domain.reward.entity.RewardLog;
 import com.gradation.zmnnoory.domain.reward.repository.RewardLogRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -21,7 +22,7 @@ public class RewardLogService {
     private final ParticipationRepository participationRepository;
 
     @Transactional
-    public RewardLog giveReward(UUID participationId) {
+    public RewardLogResponse giveReward(UUID participationId) {
         Participation participation = participationRepository.findById(participationId)
                 .orElseThrow(() -> new EntityNotFoundException("참여 정보를 찾을 수 없습니다."));
 
@@ -42,20 +43,28 @@ public class RewardLogService {
                 .point(rewardPoint)
                 .build();
 
-        return rewardLogRepository.save(rewardLog);
+        RewardLog savedRewardLog = rewardLogRepository.save(rewardLog);
+        return RewardLogResponse.of(savedRewardLog);
     }
 
-    public List<RewardLog> getRewardLogsByMember(Long memberId) {
-        return rewardLogRepository.findByMemberId(memberId);
+    public List<RewardLogResponse> getRewardLogsByMember(Long memberId) {
+        List<RewardLog> rewardLogs = rewardLogRepository.findByMemberId(memberId);
+        return rewardLogs.stream()
+                .map(RewardLogResponse::of)
+                .toList();
     }
     
-    public RewardLog findById(UUID id) {
-        return rewardLogRepository.findById(id)
+    public RewardLogResponse findById(UUID id) {
+        RewardLog rewardLog = rewardLogRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("리워드 로그를 찾을 수 없습니다."));
+        return RewardLogResponse.of(rewardLog);
     }
     
-    public List<RewardLog> findAll() {
-        return rewardLogRepository.findAll();
+    public List<RewardLogResponse> findAll() {
+        List<RewardLog> rewardLogs = rewardLogRepository.findAll();
+        return rewardLogs.stream()
+                .map(RewardLogResponse::of)
+                .toList();
     }
     
     public boolean hasReceivedReward(Long memberId, Long stageId) {

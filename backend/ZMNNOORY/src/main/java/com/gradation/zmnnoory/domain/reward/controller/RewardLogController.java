@@ -3,7 +3,6 @@ package com.gradation.zmnnoory.domain.reward.controller;
 import com.gradation.zmnnoory.common.dto.BaseResponse;
 import com.gradation.zmnnoory.domain.reward.dto.RewardLogRequest;
 import com.gradation.zmnnoory.domain.reward.dto.RewardLogResponse;
-import com.gradation.zmnnoory.domain.reward.entity.RewardLog;
 import com.gradation.zmnnoory.domain.reward.service.RewardLogService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -26,25 +25,18 @@ public class RewardLogController {
 
     @PostMapping
     public BaseResponse<RewardLogResponse> giveReward(@Valid @RequestBody RewardLogRequest request) {
-        RewardLog rewardLog = rewardLogService.giveReward(request.getParticipationId());
-        
         return BaseResponse.<RewardLogResponse>builder()
                 .status(HttpStatus.CREATED)
-                .data(RewardLogResponse.of(rewardLog))
+                .data(rewardLogService.giveReward(request.getParticipationId()))
                 .build();
     }
 
     @GetMapping("/member/{memberId}")
     public BaseResponse<List<RewardLogResponse>> getRewardLogsByMember(
             @PathVariable Long memberId) {
-        List<RewardLog> rewardLogs = rewardLogService.getRewardLogsByMember(memberId);
-        List<RewardLogResponse> responses = rewardLogs.stream()
-                .map(RewardLogResponse::of)
-                .toList();
-        
         return BaseResponse.<List<RewardLogResponse>>builder()
                 .status(HttpStatus.OK)
-                .data(responses)
+                .data(rewardLogService.getRewardLogsByMember(memberId))
                 .build();
     }
 
@@ -63,24 +55,17 @@ public class RewardLogController {
 
     @GetMapping("/{rewardId}")
     public BaseResponse<RewardLogResponse> getRewardLog(@PathVariable UUID rewardId) {
-        RewardLog rewardLog = rewardLogService.findById(rewardId);
-        
         return BaseResponse.<RewardLogResponse>builder()
                 .status(HttpStatus.OK)
-                .data(RewardLogResponse.of(rewardLog))
+                .data(rewardLogService.findById(rewardId))
                 .build();
     }
 
     @GetMapping
     public BaseResponse<List<RewardLogResponse>> getAllRewardLogs() {
-        List<RewardLog> rewardLogs = rewardLogService.findAll();
-        List<RewardLogResponse> responses = rewardLogs.stream()
-                .map(RewardLogResponse::of)
-                .toList();
-        
         return BaseResponse.<List<RewardLogResponse>>builder()
                 .status(HttpStatus.OK)
-                .data(responses)
+                .data(rewardLogService.findAll())
                 .build();
     }
 }
