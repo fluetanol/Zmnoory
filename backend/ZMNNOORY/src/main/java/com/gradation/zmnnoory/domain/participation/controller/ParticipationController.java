@@ -29,7 +29,7 @@ public class ParticipationController {
         
         return BaseResponse.<ParticipationResponse>builder()
                 .status(HttpStatus.CREATED)
-                .data(participationService.startParticipation(request.getMemberId(), request.getStageId()))
+                .data(participationService.startParticipation(request.email(), request.stageTitle()))
                 .build();
     }
 

@@ -25,11 +25,11 @@ public class ParticipationService {
     private final MemberRepository memberRepository;
     private final StageRepository stageRepository;
 
-    public ParticipationResponse startParticipation(Long memberId, Long stageId) {
-        Member member = memberRepository.findById(memberId)
+    public ParticipationResponse startParticipation(String email, String stageTitle) {
+        Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
         
-        Stage stage = stageRepository.findById(stageId)
+        Stage stage = stageRepository.findByTitle(stageTitle)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 스테이지입니다."));
 
         Participation participation = Participation.builder()
@@ -66,9 +66,9 @@ public class ParticipationService {
     public ParticipationResponse updateParticipation(UUID participationId, UpdateParticipationRequest request) {
         Participation participation = findParticipationById(participationId);
         participation.updateMediaInfo(
-                request.getFrameCount(),
-                request.getVideoUrl(),
-                request.getThumbnailUrl()
+                request.frameCount(),
+                request.videoUrl(),
+                request.thumbnailUrl()
         );
         return ParticipationResponse.of(participation);
     }
