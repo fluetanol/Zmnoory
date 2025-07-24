@@ -1,6 +1,7 @@
 package com.gradation.zmnnoory.domain.member.controller;
 
 import com.gradation.zmnnoory.common.dto.BaseResponse;
+import com.gradation.zmnnoory.domain.member.dto.MemberUpdateRequest;
 import com.gradation.zmnnoory.domain.member.dto.request.SignUpRequest;
 import com.gradation.zmnnoory.domain.member.dto.response.MemberResponse;
 import com.gradation.zmnnoory.domain.member.service.MemberService;
@@ -34,7 +35,7 @@ public class MemberController {
     }
 
     @GetMapping("/{memberId}")
-    public BaseResponse<MemberResponse> getMember5(@PathVariable("memberId") Long memberId) {
+    public BaseResponse<MemberResponse> getMembers(@PathVariable("memberId") Long memberId) {
         return BaseResponse.<MemberResponse>builder()
                 .status(HttpStatus.OK)
                 .data(memberService.findById(memberId))
@@ -48,4 +49,17 @@ public class MemberController {
                 .data(memberService.findAll())
                 .build();
     }
+
+    @PutMapping("/{email}")
+    public BaseResponse<MemberResponse> updateUserInfo(
+            @PathVariable String email,
+            @Validated MemberUpdateRequest memberUpdateRequest
+    ) {
+        return BaseResponse.<MemberResponse>builder()
+                .status(HttpStatus.OK)
+                .message("업데이트 성공")
+                .data(memberService.updateUserInfoWith(email, memberUpdateRequest))
+                .build();
+    }
+    
 }
