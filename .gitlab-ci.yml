@@ -111,12 +111,12 @@ docker_backend:
     REGISTRY_USER: "$REGISTRY_USER"
     REGISTRY_PASS: "$REGISTRY_PASS"
   before_script:
-    - echo "Waiting for Docker daemon..."
-    - until docker info >/dev/null 2>&1; do echo "Waiting for docker daemon..."; sleep 1; done
-    - echo "Docker daemon is ready!"
-    - echo "Logging into local registry..."
-    - echo "Registry: $REGISTRY_ADDR"
     - |
+      echo "Waiting for Docker daemon..."
+      until docker info >/dev/null 2>&1; do echo "Waiting for docker daemon..."; sleep 1; done
+      echo "Docker daemon is ready!"
+      echo "Logging into local registry..."
+      echo "Registry: $REGISTRY_ADDR"
       if [ -n "$REGISTRY_USER" ]; then
         echo "$REGISTRY_PASS" | docker login -u "$REGISTRY_USER" --password-stdin "$REGISTRY_ADDR"
       else
