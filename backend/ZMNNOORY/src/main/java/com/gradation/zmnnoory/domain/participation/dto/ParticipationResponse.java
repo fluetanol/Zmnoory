@@ -9,15 +9,15 @@ import java.time.LocalDate;
 
 @Getter
 public class ParticipationResponse {
-    private final String stageTitle;
+    private final String gameTitle;
     private final LocalDate startedAt;
     private final LocalDate endedAt;
     private final ParticipationStatus status;
 
     @Builder
-    private ParticipationResponse(String stageTitle, LocalDate startedAt,
+    private ParticipationResponse(String gameTitle, LocalDate startedAt,
                                LocalDate endedAt, ParticipationStatus status) {
-        this.stageTitle = stageTitle;
+        this.gameTitle = gameTitle;
         this.startedAt = startedAt;
         this.endedAt = endedAt;
         this.status = status;
@@ -25,7 +25,7 @@ public class ParticipationResponse {
 
     public static ParticipationResponse of(Participation participation) {
         return ParticipationResponse.builder()
-                .stageTitle(participation.getStage().getTitle())
+                .gameTitle(participation.getGame().getTitle())
                 .startedAt(participation.getStartedAt())
                 .endedAt(participation.getEndedAt())
                 .status(participation.getStatus())

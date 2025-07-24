@@ -11,14 +11,14 @@ import java.util.UUID;
 public class RewardLogResponse {
 
     private final String memberEmail;
-    private final String stageTitle;
+    private final String gameTitle;
     private final int point;
     private final LocalDateTime rewardedAt;
 
     @Builder
-    private RewardLogResponse(String memberEmail, String stageTitle, int point, LocalDateTime rewardedAt) {
+    private RewardLogResponse(String memberEmail, String gameTitle, int point, LocalDateTime rewardedAt) {
         this.memberEmail = memberEmail;
-        this.stageTitle = stageTitle;
+        this.gameTitle = gameTitle;
         this.point = point;
         this.rewardedAt = rewardedAt;
     }
@@ -26,7 +26,7 @@ public class RewardLogResponse {
     public static RewardLogResponse of(RewardLog rewardLog) {
         return RewardLogResponse.builder()
                 .memberEmail(rewardLog.getMember().getEmail())
-                .stageTitle(rewardLog.getStage().getTitle())
+                .gameTitle(rewardLog.getGame().getTitle())
                 .point(rewardLog.getPoint())
                 .rewardedAt(rewardLog.getCreatedAt())
                 .build();
