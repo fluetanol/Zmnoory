@@ -118,7 +118,7 @@ docker_backend:
     - echo "Registry: $REGISTRY_ADDR"
     - |
       if [ -n "$REGISTRY_USER" ]; then
-        echo $REGISTRY_PASS | docker login -u $REGISTRY_USER --password-stdin $REGISTRY_ADDR
+        echo "$REGISTRY_PASS" | docker login -u "$REGISTRY_USER" --password-stdin "$REGISTRY_ADDR"
       else
         echo "Anonymous push enabled; skipping login"
       fi
