@@ -64,7 +64,7 @@ ingress:
   #    hosts:
   #      - chart-example.local
   host: "ec2-3-38-95-2.ap-northeast-2.compute.amazonaws.com"
-  path: "/api"
+  path: "/"
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
