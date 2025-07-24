@@ -1,5 +1,6 @@
 package com.gradation.zmnnoory.domain.member.service;
 
+import com.gradation.zmnnoory.domain.member.dto.MemberUpdateRequest;
 import com.gradation.zmnnoory.domain.member.dto.request.SignUpRequest;
 import com.gradation.zmnnoory.domain.member.dto.response.MemberResponse;
 import com.gradation.zmnnoory.domain.member.entity.Member;
@@ -39,5 +40,12 @@ public class MemberService {
 
     public List<MemberResponse> findAll() {
         return memberRepository.findAll().stream().map(MemberResponse::of).toList();
+    }
+
+    @Transactional
+    public MemberResponse updateUserInfoWith(String email, MemberUpdateRequest memberUpdateRequest) {
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("No User Found"));
+        member.update(memberUpdateRequest);
+        return MemberResponse.of(member);
     }
 }

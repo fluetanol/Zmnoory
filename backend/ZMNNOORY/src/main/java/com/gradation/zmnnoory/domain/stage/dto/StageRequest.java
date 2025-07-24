@@ -3,9 +3,7 @@ package com.gradation.zmnnoory.domain.stage.dto;
 import com.gradation.zmnnoory.domain.stage.entity.Stage;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
-import lombok.Data;
 
-@Data
 public class StageRequest {
     
     @NotBlank(message = "제목은 필수입니다")
