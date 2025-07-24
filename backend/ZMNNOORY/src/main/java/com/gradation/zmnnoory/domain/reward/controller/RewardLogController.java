@@ -43,9 +43,9 @@ public class RewardLogController {
     @GetMapping("/check-reward")
     public BaseResponse<Boolean> hasReceivedReward(
             @RequestParam Long memberId,
-            @RequestParam Long stageId) {
+            @RequestParam Long gameId) {
         
-        boolean hasReceived = rewardLogService.hasReceivedReward(memberId, stageId);
+        boolean hasReceived = rewardLogService.hasReceivedReward(memberId, gameId);
         
         return BaseResponse.<Boolean>builder()
                 .status(HttpStatus.OK)

@@ -11,8 +11,8 @@ public record StartParticipationRequest(
         @Email(message = "이메일 형식이 아닙니다")
         String email,
 
-        @Schema(description = "스테이지 제목", example = "첫 번째 스테이지")
-        @NotBlank(message = "스테이지 제목은 필수입니다")
-        String stageTitle
+        @Schema(description = "게임 제목", example = "첫 번째 게임")
+        @NotBlank(message = "게임 제목은 필수입니다")
+        String gameTitle
 ) {
 }

@@ -9,6 +9,6 @@ import java.util.UUID;
 @Repository
 public interface ParticipationRepository extends JpaRepository<Participation, UUID> {
     
-    boolean existsByMemberIdAndStageId(Long memberId, Long stageId);
+    boolean existsByMemberIdAndGameId(Long memberId, Long gameId);
     
 }

@@ -27,19 +27,19 @@ public class RewardLogService {
                 .orElseThrow(() -> new EntityNotFoundException("참여 정보를 찾을 수 없습니다."));
 
         Long memberId = participation.getMember().getId();
-        Long stageId = participation.getStage().getId();
+        Long gameId = participation.getGame().getId();
 
-        boolean alreadyGiven = rewardLogRepository.existsByMemberIdAndStageId(memberId, stageId);
+        boolean alreadyGiven = rewardLogRepository.existsByMemberIdAndGameId(memberId, gameId);
         if (alreadyGiven) {
-            throw new IllegalStateException("이미 해당 스테이지에 대한 보상을 지급받았습니다.");
+            throw new IllegalStateException("이미 해당 게임에 대한 보상을 지급받았습니다.");
         }
 
-        // Stage에서 리워드 포인트 가져오기
-        int rewardPoint = participation.getStage().getRewardTotal();
+        // Game에서 리워드 포인트 가져오기
+        int rewardPoint = participation.getGame().getPoint().intValue();
 
         RewardLog rewardLog = RewardLog.builder()
                 .member(participation.getMember())
-                .stage(participation.getStage())
+                .game(participation.getGame())
                 .point(rewardPoint)
                 .build();
 
@@ -67,7 +67,7 @@ public class RewardLogService {
                 .toList();
     }
     
-    public boolean hasReceivedReward(Long memberId, Long stageId) {
-        return rewardLogRepository.existsByMemberIdAndStageId(memberId, stageId);
+    public boolean hasReceivedReward(Long memberId, Long gameId) {
+        return rewardLogRepository.existsByMemberIdAndGameId(memberId, gameId);
     }
 }
