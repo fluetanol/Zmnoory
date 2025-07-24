@@ -15,9 +15,10 @@ variables:
   BACKEND_VERSION: "$CI_COMMIT_SHORT_SHA"
   
   # Docker 설정
-  DOCKER_IMAGE: "$CI_REGISTRY_IMAGE/backend"
+  DOCKER_REGISTRY: "registry.gitlab.com"
+  DOCKER_IMAGE: "registry.gitlab.com/$CI_PROJECT_PATH/backend"
   DOCKER_TAG: "$CI_COMMIT_SHORT_SHA"
-  DOCKER_LATEST: "$CI_REGISTRY_IMAGE/backend:latest"
+  DOCKER_LATEST: "registry.gitlab.com/$CI_PROJECT_PATH/backend:latest"
   
   # Kubernetes 설정
   KUBE_NAMESPACE: "zmnnoory"
@@ -112,7 +113,9 @@ docker_backend:
     - until docker info >/dev/null 2>&1; do echo "Waiting for docker daemon..."; sleep 1; done
     - echo "Docker daemon is ready!"
     - echo "Logging into GitLab Container Registry..."
-    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY
+    - echo "Registry: $DOCKER_REGISTRY"
+    - echo "User: $CI_REGISTRY_USER"
+    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $DOCKER_REGISTRY
   script:
     - echo "Building Docker image..."
     - docker build -t $DOCKER_IMAGE:$DOCKER_TAG .
@@ -126,7 +129,7 @@ docker_backend:
     - echo "  $DOCKER_IMAGE:$DOCKER_TAG"
     - echo "  $DOCKER_IMAGE:latest"
   after_script:
-    - docker logout $CI_REGISTRY
+    - docker logout $DOCKER_REGISTRY
   dependencies:
     - build_backend
   rules:
