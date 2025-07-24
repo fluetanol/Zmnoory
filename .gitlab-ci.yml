@@ -14,11 +14,11 @@ variables:
   BACKEND_APP_NAME: "zmnnoory-backend"
   BACKEND_VERSION: "$CI_COMMIT_SHORT_SHA"
   
-  # Docker 설정
-  DOCKER_REGISTRY: "registry.gitlab.com"
-  DOCKER_IMAGE: "registry.gitlab.com/$CI_PROJECT_PATH/backend"
+  # Docker 설정 (MicroK8s 내장 레지스트리 사용)
+  REGISTRY_ADDR: "localhost:32000"
+  DOCKER_IMAGE: "$REGISTRY_ADDR/zmnnoory-backend"
   DOCKER_TAG: "$CI_COMMIT_SHORT_SHA"
-  DOCKER_LATEST: "registry.gitlab.com/$CI_PROJECT_PATH/backend:latest"
+  DOCKER_LATEST: "$REGISTRY_ADDR/zmnnoory-backend:latest"
   
   # Kubernetes 설정
   KUBE_NAMESPACE: "zmnnoory"
@@ -104,32 +104,38 @@ docker_backend:
       alias: docker
       command: ["--tls=false"]
   variables:
-    # Docker 연결 설정 (TLS 비활성화)
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
     DOCKER_DRIVER: overlay2
+    # 로컬 레지스트리 인증 정보 (필요 시). 익명 푸시가 가능하면 제거 가능
+    REGISTRY_USER: "$REGISTRY_USER"
+    REGISTRY_PASS: "$REGISTRY_PASS"
   before_script:
     - echo "Waiting for Docker daemon..."
     - until docker info >/dev/null 2>&1; do echo "Waiting for docker daemon..."; sleep 1; done
     - echo "Docker daemon is ready!"
-    - echo "Logging into GitLab Container Registry..."
-    - echo "Registry: $DOCKER_REGISTRY"
-    - echo "User: $CI_REGISTRY_USER"
-    - echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $DOCKER_REGISTRY
+    - echo "Logging into local registry..."
+    - echo "Registry: $REGISTRY_ADDR"
+    - |
+      if [ -n "$REGISTRY_USER" ]; then
+        echo $REGISTRY_PASS | docker login -u $REGISTRY_USER --password-stdin $REGISTRY_ADDR
+      else
+        echo "Anonymous push enabled; skipping login"
+      fi
   script:
     - echo "Building Docker image..."
     - docker build -t $DOCKER_IMAGE:$DOCKER_TAG .
-    - docker tag $DOCKER_IMAGE:$DOCKER_TAG $DOCKER_IMAGE:latest
+    - docker tag $DOCKER_IMAGE:$DOCKER_TAG $DOCKER_LATEST
     
     - echo "Pushing Docker image to registry..."
     - docker push $DOCKER_IMAGE:$DOCKER_TAG
-    - docker push $DOCKER_IMAGE:latest
+    - docker push $DOCKER_LATEST
     
     - echo "Docker image pushed:"
     - echo "  $DOCKER_IMAGE:$DOCKER_TAG"
-    - echo "  $DOCKER_IMAGE:latest"
+    - echo "  $DOCKER_LATEST"
   after_script:
-    - docker logout $DOCKER_REGISTRY
+    - if [ -n "$REGISTRY_USER" ]; then docker logout $REGISTRY_ADDR; fi
   dependencies:
     - build_backend
   rules:
@@ -186,147 +192,92 @@ deploy_frontend_prod:
 # Backend Deploy Stages: Kubernetes 무중단 배포
 # =================================================================
 
-# Backend 개발 환경 배포
+# Backend 개발 환경 배포 (Helm)
 deploy_backend_dev:
-  stage: deploy
-  image: 
-    name: bitnami/kubectl:latest
-    entrypoint: ['']
-  variables:
-    KUBE_CONFIG: $KUBECONFIG_DEV_CONTENT
-    KUBE_NAMESPACE: "zmnnoory-dev"
-  before_script:
-    - echo "Setting up kubectl for development..."
-    - mkdir -p ~/.kube
-    - echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
-    - kubectl version --client
-    - kubectl cluster-info
-  script:
-    - echo "Deploying backend to Development Kubernetes..."
-    
-    # ConfigMap 및 Secret 업데이트
-    - echo "Updating ConfigMaps and Secrets..."
-    - kubectl apply -f infra/k8s/02-configmap.yaml
-    - kubectl apply -f infra/k8s/03-secret.yaml
-    
-    # 새 이미지로 Deployment 업데이트
-    - echo "Updating deployment with new image..."
-    - kubectl set image deployment/$DEPLOYMENT_NAME backend=$DOCKER_IMAGE:$DOCKER_TAG -n $KUBE_NAMESPACE
-    
-    # 배포 상태 확인
-    - echo "Waiting for rollout to complete..."
-    - kubectl rollout status deployment/$DEPLOYMENT_NAME -n $KUBE_NAMESPACE --timeout=300s
-    
-    # 배포 정보 출력
-    - echo "Backend development deployment completed successfully!"
-    - kubectl get pods -n $KUBE_NAMESPACE -l app=$BACKEND_APP_NAME
-    - kubectl get service -n $KUBE_NAMESPACE
-  after_script:
-    - rm -f ~/.kube/config
-  dependencies:
-    - docker_backend
-  environment:
-    name: kubernetes-development
-    url: $DEV_BACKEND_URL
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "backend-dev"'
+   stage: deploy
+   image: bitnami/kubectl:latest
+   variables:
+     KUBE_CONFIG: $KUBECONFIG_DEV_CONTENT
+     NAMESPACE: backend-dev
+   before_script:
+     - mkdir -p ~/.kube
+     - echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
+     - helm version
+     - kubectl cluster-info
+   script:
+     - echo "Deploying backend (dev) via Helm"
+     - helm upgrade --install backend-dev infra/zmnnoory-backend \
+         --namespace $NAMESPACE --create-namespace \
+         --set image.repository=$DOCKER_IMAGE \
+         --set image.tag=$DOCKER_TAG \
+         --set-string jwt.secret=$JWT_SECRET \
+         --wait
+   after_script:
+     - rm -f ~/.kube/config
+   dependencies:
+     - docker_backend
+   environment:
+     name: kubernetes-development
+     url: http://$DEV_BACKEND_HOST/actuator/health
+   rules:
+     - if: '$CI_COMMIT_BRANCH == "backend-dev"'
 
-# Backend 운영 환경 배포
+# Backend 운영 환경 배포 (Helm)
 deploy_backend_prod:
-  stage: deploy
-  image: 
-    name: bitnami/kubectl:latest
-    entrypoint: ['']
-  variables:
-    KUBE_CONFIG: $KUBECONFIG_PROD_CONTENT
-    KUBE_NAMESPACE: "zmnnoory"
-  before_script:
-    - echo "Setting up kubectl for production..."
-    - mkdir -p ~/.kube
-    - echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
-    - kubectl version --client
-    - kubectl cluster-info
-  script:
-    - echo "Deploying backend to Production Kubernetes..."
-    
-    # ConfigMap 및 Secret 업데이트
-    - echo "Updating ConfigMaps and Secrets..."
-    - kubectl apply -f infra/k8s/02-configmap.yaml
-    - kubectl apply -f infra/k8s/03-secret.yaml
-    
-    # 새 이미지로 Deployment 업데이트
-    - echo "Updating deployment with new image..."
-    - kubectl set image deployment/$DEPLOYMENT_NAME backend=$DOCKER_IMAGE:$DOCKER_TAG -n $KUBE_NAMESPACE
-    
-    # 배포 상태 확인
-    - echo "Waiting for rollout to complete..."
-    - kubectl rollout status deployment/$DEPLOYMENT_NAME -n $KUBE_NAMESPACE --timeout=300s
-    
-    # 배포 정보 출력
-    - echo "Backend production deployment completed successfully!"
-    - kubectl get pods -n $KUBE_NAMESPACE -l app=$BACKEND_APP_NAME
-    - kubectl get service -n $KUBE_NAMESPACE
-  after_script:
-    - rm -f ~/.kube/config
-  dependencies:
-    - docker_backend
-  environment:
-    name: kubernetes-production
-    url: $PROD_BACKEND_URL
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "backend-prod"'
-      when: manual
+   stage: deploy
+   image: bitnami/kubectl:latest
+   variables:
+     KUBE_CONFIG: $KUBECONFIG_PROD_CONTENT
+     NAMESPACE: backend-prod
+   before_script:
+     - mkdir -p ~/.kube
+     - echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
+     - helm version
+     - kubectl cluster-info
+   script:
+     - echo "Deploying backend (prod) via Helm"
+     - helm upgrade --install backend-prod infra/zmnnoory-backend \
+         --namespace $NAMESPACE --create-namespace \
+         --set image.repository=$DOCKER_IMAGE \
+         --set image.tag=$DOCKER_TAG \
+         --set-string jwt.secret=$JWT_SECRET \
+         --wait
+   after_script:
+     - rm -f ~/.kube/config
+   dependencies:
+     - docker_backend
+   environment:
+     name: kubernetes-production
+     url: https://$PROD_BACKEND_HOST/actuator/health
+   rules:
+     - if: '$CI_COMMIT_BRANCH == "backend-prod"'
+       when: manual
 
-# =================================================================
-# Verify Stage: Backend 배포 검증 및 헬스체크
-# =================================================================
 verify_backend_dev:
   stage: verify
   image: curlimages/curl:latest
   variables:
-    APP_URL: "$DEV_BACKEND_URL"
+    APP_URL: "http://$DEV_BACKEND_HOST/actuator/health"
   script:
-    - echo "Verifying backend development deployment..."
-    - sleep 30  # 애플리케이션 시작 대기
-    
-    # 헬스체크 엔드포인트 확인
-    - echo "Checking health endpoint..."
-    - curl -f "$APP_URL/actuator/health" || exit 1
-    
-    # API 응답 테스트
-    - echo "Testing API endpoints..."
-    - curl -f "$APP_URL/api/test" || echo "API test endpoint not available"
-    
-    - echo "Backend development deployment verification completed successfully!"
+    - echo "Verifying backend dev deployment..."
+    - curl -f "$APP_URL" || exit 1
   dependencies:
     - deploy_backend_dev
   rules:
     - if: '$CI_COMMIT_BRANCH == "backend-dev"'
-  when: on_success
 
 verify_backend_prod:
   stage: verify
   image: curlimages/curl:latest
   variables:
-    APP_URL: "$PROD_BACKEND_URL"
+    APP_URL: "https://$PROD_BACKEND_HOST/actuator/health"
   script:
-    - echo "Verifying backend production deployment..."
-    - sleep 30  # 애플리케이션 시작 대기
-    
-    # 헬스체크 엔드포인트 확인
-    - echo "Checking health endpoint..."
-    - curl -f "$APP_URL/actuator/health" || exit 1
-    
-    # API 응답 테스트
-    - echo "Testing API endpoints..."
-    - curl -f "$APP_URL/api/test" || echo "API test endpoint not available"
-    
-    - echo "Backend production deployment verification completed successfully!"
+    - echo "Verifying backend prod deployment..."
+    - curl -f "$APP_URL" || exit 1
   dependencies:
     - deploy_backend_prod
   rules:
     - if: '$CI_COMMIT_BRANCH == "backend-prod"'
-  when: on_success
 
 # =================================================================
 # Rollback Job: Backend 배포 실패 시 이전 버전으로 롤백
