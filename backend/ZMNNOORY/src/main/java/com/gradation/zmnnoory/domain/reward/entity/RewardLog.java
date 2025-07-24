@@ -2,7 +2,7 @@ package com.gradation.zmnnoory.domain.reward.entity;
 
 import com.gradation.zmnnoory.common.entity.BaseEntity;
 import com.gradation.zmnnoory.domain.member.entity.Member;
-import com.gradation.zmnnoory.domain.stage.entity.Stage;
+import com.gradation.zmnnoory.domain.game.entity.Game;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -26,16 +26,16 @@ public class RewardLog extends BaseEntity {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "stage_id", nullable = false)
-    private Stage stage;
+    @JoinColumn(name = "game_id", nullable = false)
+    private Game game;
 
     @Column(nullable = false)
     private int point;
 
     @Builder
-    public RewardLog(Member member, Stage stage, int point) {
+    public RewardLog(Member member, Game game, int point) {
         this.member = member;
-        this.stage = stage;
+        this.game = game;
         this.point = point;
     }
 }

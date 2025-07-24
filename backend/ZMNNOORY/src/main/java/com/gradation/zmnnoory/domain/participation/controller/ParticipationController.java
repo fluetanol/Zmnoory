@@ -29,7 +29,7 @@ public class ParticipationController {
         
         return BaseResponse.<ParticipationResponse>builder()
                 .status(HttpStatus.CREATED)
-                .data(participationService.startParticipation(request.email(), request.stageTitle()))
+                .data(participationService.startParticipation(request.email(), request.gameTitle()))
                 .build();
     }
 
@@ -57,9 +57,9 @@ public class ParticipationController {
     @GetMapping("/check-first")
     public BaseResponse<Boolean> isFirstParticipation(
             @RequestParam Long memberId,
-            @RequestParam Long stageId) {
+            @RequestParam Long gameId) {
         
-        boolean isFirst = participationService.isFirstParticipation(memberId, stageId);
+        boolean isFirst = participationService.isFirstParticipation(memberId, gameId);
         return BaseResponse.<Boolean>builder()
                 .status(HttpStatus.OK)
                 .data(isFirst)
