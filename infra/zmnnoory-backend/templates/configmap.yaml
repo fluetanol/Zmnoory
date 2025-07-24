@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-config
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/managed-by: Helm
+    environment: {{ .Values.environment }}
+data:
+  SPRING_PROFILES_ACTIVE: "{{ .Values.spring.profile }}" 
