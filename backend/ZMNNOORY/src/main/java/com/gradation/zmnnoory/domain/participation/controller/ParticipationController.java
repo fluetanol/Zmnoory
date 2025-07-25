@@ -6,8 +6,6 @@ import com.gradation.zmnnoory.domain.participation.dto.StartParticipationRequest
 import com.gradation.zmnnoory.domain.participation.dto.UpdateParticipationRequest;
 import com.gradation.zmnnoory.domain.participation.service.ParticipationService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
