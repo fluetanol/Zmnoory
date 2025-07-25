@@ -104,7 +104,6 @@ docker_backend:
     - name: docker:24-dind
       alias: docker
       command: ["--tls=false"]
-      privileged: true
   variables:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
