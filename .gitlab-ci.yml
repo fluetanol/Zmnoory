@@ -99,6 +99,8 @@ build_backend:
 docker_backend:
   stage: docker
   image: docker:24
+  # DinD requires privileged runner
+  privileged: true
   services:
     - name: docker:24-dind
       alias: docker
