@@ -203,8 +203,7 @@ deploy_backend_dev:
        --set-string redis.password=$REDIS_PASSWORD \
        --set-string jwt.secret=$JWT_SECRET \
        --set-string jwt.issuer=$JWT_ISSUER \
-       --set-string jwt.expiration=$JWT_EXPIRATION \
-       --set-string jwt.prefix=$JWT_PREFIX \
+       --set-string jwt.prefix=$JWT_TOKEN_PREFIX \
        --set-string jwt.header=$JWT_HEADER \
        --wait
    after_script:
@@ -246,8 +245,7 @@ deploy_backend_prod:
        --set-string redis.password=$REDIS_PASSWORD_PROD \
        --set-string jwt.secret=$JWT_SECRET \
        --set-string jwt.issuer=$JWT_ISSUER \
-       --set-string jwt.expiration=$JWT_EXPIRATION \
-       --set-string jwt.prefix=$JWT_PREFIX \
+       --set-string jwt.prefix=$JWT_TOKEN_PREFIX \
        --set-string jwt.header=$JWT_HEADER \
        --wait
    after_script:

@@ -22,6 +22,5 @@ data:
   
   # JWT Configuration (non-sensitive)
   JWT_ISSUER: "{{ .Values.jwt.issuer }}"
-  JWT_EXPIRATION: "{{ .Values.jwt.expiration }}"
-  JWT_PREFIX: "{{ .Values.jwt.prefix }}"
+  JWT_TOKEN_PREFIX: "{{ .Values.jwt.prefix }}"
   JWT_HEADER: "{{ .Values.jwt.header }}" 
