@@ -3,7 +3,7 @@ package com.gradation.zmnnoory.domain.participation.service;
 import com.gradation.zmnnoory.domain.game.entity.Game;
 import com.gradation.zmnnoory.domain.game.repository.GameRepository;
 import com.gradation.zmnnoory.domain.member.entity.Member;
-<<<<<<< backend/ZMNNOORY/src/main/java/com/gradation/zmnnoory/domain/participation/service/ParticipationService.java
+import com.gradation.zmnnoory.domain.member.exception.MemberNotFoundException;
 import com.gradation.zmnnoory.domain.member.repository.MemberRepository;
 import com.gradation.zmnnoory.domain.participation.dto.EndParticipationRequest;
 import com.gradation.zmnnoory.domain.participation.dto.ParticipationResponse;
@@ -11,21 +11,11 @@ import com.gradation.zmnnoory.domain.participation.dto.StartParticipationRequest
 import com.gradation.zmnnoory.domain.participation.entity.Participation;
 import com.gradation.zmnnoory.domain.participation.entity.ParticipationStatus;
 import com.gradation.zmnnoory.domain.participation.repository.ParticipationRepository;
-=======
-import com.gradation.zmnnoory.domain.member.exception.MemberNotFoundException;
-import com.gradation.zmnnoory.domain.member.repository.MemberRepository;
-import com.gradation.zmnnoory.domain.participation.dto.ParticipationResponse;
-import com.gradation.zmnnoory.domain.participation.dto.UpdateParticipationRequest;
-import com.gradation.zmnnoory.domain.participation.entity.Participation;
-import com.gradation.zmnnoory.domain.participation.repository.ParticipationRepository;
-import com.gradation.zmnnoory.domain.participation.status.ParticipationStatus;
->>>>>>> backend/ZMNNOORY/src/main/java/com/gradation/zmnnoory/domain/participation/service/ParticipationService.java
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +32,7 @@ public class ParticipationService {
                 .orElseThrow(MemberNotFoundException::new);
 
         Game game = gameRepository.findByTitle(request.gameTitle())
-                .orElseThrow(MemberNotFoundException::new);
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게임입니다."));
 
         // 중복 참여 검증
         if (participationRepository.existsByMemberEmailAndGameTitle(request.email(), request.gameTitle())) {
@@ -56,7 +46,6 @@ public class ParticipationService {
                 .build();
 
         return ParticipationResponse.of(participationRepository.save(participation));
-
     }
 
     // 2. 게임 참여 종료 및 리워드 지급
@@ -67,14 +56,13 @@ public class ParticipationService {
 
         if (participation.getStatus() == ParticipationStatus.NOT_PARTICIPATED) {
             participation.complete();
-//            Long rewardPoint = participation.getGame().getPoint();
-//            Member member = participation.getMember();
-//            member.addPoint(rewardPoint);
+//          Long rewardPoint = participation.getGame().getPoint();
+//          Member member = participation.getMember();
+//          member.addPoint(rewardPoint);
         }
 
         return ParticipationResponse.of(participation);
     }
-
 
     // 3. 한 멤버의 전체 참여 리스트
     public List<ParticipationResponse> getParticipationsByMember(Long memberId) {
@@ -82,6 +70,5 @@ public class ParticipationService {
                 .map(ParticipationResponse::of)
                 .toList();
     }
-
 
 }
