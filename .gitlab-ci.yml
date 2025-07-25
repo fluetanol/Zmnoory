@@ -190,7 +190,7 @@ deploy_backend_dev:
    script:
      - echo "Deploying backend (dev) via Helm"
      - |
-      helm upgrade --install backend-dev infra/zmnnoory-backend \
+      helm upgrade --install backend-dev ./infra/zmnnoory-backend \
         --namespace $NAMESPACE --create-namespace \
         --set image.repository=$DOCKER_IMAGE \
         --set image.tag=$DOCKER_TAG \
@@ -222,7 +222,7 @@ deploy_backend_prod:
      - kubectl cluster-info
    script:
      - echo "Deploying backend (prod) via Helm"
-     - helm upgrade --install backend-prod infra/zmnnoory-backend \
+     - helm upgrade --install backend-prod ./infra/zmnnoory-backend \
          --namespace $NAMESPACE --create-namespace \
          --set image.repository=$DOCKER_IMAGE \
          --set image.tag=$DOCKER_TAG \
