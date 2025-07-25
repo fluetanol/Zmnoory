@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +21,7 @@ public class RewardLogService {
     private final ParticipationRepository participationRepository;
 
     @Transactional
-    public RewardLogResponse giveReward(UUID participationId) {
+    public RewardLogResponse giveReward(Long participationId) {
         Participation participation = participationRepository.findById(participationId)
                 .orElseThrow(() -> new EntityNotFoundException("참여 정보를 찾을 수 없습니다."));
 
@@ -54,7 +53,7 @@ public class RewardLogService {
                 .toList();
     }
     
-    public RewardLogResponse findById(UUID id) {
+    public RewardLogResponse findById(Long id) {
         RewardLog rewardLog = rewardLogRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("리워드 로그를 찾을 수 없습니다."));
         return RewardLogResponse.of(rewardLog);
