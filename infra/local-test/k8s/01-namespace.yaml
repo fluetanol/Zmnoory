@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: zmnnoory
-  labels:
-    name: zmnnoory
-    environment: production
-    app: spring-boot-backend 
