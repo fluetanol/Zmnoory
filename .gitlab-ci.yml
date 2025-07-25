@@ -85,11 +85,9 @@ build_backend:
   before_script:
     - cd backend/ZMNNOORY
     - chmod +x ./gradlew  # gradlew 실행 권한 부여
-    # Wait for services to be ready using netcat (already available)
-    - echo "Waiting for PostgreSQL to be ready..."
-    - until nc -z postgres 5432; do sleep 1; done
-    - echo "Waiting for Redis to be ready..."
-    - until nc -z redis 6379; do sleep 1; done
+    # Wait for services to be ready (simple sleep approach)
+    - echo "Waiting for services to start..."
+    - sleep 30
   script:
     - echo "Building Spring Boot application..."
     - ./gradlew clean build -x test --info
