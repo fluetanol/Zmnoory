@@ -177,7 +177,7 @@ deploy_frontend_prod:
 deploy_backend_dev:
    stage: deploy
    image:
-    name: lachlanevenson/k8s-helm:v3.14.4
+    name: lachlanevenson/k8s-helm:latest
     entrypoint: ['']
    variables:
      KUBE_CONFIG: $KUBECONFIG_DEV_CONTENT
@@ -209,7 +209,7 @@ deploy_backend_dev:
 deploy_backend_prod:
    stage: deploy
    image:
-    name: lachlanevenson/k8s-helm:v3.14.4
+    name: lachlanevenson/k8s-helm:latest
     entrypoint: ['']
    variables:
      KUBE_CONFIG: $KUBECONFIG_PROD_CONTENT
