@@ -52,7 +52,8 @@ Content-Type: application/json
   "email" : "test2@test.com",
   "password": "123123123",
   "gender": "MALE",
-  "nickname" : "tester",
+  "nickname" : "tester2",
+  "recommenderEmail": "test1@test.com",
   "birthday": "2000-01-01"
 }
 
@@ -86,6 +87,6 @@ Content-Type: application/json
 Authorization: Bearer {{auth}}
 
 ### response test2
-GET http://localhost:8080/api/members/memberss
+GET http://localhost:8080/api/members
 Content-Type: application/json
 Authorization: Bearer {{auth}}

@@ -12,13 +12,14 @@ public class MemberCreateHandler {
 
     private final PasswordEncoder passwordEncoder;
 
-    public Member createMemberWith(SignUpRequest signUpRequest) {
+    public Member createMemberWith(SignUpRequest signUpRequest, Member recommender) {
         return Member.builder()
                 .email(signUpRequest.email())
                 .password(passwordEncoder.encode(signUpRequest.password()))
                 .nickname(signUpRequest.nickname())
-
                 .gender(signUpRequest.gender())
+                .birthday(signUpRequest.birthday())
+                .recommender(recommender)
                 .build();
     }
 }

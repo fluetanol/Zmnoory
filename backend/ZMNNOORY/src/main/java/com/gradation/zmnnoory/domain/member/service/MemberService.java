@@ -28,7 +28,15 @@ public class MemberService {
             throw new DuplicatedEmailException();
         }
 
-        Member newMember = memberCreateHandler.createMemberWith(signUpRequest);
+        Member recommender = null;
+        String recommenderEmail = signUpRequest.recommenderEmail();
+
+        if (recommenderEmail != null && !recommenderEmail.isBlank()) {
+            recommender = memberRepository.findByEmail(recommenderEmail)
+                    .orElseThrow(() -> new EntityNotFoundException("추천인을 찾을 수 없습니다."));
+        }
+
+        Member newMember = memberCreateHandler.createMemberWith(signUpRequest, recommender);
         memberRepository.save(newMember);
         return MemberResponse.of(newMember);
     }

@@ -9,7 +9,8 @@ import org.springframework.http.HttpStatus;
 public enum MemberExceptionConstant {
 
     DUPLICATED_EMAIL_EXCEPTION("이미 사용 중인 이메일입니다.", HttpStatus.CONFLICT),
-    INVALID_GENDER_EXCEPTION("지원하는 성별이 아닙니다.", HttpStatus.BAD_REQUEST);
+    INVALID_GENDER_EXCEPTION("지원하는 성별이 아닙니다.", HttpStatus.BAD_REQUEST),
+    ILLEGAL_POINT_USAGE_EXCEPTION("소유한 포인트가 부족합니다.", HttpStatus.BAD_REQUEST);
 
     private final String message;
     private final HttpStatus status;
