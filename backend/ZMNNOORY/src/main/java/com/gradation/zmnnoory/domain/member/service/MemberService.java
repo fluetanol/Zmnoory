@@ -5,9 +5,9 @@ import com.gradation.zmnnoory.domain.member.dto.request.SignUpRequest;
 import com.gradation.zmnnoory.domain.member.dto.response.MemberResponse;
 import com.gradation.zmnnoory.domain.member.entity.Member;
 import com.gradation.zmnnoory.domain.member.exception.DuplicatedEmailException;
+import com.gradation.zmnnoory.domain.member.exception.MemberNotFoundException;
 import com.gradation.zmnnoory.domain.member.handler.MemberCreateHandler;
 import com.gradation.zmnnoory.domain.member.repository.MemberRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +33,7 @@ public class MemberService {
 
         if (recommenderEmail != null && !recommenderEmail.isBlank()) {
             recommender = memberRepository.findByEmail(recommenderEmail)
-                    .orElseThrow(() -> new EntityNotFoundException("추천인을 찾을 수 없습니다."));
+                    .orElseThrow(() -> new MemberNotFoundException("추천인을 찾을 수 없습니다."));
         }
 
         Member newMember = memberCreateHandler.createMemberWith(signUpRequest, recommender);
@@ -42,7 +42,7 @@ public class MemberService {
     }
 
     public MemberResponse findById(Long id) {
-        Member foundMember = memberRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("No User Found"));
+        Member foundMember = memberRepository.findById(id).orElseThrow(MemberNotFoundException::new);
         return MemberResponse.of(foundMember);
     }
 
@@ -52,7 +52,7 @@ public class MemberService {
 
     @Transactional
     public MemberResponse updateUserInfoWith(String email, MemberUpdateRequest memberUpdateRequest) {
-        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("No User Found"));
+        Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
         member.update(memberUpdateRequest);
         return MemberResponse.of(member);
     }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gradation.zmnnoory.common.dto.BaseResponse;
 import com.gradation.zmnnoory.common.jwt.JwtProvider;
 import com.gradation.zmnnoory.domain.member.dto.request.LoginRequest;
+import com.gradation.zmnnoory.domain.member.exception.InvalidLoginRequestException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -48,7 +48,7 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
 
             return this.getAuthenticationManager().authenticate(authRequest);
         } catch (Exception e) {
-            throw new AuthenticationServiceException("Invalid username or password", e);
+            throw new InvalidLoginRequestException();
         }
     }
 

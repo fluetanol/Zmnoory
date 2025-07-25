@@ -1,14 +1,15 @@
 package com.gradation.zmnnoory.domain.participation.service;
 
+import com.gradation.zmnnoory.domain.game.entity.Game;
+import com.gradation.zmnnoory.domain.game.repository.GameRepository;
 import com.gradation.zmnnoory.domain.member.entity.Member;
+import com.gradation.zmnnoory.domain.member.exception.MemberNotFoundException;
 import com.gradation.zmnnoory.domain.member.repository.MemberRepository;
 import com.gradation.zmnnoory.domain.participation.dto.ParticipationResponse;
 import com.gradation.zmnnoory.domain.participation.dto.UpdateParticipationRequest;
 import com.gradation.zmnnoory.domain.participation.entity.Participation;
 import com.gradation.zmnnoory.domain.participation.repository.ParticipationRepository;
 import com.gradation.zmnnoory.domain.participation.status.ParticipationStatus;
-import com.gradation.zmnnoory.domain.game.entity.Game;
-import com.gradation.zmnnoory.domain.game.repository.GameRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,10 +28,10 @@ public class ParticipationService {
 
     public ParticipationResponse startParticipation(String email, String gameTitle) {
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+                .orElseThrow(MemberNotFoundException::new);
         
         Game game = gameRepository.findByTitle(gameTitle)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게임입니다."));
+                .orElseThrow(MemberNotFoundException::new);
 
         Participation participation = Participation.builder()
                 .member(member)
