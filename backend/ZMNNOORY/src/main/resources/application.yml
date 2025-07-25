@@ -21,6 +21,7 @@ spring:
         show_sql: false
         format_sql: true
         highlight_sql: true
+    open-in-view: false
 
 springdoc:
   swagger-ui:                                   # swagger-ui ?? ??
