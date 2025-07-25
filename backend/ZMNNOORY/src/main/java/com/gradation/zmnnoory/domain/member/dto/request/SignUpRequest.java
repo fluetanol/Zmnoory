@@ -31,6 +31,10 @@ public record SignUpRequest(
         @Schema(description = "생년월일 (yyyy-MM-dd 형식)", example = "1990-01-01")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
         @DateTimeFormat(pattern = "yyyy-MM-dd")
-        LocalDate birthday
+        LocalDate birthday,
+
+        @Schema(description = "추천인 이메일", example = "recommender@test.com")
+        @Email(message = "추천인은 이메일이어야 합니다.")
+        String recommenderEmail
 ) {
 }

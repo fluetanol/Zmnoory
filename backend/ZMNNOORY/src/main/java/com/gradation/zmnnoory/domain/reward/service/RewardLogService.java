@@ -1,11 +1,13 @@
 package com.gradation.zmnnoory.domain.reward.service;
 
 import com.gradation.zmnnoory.domain.participation.entity.Participation;
+import com.gradation.zmnnoory.domain.participation.exception.ParticipationNotFoundException;
 import com.gradation.zmnnoory.domain.participation.repository.ParticipationRepository;
 import com.gradation.zmnnoory.domain.reward.dto.RewardLogResponse;
 import com.gradation.zmnnoory.domain.reward.entity.RewardLog;
+import com.gradation.zmnnoory.domain.reward.exception.DuplicatedRewardRequestException;
+import com.gradation.zmnnoory.domain.reward.exception.RewardNotFoundException;
 import com.gradation.zmnnoory.domain.reward.repository.RewardLogRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,14 +25,14 @@ public class RewardLogService {
     @Transactional
     public RewardLogResponse giveReward(Long participationId) {
         Participation participation = participationRepository.findById(participationId)
-                .orElseThrow(() -> new EntityNotFoundException("참여 정보를 찾을 수 없습니다."));
+                .orElseThrow(ParticipationNotFoundException::new);
 
         Long memberId = participation.getMember().getId();
         Long gameId = participation.getGame().getId();
 
         boolean alreadyGiven = rewardLogRepository.existsByMemberIdAndGameId(memberId, gameId);
         if (alreadyGiven) {
-            throw new IllegalStateException("이미 해당 게임에 대한 보상을 지급받았습니다.");
+            throw new DuplicatedRewardRequestException();
         }
 
         // Game에서 리워드 포인트 가져오기
@@ -55,7 +57,7 @@ public class RewardLogService {
     
     public RewardLogResponse findById(Long id) {
         RewardLog rewardLog = rewardLogRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("리워드 로그를 찾을 수 없습니다."));
+                .orElseThrow(RewardNotFoundException::new);
         return RewardLogResponse.of(rewardLog);
     }
     
