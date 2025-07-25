@@ -1,6 +1,7 @@
 package com.gradation.zmnnoory.domain.member.entity;
 
 import com.gradation.zmnnoory.common.entity.BaseEntity;
+import com.gradation.zmnnoory.domain.member.dto.MemberUpdateRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -41,5 +42,13 @@ public class Member extends BaseEntity {
         this.gender = gender;
         this.nickname = nickname;
         this.birthday = birthday;
+    }
+
+    public void update(MemberUpdateRequest memberUpdateRequest) {
+        this.email = memberUpdateRequest.email();
+        this.password = memberUpdateRequest.password();
+        this.gender = memberUpdateRequest.gender();
+        this.nickname = memberUpdateRequest.nickname();
+        this.birthday = memberUpdateRequest.birthday();
     }
 }
