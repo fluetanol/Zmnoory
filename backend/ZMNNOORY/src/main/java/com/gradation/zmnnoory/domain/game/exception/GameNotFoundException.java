@@ -11,6 +11,10 @@ public class GameNotFoundException extends BaseException {
         super(GAME_NOT_FOUND_EXCEPTION.getMessage() + " " + gameId);
     }
 
+    public GameNotFoundException(String gameTitle) {
+        super(GAME_NOT_FOUND_EXCEPTION.getMessage() + " " + gameTitle);
+    }
+
     @Override
     public HttpStatus getStatus() {
         return GAME_NOT_FOUND_EXCEPTION.getStatus();

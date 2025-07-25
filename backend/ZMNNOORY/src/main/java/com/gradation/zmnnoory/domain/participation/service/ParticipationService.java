@@ -4,12 +4,15 @@ import com.gradation.zmnnoory.domain.game.entity.Game;
 import com.gradation.zmnnoory.domain.game.repository.GameRepository;
 import com.gradation.zmnnoory.domain.member.entity.Member;
 import com.gradation.zmnnoory.domain.member.exception.MemberNotFoundException;
+import com.gradation.zmnnoory.domain.game.exception.GameNotFoundException;
+import com.gradation.zmnnoory.domain.participation.exception.AlreadyParticipatedException;
 import com.gradation.zmnnoory.domain.member.repository.MemberRepository;
 import com.gradation.zmnnoory.domain.participation.dto.EndParticipationRequest;
 import com.gradation.zmnnoory.domain.participation.dto.ParticipationResponse;
 import com.gradation.zmnnoory.domain.participation.dto.StartParticipationRequest;
 import com.gradation.zmnnoory.domain.participation.entity.Participation;
 import com.gradation.zmnnoory.domain.participation.entity.ParticipationStatus;
+import com.gradation.zmnnoory.domain.participation.exception.ParticipationNotFoundException;
 import com.gradation.zmnnoory.domain.participation.repository.ParticipationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,11 +35,11 @@ public class ParticipationService {
                 .orElseThrow(MemberNotFoundException::new);
 
         Game game = gameRepository.findByTitle(request.gameTitle())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 게임입니다."));
+                .orElseThrow(() -> new GameNotFoundException(request.gameTitle()));
 
         // 중복 참여 검증
         if (participationRepository.existsByMemberEmailAndGameTitle(request.email(), request.gameTitle())) {
-            throw new IllegalStateException("이미 참여한 게임입니다.");
+            throw new AlreadyParticipatedException();
         }
 
         Participation participation = Participation.builder()
@@ -52,7 +55,7 @@ public class ParticipationService {
     public ParticipationResponse endParticipation(EndParticipationRequest request) {
         Participation participation = participationRepository
                 .findByMemberEmailAndGameTitle(request.email(), request.gameTitle())
-                .orElseThrow(() -> new IllegalArgumentException("참여 기록을 찾을 수 없습니다."));
+                .orElseThrow(ParticipationNotFoundException::new);
 
         if (participation.getStatus() == ParticipationStatus.NOT_PARTICIPATED) {
             participation.complete();
