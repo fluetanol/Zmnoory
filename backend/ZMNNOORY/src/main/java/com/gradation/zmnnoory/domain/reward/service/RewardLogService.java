@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +23,7 @@ public class RewardLogService {
     private final ParticipationRepository participationRepository;
 
     @Transactional
-    public RewardLogResponse giveReward(UUID participationId) {
+    public RewardLogResponse giveReward(Long participationId) {
         Participation participation = participationRepository.findById(participationId)
                 .orElseThrow(ParticipationNotFoundException::new);
 
@@ -56,7 +55,7 @@ public class RewardLogService {
                 .toList();
     }
     
-    public RewardLogResponse findById(UUID id) {
+    public RewardLogResponse findById(Long id) {
         RewardLog rewardLog = rewardLogRepository.findById(id)
                 .orElseThrow(RewardNotFoundException::new);
         return RewardLogResponse.of(rewardLog);

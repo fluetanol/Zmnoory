@@ -54,7 +54,7 @@ public class RewardLogController {
     }
 
     @GetMapping("/{rewardId}")
-    public BaseResponse<RewardLogResponse> getRewardLog(@PathVariable UUID rewardId) {
+    public BaseResponse<RewardLogResponse> getRewardLog(@PathVariable Long rewardId) {
         return BaseResponse.<RewardLogResponse>builder()
                 .status(HttpStatus.OK)
                 .data(rewardLogService.findById(rewardId))

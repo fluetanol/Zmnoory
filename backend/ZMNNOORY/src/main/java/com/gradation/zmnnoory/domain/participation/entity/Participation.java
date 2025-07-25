@@ -1,17 +1,13 @@
 package com.gradation.zmnnoory.domain.participation.entity;
 
 import com.gradation.zmnnoory.common.entity.BaseEntity;
-import com.gradation.zmnnoory.domain.member.entity.Member;
-import com.gradation.zmnnoory.domain.participation.status.ParticipationStatus;
 import com.gradation.zmnnoory.domain.game.entity.Game;
+import com.gradation.zmnnoory.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
-import java.util.UUID;
 
 @Entity
 @Getter
@@ -20,8 +16,8 @@ import java.util.UUID;
 public class Participation extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
@@ -31,41 +27,21 @@ public class Participation extends BaseEntity {
     @JoinColumn(name = "game_id", nullable = false)
     private Game game;
 
-    private LocalDate startedAt;
-    private LocalDate endedAt;
-
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ParticipationStatus status;
 
-    private Integer frameCount;
-    private String videoUrl;
-    private String thumbnailUrl;
-
-    public void updateMediaInfo(Integer frameCount, String videoUrl, String thumbnailUrl) {
-        if (frameCount != null) this.frameCount = frameCount;
-        if (videoUrl != null) this.videoUrl = videoUrl;
-        if (thumbnailUrl != null) this.thumbnailUrl = thumbnailUrl;
-    }
-
     public void complete() {
-        if (this.status != ParticipationStatus.IN_PROGRESS) {
-            throw new IllegalStateException("진행 중인 participation이 아닙니다.");
+        if (this.status != ParticipationStatus.NOT_PARTICIPATED) {
+            throw new IllegalStateException("이미 완료된 게임 참여입니다. 리워드를 다시 지급할 수 없습니다.");
         }
         this.status = ParticipationStatus.COMPLETED;
-        this.endedAt = LocalDate.now();
     }
 
     @Builder
-    public Participation(Member member, Game game, LocalDate startedAt,
-                         LocalDate endedAt, ParticipationStatus status,
-                         Integer frameCount, String videoUrl, String thumbnailUrl) {
+    public Participation(Member member, Game game, ParticipationStatus status) {
         this.member = member;
         this.game = game;
-        this.startedAt = startedAt;
-        this.endedAt = endedAt;
         this.status = status;
-        this.frameCount = frameCount;
-        this.videoUrl = videoUrl;
-        this.thumbnailUrl = thumbnailUrl;
     }
 }

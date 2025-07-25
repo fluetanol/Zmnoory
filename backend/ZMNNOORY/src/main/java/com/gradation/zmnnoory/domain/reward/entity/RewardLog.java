@@ -1,15 +1,13 @@
 package com.gradation.zmnnoory.domain.reward.entity;
 
 import com.gradation.zmnnoory.common.entity.BaseEntity;
-import com.gradation.zmnnoory.domain.member.entity.Member;
 import com.gradation.zmnnoory.domain.game.entity.Game;
+import com.gradation.zmnnoory.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.UUID;
 
 @Entity
 @Getter
@@ -18,8 +16,8 @@ import java.util.UUID;
 public class RewardLog extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)

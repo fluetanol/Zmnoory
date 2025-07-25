@@ -1,9 +1,9 @@
 package com.gradation.zmnnoory.domain.participation.controller;
 
 import com.gradation.zmnnoory.common.dto.BaseResponse;
+import com.gradation.zmnnoory.domain.participation.dto.EndParticipationRequest;
 import com.gradation.zmnnoory.domain.participation.dto.ParticipationResponse;
 import com.gradation.zmnnoory.domain.participation.dto.StartParticipationRequest;
-import com.gradation.zmnnoory.domain.participation.dto.UpdateParticipationRequest;
 import com.gradation.zmnnoory.domain.participation.service.ParticipationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
+import java.util.List;
+
 
 @RestController
 @RequiredArgsConstructor
@@ -21,56 +22,36 @@ public class ParticipationController {
 
     private final ParticipationService participationService;
 
+    // 1. 게임 참여 시작
     @PostMapping("/start")
     public BaseResponse<ParticipationResponse> startParticipation(
             @Valid @RequestBody StartParticipationRequest request) {
-        
+
         return BaseResponse.<ParticipationResponse>builder()
                 .status(HttpStatus.CREATED)
-                .data(participationService.startParticipation(request.email(), request.gameTitle()))
+                .data(participationService.startParticipation(request))
                 .build();
     }
 
-    @PutMapping("/{participationId}/end")
+    // 2. 게임 참여 종료 및 리워드 지급
+    @PutMapping("/end")
     public BaseResponse<ParticipationResponse> endParticipation(
-            @PathVariable UUID participationId) {
-        
+            @Valid @RequestBody EndParticipationRequest request) {
+
         return BaseResponse.<ParticipationResponse>builder()
                 .status(HttpStatus.OK)
-                .data(participationService.endParticipation(participationId))
+                .data(participationService.endParticipation(request))
                 .build();
     }
 
-    @PutMapping("/{participationId}")
-    public BaseResponse<ParticipationResponse> updateParticipation(
-            @PathVariable UUID participationId,
-            @Valid @RequestBody UpdateParticipationRequest request) {
-        
-        return BaseResponse.<ParticipationResponse>builder()
-                .status(HttpStatus.OK)
-                .data(participationService.updateParticipation(participationId, request))
-                .build();
-    }
+    // 3. 특정 멤버의 모든 참여 조회
+    @GetMapping("/member/{memberId}")
+    public BaseResponse<List<ParticipationResponse>> getParticipationsByMember(
+            @PathVariable Long memberId) {
 
-    @GetMapping("/check-first")
-    public BaseResponse<Boolean> isFirstParticipation(
-            @RequestParam Long memberId,
-            @RequestParam Long gameId) {
-        
-        boolean isFirst = participationService.isFirstParticipation(memberId, gameId);
-        return BaseResponse.<Boolean>builder()
+        return BaseResponse.<List<ParticipationResponse>>builder()
                 .status(HttpStatus.OK)
-                .data(isFirst)
-                .build();
-    }
-
-    @GetMapping("/{participationId}")
-    public BaseResponse<ParticipationResponse> getParticipation(
-            @PathVariable UUID participationId) {
-        
-        return BaseResponse.<ParticipationResponse>builder()
-                .status(HttpStatus.OK)
-                .data(participationService.getParticipation(participationId))
+                .data(participationService.getParticipationsByMember(memberId))
                 .build();
     }
 }
