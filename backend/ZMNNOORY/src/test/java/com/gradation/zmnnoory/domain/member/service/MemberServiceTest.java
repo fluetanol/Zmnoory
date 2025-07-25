@@ -4,8 +4,8 @@ import com.gradation.zmnnoory.domain.member.dto.MemberUpdateRequest;
 import com.gradation.zmnnoory.domain.member.dto.response.MemberResponse;
 import com.gradation.zmnnoory.domain.member.entity.Gender;
 import com.gradation.zmnnoory.domain.member.entity.Member;
+import com.gradation.zmnnoory.domain.member.exception.MemberNotFoundException;
 import com.gradation.zmnnoory.domain.member.repository.MemberRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -80,7 +80,7 @@ class MemberServiceTest {
         );
 
         // when & then
-        assertThrows(EntityNotFoundException.class, () -> {
+        assertThrows(MemberNotFoundException.class, () -> {
             memberService.updateUserInfoWith(nonExistentMemberEmail, updateRequest);
         });
     }
