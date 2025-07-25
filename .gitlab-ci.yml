@@ -194,7 +194,18 @@ deploy_backend_dev:
        --namespace $NAMESPACE --create-namespace \
        --set image.repository=$DOCKER_IMAGE \
        --set image.tag=$DOCKER_TAG \
+       --set-string app.name=$APP_NAME \
+       --set-string database.url=$DB_URL \
+       --set-string database.username=$DB_USERNAME \
+       --set-string database.password=$DB_PASSWORD \
+       --set-string redis.host=$REDIS_HOST \
+       --set-string redis.port=$REDIS_PORT \
+       --set-string redis.password=$REDIS_PASSWORD \
        --set-string jwt.secret=$JWT_SECRET \
+       --set-string jwt.issuer=$JWT_ISSUER \
+       --set-string jwt.expiration=$JWT_EXPIRATION \
+       --set-string jwt.prefix=$JWT_PREFIX \
+       --set-string jwt.header=$JWT_HEADER \
        --wait
    after_script:
      - rm -f ~/.kube/config
@@ -226,7 +237,18 @@ deploy_backend_prod:
        --namespace $NAMESPACE --create-namespace \
        --set image.repository=$DOCKER_IMAGE \
        --set image.tag=$DOCKER_TAG \
+       --set-string app.name=$APP_NAME \
+       --set-string database.url=$DB_URL_PROD \
+       --set-string database.username=$DB_USERNAME_PROD \
+       --set-string database.password=$DB_PASSWORD_PROD \
+       --set-string redis.host=$REDIS_HOST_PROD \
+       --set-string redis.port=$REDIS_PORT_PROD \
+       --set-string redis.password=$REDIS_PASSWORD_PROD \
        --set-string jwt.secret=$JWT_SECRET \
+       --set-string jwt.issuer=$JWT_ISSUER \
+       --set-string jwt.expiration=$JWT_EXPIRATION \
+       --set-string jwt.prefix=$JWT_PREFIX \
+       --set-string jwt.header=$JWT_HEADER \
        --wait
    after_script:
      - rm -f ~/.kube/config
