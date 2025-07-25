@@ -187,15 +187,15 @@ deploy_backend_dev:
      - echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
      - helm version
      - kubectl cluster-info
-   script:
-     - echo "Deploying backend (dev) via Helm"
-     - |
-      helm upgrade --install backend-dev ./infra/zmnnoory-backend \
-        --namespace $NAMESPACE --create-namespace \
-        --set image.repository=$DOCKER_IMAGE \
-        --set image.tag=$DOCKER_TAG \
-        --set-string jwt.secret=$JWT_SECRET \
-        --wait
+   script: |
+     echo "Deploying backend (dev) via Helm"
+     ls -R infra | head        # <— 디버그용, 경로 존재 확인
+     helm upgrade --install backend-dev infra/zmnnoory-backend \
+       --namespace $NAMESPACE --create-namespace \
+       --set image.repository=$DOCKER_IMAGE \
+       --set image.tag=$DOCKER_TAG \
+       --set-string jwt.secret=$JWT_SECRET \
+       --wait
    after_script:
      - rm -f ~/.kube/config
    dependencies:
@@ -220,14 +220,14 @@ deploy_backend_prod:
      - echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
      - helm version
      - kubectl cluster-info
-   script:
-     - echo "Deploying backend (prod) via Helm"
-     - helm upgrade --install backend-prod ./infra/zmnnoory-backend \
-         --namespace $NAMESPACE --create-namespace \
-         --set image.repository=$DOCKER_IMAGE \
-         --set image.tag=$DOCKER_TAG \
-         --set-string jwt.secret=$JWT_SECRET \
-         --wait
+   script: |
+     echo "Deploying backend (prod) via Helm"
+     helm upgrade --install backend-prod ./infra/zmnnoory-backend \
+       --namespace $NAMESPACE --create-namespace \
+       --set image.repository=$DOCKER_IMAGE \
+       --set image.tag=$DOCKER_TAG \
+       --set-string jwt.secret=$JWT_SECRET \
+       --wait
    after_script:
      - rm -f ~/.kube/config
    dependencies:
