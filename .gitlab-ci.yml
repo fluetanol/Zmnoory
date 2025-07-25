@@ -68,9 +68,37 @@ build_frontend:
 build_backend:
   stage: build
   image: gradle:jdk24
+  services:
+    - name: postgres:16
+      alias: postgres
+      variables:
+        POSTGRES_DB: development_db
+        POSTGRES_USER: root
+        POSTGRES_PASSWORD: q1w2e3r4t5
+    - name: redis/redis-stack:latest
+      alias: redis
+  variables:
+    # Test environment database configuration
+    DB_URL: "jdbc:postgresql://postgres:5432/development_db"
+    DB_USERNAME: "root"
+    DB_PASSWORD: "q1w2e3r4t5"
+    REDIS_HOST: "redis"
+    REDIS_PORT: "6379"
+    REDIS_PASSWORD: ""
+    # JWT configuration for tests
+    JWT_SECRET_KEY: "em1ubm9ycnltZW1iZXJzY2FuZ2V0YWpvYnRoYXR0aGV5d2FudGlzdXJlZm9ydGhhdHNzYWZ5d291bGRoZWxwdXNmb3J0aGF0Y29tZXRydWU="
+    JWT_ISSUER: "ZMNNOORY"
+    JWT_TOKEN_PREFIX: "Bearer "
+    JWT_HEADER: "Authorization"
+    APP_NAME: "ZMNNOORY"
   before_script:
     - cd backend/ZMNNOORY
     - chmod +x ./gradlew  # gradlew 실행 권한 부여
+    # Wait for services to be ready
+    - echo "Waiting for PostgreSQL to be ready..."
+    - until pg_isready -h postgres -p 5432 -U root; do sleep 1; done
+    - echo "Waiting for Redis to be ready..."
+    - until redis-cli -h redis ping; do sleep 1; done
   script:
     - echo "Building Spring Boot application..."
     - ./gradlew clean build -x test --info
@@ -198,8 +226,6 @@ deploy_backend_dev:
        --set-string database.url=$DB_URL \
        --set-string database.username=$DB_USERNAME \
        --set-string database.password=$DB_PASSWORD \
-       --set-string redis.host=$REDIS_HOST \
-       --set-string redis.port=$REDIS_PORT \
        --set-string redis.password=$REDIS_PASSWORD \
        --set-string jwt.secret=$JWT_SECRET \
        --set-string jwt.issuer=$JWT_ISSUER \

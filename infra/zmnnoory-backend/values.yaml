@@ -6,27 +6,27 @@ spring:
 
 # Database Configuration (will be overridden by CI/CD)
 database:
-  url: "jdbc:postgresql://3.38.95.2:5432/development_db"
-  username: "root"
-  password: "q1w2e3r4t5"
+  url: "__DB_URL__"
+  username: "__DB_USERNAME__"
+  password: "__DB_PASSWORD__"
   
 # Redis Configuration (will be overridden by CI/CD)
 redis:
-  host: "3.38.95.2"
-  port: "6379"
-  password: ""
+  host: "__REDIS_HOST__"
+  port: "__REDIS_PORT__"
+  password: "__REDIS_PASSWORD__"
 
 # JWT Configuration (will be overridden by CI/CD)
 jwt:
-  secret: "em1ubm9ycnltZW1iZXJzY2FuZ2V0YWpvYnRoYXR0aGV5d2FudGlzdXJlZm9ydGhhdHNzYWZ5d291bGRoZWxwdXNmb3J0aGF0Y29tZXRydWU="
-  issuer: "ZMNNOORY"
-  expiration: "3h"
-  prefix: "Bearer "
-  header: "Authorization"
+  secret: "__JWT_SECRET__"
+  issuer: "__JWT_ISSUER__"
+  expiration: "__JWT_EXPIRATION__"
+  prefix: "__JWT_PREFIX__"
+  header: "__JWT_HEADER__"
 
 # Application Configuration
 app:
-  name: "ZMNNOORY"
+  name: "__APP_NAME__"
 
 # Default values for zmnnoory-backend.
 # This is a YAML-formatted file.
