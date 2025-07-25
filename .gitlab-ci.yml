@@ -176,7 +176,9 @@ deploy_frontend_prod:
 # Backend 개발 환경 배포 (Helm)
 deploy_backend_dev:
    stage: deploy
-   image: bitnami/kubectl:latest
+   image:
+     name: bitnami/kubectl:latest
+     entrypoint: ['']
    variables:
      KUBE_CONFIG: $KUBECONFIG_DEV_CONTENT
      NAMESPACE: backend-dev
