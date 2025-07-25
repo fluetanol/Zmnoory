@@ -4,8 +4,29 @@ environment: dev
 spring:
   profile: k8s
 
+# Database Configuration (will be overridden by CI/CD)
+database:
+  url: "__DB_URL__"
+  username: "__DB_USERNAME__"
+  password: "__DB_PASSWORD__"
+  
+# Redis Configuration (will be overridden by CI/CD)
+redis:
+  host: "__REDIS_HOST__"
+  port: "__REDIS_PORT__"
+  password: "__REDIS_PASSWORD__"
+
+# JWT Configuration (will be overridden by CI/CD)
 jwt:
-  secret: "__REPLACE_ME__"
+  secret: "__JWT_SECRET__"
+  issuer: "__JWT_ISSUER__"
+  expiration: "__JWT_EXPIRATION__"
+  prefix: "__JWT_PREFIX__"
+  header: "__JWT_HEADER__"
+
+# Application Configuration
+app:
+  name: "__APP_NAME__"
 
 # Default values for zmnnoory-backend.
 # This is a YAML-formatted file.
