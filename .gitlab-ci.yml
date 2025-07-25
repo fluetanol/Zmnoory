@@ -177,8 +177,8 @@ deploy_frontend_prod:
 deploy_backend_dev:
    stage: deploy
    image:
-     name: bitnami/kubectl:latest
-     entrypoint: ['']
+    name: lachlanevenson/k8s-helm:v3.14.4
+    entrypoint: ['']
    variables:
      KUBE_CONFIG: $KUBECONFIG_DEV_CONTENT
      NAMESPACE: backend-dev
@@ -208,7 +208,9 @@ deploy_backend_dev:
 # Backend 운영 환경 배포 (Helm)
 deploy_backend_prod:
    stage: deploy
-   image: bitnami/kubectl:latest
+   image:
+    name: lachlanevenson/k8s-helm:v3.14.4
+    entrypoint: ['']
    variables:
      KUBE_CONFIG: $KUBECONFIG_PROD_CONTENT
      NAMESPACE: backend-prod
