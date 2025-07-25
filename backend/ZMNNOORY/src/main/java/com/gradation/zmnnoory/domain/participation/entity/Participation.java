@@ -3,7 +3,7 @@ package com.gradation.zmnnoory.domain.participation.entity;
 import com.gradation.zmnnoory.common.entity.BaseEntity;
 import com.gradation.zmnnoory.domain.member.entity.Member;
 import com.gradation.zmnnoory.domain.participation.status.ParticipationStatus;
-import com.gradation.zmnnoory.domain.stage.entity.Stage;
+import com.gradation.zmnnoory.domain.game.entity.Game;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -20,7 +20,7 @@ import java.util.UUID;
 public class Participation extends BaseEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -28,8 +28,8 @@ public class Participation extends BaseEntity {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "stage_id", nullable = false)
-    private Stage stage;
+    @JoinColumn(name = "game_id", nullable = false)
+    private Game game;
 
     private LocalDate startedAt;
     private LocalDate endedAt;
@@ -56,11 +56,11 @@ public class Participation extends BaseEntity {
     }
 
     @Builder
-    public Participation(Member member, Stage stage, LocalDate startedAt, 
-                        LocalDate endedAt, ParticipationStatus status, 
-                        Integer frameCount, String videoUrl, String thumbnailUrl) {
+    public Participation(Member member, Game game, LocalDate startedAt,
+                         LocalDate endedAt, ParticipationStatus status,
+                         Integer frameCount, String videoUrl, String thumbnailUrl) {
         this.member = member;
-        this.stage = stage;
+        this.game = game;
         this.startedAt = startedAt;
         this.endedAt = endedAt;
         this.status = status;
