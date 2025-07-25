@@ -99,30 +99,10 @@ build_backend:
 docker_backend:
   stage: docker
   image: docker:24
-  # DinD requires privileged runner
-  services:
-    - name: docker:24-dind
-      alias: docker
-      command: ["--tls=false"]
   variables:
-    DOCKER_HOST: tcp://docker:2375
-    DOCKER_TLS_CERTDIR: ""
     DOCKER_DRIVER: overlay2
-    # 로컬 레지스트리 인증 정보 (필요 시). 익명 푸시가 가능하면 제거 가능
-    REGISTRY_USER: "$REGISTRY_USER"
-    REGISTRY_PASS: "$REGISTRY_PASS"
   before_script:
-    - |
-      echo "Waiting for Docker daemon..."
-      until docker info >/dev/null 2>&1; do echo "Waiting for docker daemon..."; sleep 1; done
-      echo "Docker daemon is ready!"
-      echo "Logging into local registry..."
-      echo "Registry: $REGISTRY_ADDR"
-      if [ -n "$REGISTRY_USER" ]; then
-        echo "$REGISTRY_PASS" | docker login -u "$REGISTRY_USER" --password-stdin "$REGISTRY_ADDR"
-      else
-        echo "Anonymous push enabled; skipping login"
-      fi
+    - echo "Starting Docker build process..."
   script:
     - echo "Building Docker image..."
     - docker build -t $DOCKER_IMAGE:$DOCKER_TAG .
