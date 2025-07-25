@@ -189,12 +189,13 @@ deploy_backend_dev:
      - kubectl cluster-info
    script:
      - echo "Deploying backend (dev) via Helm"
-     - helm upgrade --install backend-dev infra/zmnnoory-backend \
-         --namespace $NAMESPACE --create-namespace \
-         --set image.repository=$DOCKER_IMAGE \
-         --set image.tag=$DOCKER_TAG \
-         --set-string jwt.secret=$JWT_SECRET \
-         --wait
+     - |
+      helm upgrade --install backend-dev infra/zmnnoory-backend \
+        --namespace $NAMESPACE --create-namespace \
+        --set image.repository=$DOCKER_IMAGE \
+        --set image.tag=$DOCKER_TAG \
+        --set-string jwt.secret=$JWT_SECRET \
+        --wait
    after_script:
      - rm -f ~/.kube/config
    dependencies:
