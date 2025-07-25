@@ -99,31 +99,10 @@ build_backend:
 docker_backend:
   stage: docker
   image: docker:24
-  # DinD requires privileged runner
-  privileged: true
-  services:
-    - name: docker:24-dind
-      alias: docker
-      command: ["--tls=false"]
   variables:
-    DOCKER_HOST: tcp://docker:2375
-    DOCKER_TLS_CERTDIR: ""
     DOCKER_DRIVER: overlay2
-    # 로컬 레지스트리 인증 정보 (필요 시). 익명 푸시가 가능하면 제거 가능
-    REGISTRY_USER: "$REGISTRY_USER"
-    REGISTRY_PASS: "$REGISTRY_PASS"
   before_script:
-    - |
-      echo "Waiting for Docker daemon..."
-      until docker info >/dev/null 2>&1; do echo "Waiting for docker daemon..."; sleep 1; done
-      echo "Docker daemon is ready!"
-      echo "Logging into local registry..."
-      echo "Registry: $REGISTRY_ADDR"
-      if [ -n "$REGISTRY_USER" ]; then
-        echo "$REGISTRY_PASS" | docker login -u "$REGISTRY_USER" --password-stdin "$REGISTRY_ADDR"
-      else
-        echo "Anonymous push enabled; skipping login"
-      fi
+    - echo "Starting Docker build process..."
   script:
     - echo "Building Docker image..."
     - docker build -t $DOCKER_IMAGE:$DOCKER_TAG .
@@ -197,7 +176,9 @@ deploy_frontend_prod:
 # Backend 개발 환경 배포 (Helm)
 deploy_backend_dev:
    stage: deploy
-   image: bitnami/kubectl:latest
+   image:
+    name: alpine/k8s:1.30.2
+    entrypoint: ['']
    variables:
      KUBE_CONFIG: $KUBECONFIG_DEV_CONTENT
      NAMESPACE: backend-dev
@@ -206,14 +187,15 @@ deploy_backend_dev:
      - echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
      - helm version
      - kubectl cluster-info
-   script:
-     - echo "Deploying backend (dev) via Helm"
-     - helm upgrade --install backend-dev infra/zmnnoory-backend \
-         --namespace $NAMESPACE --create-namespace \
-         --set image.repository=$DOCKER_IMAGE \
-         --set image.tag=$DOCKER_TAG \
-         --set-string jwt.secret=$JWT_SECRET \
-         --wait
+   script: |
+     echo "Deploying backend (dev) via Helm"
+     ls -R infra | head        # <— 디버그용, 경로 존재 확인
+     helm upgrade --install backend-dev infra/zmnnoory-backend \
+       --namespace $NAMESPACE --create-namespace \
+       --set image.repository=$DOCKER_IMAGE \
+       --set image.tag=$DOCKER_TAG \
+       --set-string jwt.secret=$JWT_SECRET \
+       --wait
    after_script:
      - rm -f ~/.kube/config
    dependencies:
@@ -227,7 +209,9 @@ deploy_backend_dev:
 # Backend 운영 환경 배포 (Helm)
 deploy_backend_prod:
    stage: deploy
-   image: bitnami/kubectl:latest
+   image:
+    name: alpine/k8s:1.30.2
+    entrypoint: ['']
    variables:
      KUBE_CONFIG: $KUBECONFIG_PROD_CONTENT
      NAMESPACE: backend-prod
@@ -236,14 +220,14 @@ deploy_backend_prod:
      - echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
      - helm version
      - kubectl cluster-info
-   script:
-     - echo "Deploying backend (prod) via Helm"
-     - helm upgrade --install backend-prod infra/zmnnoory-backend \
-         --namespace $NAMESPACE --create-namespace \
-         --set image.repository=$DOCKER_IMAGE \
-         --set image.tag=$DOCKER_TAG \
-         --set-string jwt.secret=$JWT_SECRET \
-         --wait
+   script: |
+     echo "Deploying backend (prod) via Helm"
+     helm upgrade --install backend-prod ./infra/zmnnoory-backend \
+       --namespace $NAMESPACE --create-namespace \
+       --set image.repository=$DOCKER_IMAGE \
+       --set image.tag=$DOCKER_TAG \
+       --set-string jwt.secret=$JWT_SECRET \
+       --wait
    after_script:
      - rm -f ~/.kube/config
    dependencies:
@@ -286,20 +270,20 @@ verify_backend_prod:
 # =================================================================
 rollback_backend_dev:
   stage: deploy
-  image: 
-    name: bitnami/kubectl:latest
+  image:
+    name: alpine/k8s:1.30.2
     entrypoint: ['']
   variables:
     KUBE_CONFIG: $KUBECONFIG_DEV_CONTENT
-    KUBE_NAMESPACE: "zmnnoory-dev"
+    RELEASE: backend-dev
   before_script:
     - mkdir -p ~/.kube
     - echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
-  script:
-    - echo "Rolling back backend development deployment..."
-    - kubectl rollout undo deployment/$DEPLOYMENT_NAME -n $KUBE_NAMESPACE
-    - kubectl rollout status deployment/$DEPLOYMENT_NAME -n $KUBE_NAMESPACE --timeout=300s
-    - echo "Backend development rollback completed!"
+    - helm version
+  script: |
+    echo "Rolling back $RELEASE to previous revision..."
+    helm rollback $RELEASE 0        # 0 = 자동으로 직전 리비전
+    helm history  $RELEASE
   after_script:
     - rm -f ~/.kube/config
   rules:
@@ -308,20 +292,20 @@ rollback_backend_dev:
 
 rollback_backend_prod:
   stage: deploy
-  image: 
-    name: bitnami/kubectl:latest
+  image:
+    name: alpine/k8s:1.30.2
     entrypoint: ['']
   variables:
     KUBE_CONFIG: $KUBECONFIG_PROD_CONTENT
-    KUBE_NAMESPACE: "zmnnoory"
+    RELEASE: backend-prod
   before_script:
     - mkdir -p ~/.kube
     - echo "$KUBE_CONFIG" | base64 -d > ~/.kube/config
-  script:
-    - echo "Rolling back backend production deployment..."
-    - kubectl rollout undo deployment/$DEPLOYMENT_NAME -n $KUBE_NAMESPACE
-    - kubectl rollout status deployment/$DEPLOYMENT_NAME -n $KUBE_NAMESPACE --timeout=300s
-    - echo "Backend production rollback completed!"
+    - helm version
+  script: |
+    echo "Rolling back $RELEASE to previous revision..."
+    helm rollback $RELEASE 0
+    helm history  $RELEASE
   after_script:
     - rm -f ~/.kube/config
   rules:
