@@ -1,9 +1,12 @@
 package com.gradation.zmnnoory.domain.member.controller;
 
 import com.gradation.zmnnoory.common.dto.BaseResponse;
+import com.gradation.zmnnoory.domain.member.annotation.LoginMember;
 import com.gradation.zmnnoory.domain.member.dto.MemberUpdateRequest;
+import com.gradation.zmnnoory.domain.member.dto.request.PasswordUpdateRequest;
 import com.gradation.zmnnoory.domain.member.dto.request.SignUpRequest;
 import com.gradation.zmnnoory.domain.member.dto.response.MemberResponse;
+import com.gradation.zmnnoory.domain.member.entity.Member;
 import com.gradation.zmnnoory.domain.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -90,6 +93,27 @@ public class MemberController {
                 .status(HttpStatus.OK)
                 .message("업데이트 성공")
                 .data(memberService.updateUserInfoWith(email, memberUpdateRequest))
+                .build();
+    }
+
+    @Operation(
+            summary = "사용자 비밀번호 수정",
+            description = """
+            사용자의 비밀번호를 수정합니다.
+            - 이메일을 기준으로 사용자를 식별합니다.
+            - 요청 본문에 수정할 닉네임, 생년월일 정보가 포함되어야 합니다.
+            - 존재하지 않는 이메일일 경우 404 오류가 발생할 수 있습니다.
+            """
+    )
+
+    @PatchMapping("/password")
+    public BaseResponse<MemberResponse> updateUserPassword(
+            @LoginMember Member member,
+            @Validated PasswordUpdateRequest passwordUpdateRequest
+            ) {
+        return BaseResponse.<MemberResponse>builder()
+                .status(HttpStatus.OK)
+                .data(memberService.updateUserPassword(member, passwordUpdateRequest))
                 .build();
     }
     

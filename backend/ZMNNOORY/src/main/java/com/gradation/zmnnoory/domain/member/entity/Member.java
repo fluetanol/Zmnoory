@@ -78,4 +78,8 @@ public class Member extends BaseEntity {
 
         this.point -= point;
     }
+
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
+    }
 }

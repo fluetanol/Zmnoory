@@ -3,6 +3,7 @@ package com.gradation.zmnnoory.common.handler;
 import com.gradation.zmnnoory.common.dto.BaseResponse;
 import com.gradation.zmnnoory.common.exception.BaseException;
 import com.gradation.zmnnoory.common.exception.ValidException;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -30,5 +31,10 @@ public class ApiExceptionHandler {
     @ExceptionHandler(BaseException.class)
     public BaseResponse<?> handleBaseException(BaseException e) {
         return BaseResponse.fail(e.getValidations(), e.getMessage(), e.getStatus());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public BaseResponse<?> handleException(Exception e) {
+        return BaseResponse.fail(e.getCause(), e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
