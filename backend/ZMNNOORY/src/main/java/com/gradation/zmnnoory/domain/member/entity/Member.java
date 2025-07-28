@@ -44,13 +44,18 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private Long point = 0L;
 
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     @Builder
     private Member(String email,
                    String password,
                    Gender gender,
                    String nickname,
                    LocalDate birthday,
-                   Member recommender
+                   Member recommender,
+                   Role role
     ) {
         this.email = email;
         this.password = password;
@@ -58,11 +63,11 @@ public class Member extends BaseEntity {
         this.nickname = nickname;
         this.birthday = birthday;
         this.recommender = recommender;
+        this.role = role;
     }
 
     public void update(MemberUpdateRequest memberUpdateRequest) {
         this.email = memberUpdateRequest.email();
-        this.password = memberUpdateRequest.password();
         this.gender = memberUpdateRequest.gender();
         this.nickname = memberUpdateRequest.nickname();
         this.birthday = memberUpdateRequest.birthday();
@@ -78,5 +83,13 @@ public class Member extends BaseEntity {
         }
 
         this.point -= point;
+    }
+
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
+    }
+
+    public void updateRole() {
+        this.role = Role.ADMIN;
     }
 }
