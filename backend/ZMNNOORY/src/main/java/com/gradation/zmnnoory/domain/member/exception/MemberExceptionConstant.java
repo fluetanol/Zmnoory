@@ -14,6 +14,8 @@ public enum MemberExceptionConstant {
     MEMBER_NOT_FOUND_EXCEPTION("해당하는 회원이 없습니다.", HttpStatus.NOT_FOUND),
     INVALID_LOGIN_REQUEST_EXCEPTION("이메일 또는 비밀번호가 일치하지 않습니다.", HttpStatus.UNAUTHORIZED),
     INVALID_PASSWORD_EXCEPTION("비밀번호가 일치하지 않습니다.", HttpStatus.UNAUTHORIZED),
+    NO_LOGIN_INFO_EXCEPTION("로그인해야합니다.", HttpStatus.UNAUTHORIZED),
+    MEMBER_ROLE_EXCEPTION("권한이 없습니다.", HttpStatus.FORBIDDEN),
     ;
 
     private final String message;

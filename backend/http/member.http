@@ -10,15 +10,6 @@ Content-Type: application/json
   "birthday": "2000-01-01"
 }
 
-### create member fail 2
-POST http://localhost:8080/api/members/sign-up
-Content-Type: application/json
-
-{
-  "email" : "",
-  "password": "",
-  "gender": "MALE"
-}
 
 ### create member1
 POST http://localhost:8080/api/members/sign-up
@@ -80,12 +71,31 @@ Content-Type: application/json
     client.global.set("auth", response.body.body.data);
 %}
 
+### login success
+POST http://localhost:8080/api/members/login
+Content-Type: application/json
+
+{
+  "email" : "test2@test.com",
+  "password" : "123123123"
+}
+
+> {%
+    // Authorization 헤더 값을 가져와 전역 변수에 저장
+    client.global.set("auth", response.body.body.data);
+%}
+
+### admin required request
+GET http://localhost:8080/api/members/admin
+Authorization: Bearer {{auth}}
+
 ### password update
 PATCH http://localhost:8080/api/members/password
 Content-Type: application/json
-Authorization: bearer {{auth}}
+Authorization: Bearer {{auth}}
 
 {
   "originPassword": "123123123",
   "updatedPassword" : "321321321"
 }
+

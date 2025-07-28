@@ -5,6 +5,7 @@ import com.gradation.zmnnoory.domain.member.dto.request.PasswordUpdateRequest;
 import com.gradation.zmnnoory.domain.member.dto.response.MemberResponse;
 import com.gradation.zmnnoory.domain.member.entity.Gender;
 import com.gradation.zmnnoory.domain.member.entity.Member;
+import com.gradation.zmnnoory.domain.member.entity.Role;
 import com.gradation.zmnnoory.domain.member.exception.InvalidPasswordException;
 import com.gradation.zmnnoory.domain.member.exception.MemberNotFoundException;
 import com.gradation.zmnnoory.domain.member.repository.MemberRepository;
@@ -43,6 +44,7 @@ class MemberServiceTest {
                 .gender(Gender.MALE)
                 .birthday(LocalDate.of(2000, 1, 1))
                 .nickname("tester")
+                .role(Role.USER)
                 .build();
 
         memberRepository.save(member);
@@ -66,7 +68,7 @@ class MemberServiceTest {
             );
 
             // when
-            MemberResponse updatedMember = memberService.updateUserInfoWith(member.getEmail(), updateRequest);
+            MemberResponse updatedMember = memberService.updateMemberInfoWith(member.getEmail(), updateRequest);
 
             // then
             assertThat(updatedMember.getEmail()).isEqualTo(updateRequest.email());
@@ -90,7 +92,7 @@ class MemberServiceTest {
 
             // when & then
             assertThrows(MemberNotFoundException.class, () -> {
-                memberService.updateUserInfoWith(nonExistentMemberEmail, updateRequest);
+                memberService.updateMemberInfoWith(nonExistentMemberEmail, updateRequest);
             });
         }
     }
@@ -106,7 +108,7 @@ class MemberServiceTest {
             Member member = memberRepository.findByEmail("test@test.com").get();
             PasswordUpdateRequest request = new PasswordUpdateRequest("123123123", "321321321");
             // when
-            memberService.updateUserPassword(member, request);
+            memberService.updateMemberPassword(member, request);
 
             // then
             assertThat(passwordResolver.isInvalidPasswordOf(member, "321321321")).isFalse();
@@ -119,7 +121,7 @@ class MemberServiceTest {
             Member member = memberRepository.findByEmail("test@test.com").get();
             PasswordUpdateRequest request = new PasswordUpdateRequest("111111111", "321321321");
             // when then
-            assertThrows(InvalidPasswordException.class, () -> memberService.updateUserPassword(member, request));
+            assertThrows(InvalidPasswordException.class, () -> memberService.updateMemberPassword(member, request));
         }
     }
 }

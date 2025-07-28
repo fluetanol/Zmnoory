@@ -2,6 +2,7 @@ package com.gradation.zmnnoory.domain.member.handler;
 
 import com.gradation.zmnnoory.domain.member.dto.request.SignUpRequest;
 import com.gradation.zmnnoory.domain.member.entity.Member;
+import com.gradation.zmnnoory.domain.member.entity.Role;
 import com.gradation.zmnnoory.domain.member.resolver.PasswordResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,7 @@ public class MemberCreateHandler {
                 .gender(signUpRequest.gender())
                 .birthday(signUpRequest.birthday())
                 .recommender(recommender)
+                .role(Role.USER)
                 .build();
     }
 }
