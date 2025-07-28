@@ -1,7 +1,10 @@
 package com.gradation.zmnnoory.domain.game.controller;
 
 import com.gradation.zmnnoory.common.dto.BaseResponse;
-import com.gradation.zmnnoory.domain.game.dto.*;
+import com.gradation.zmnnoory.domain.game.dto.request.GameCreateRequest;
+import com.gradation.zmnnoory.domain.game.dto.request.GameSearchRequest;
+import com.gradation.zmnnoory.domain.game.dto.request.GameUpdateRequest;
+import com.gradation.zmnnoory.domain.game.dto.response.GameResponse;
 import com.gradation.zmnnoory.domain.game.service.GameService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

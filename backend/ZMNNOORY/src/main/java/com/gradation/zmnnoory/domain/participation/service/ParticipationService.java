@@ -7,13 +7,14 @@ import com.gradation.zmnnoory.domain.member.exception.MemberNotFoundException;
 import com.gradation.zmnnoory.domain.game.exception.GameNotFoundException;
 import com.gradation.zmnnoory.domain.participation.exception.AlreadyParticipatedException;
 import com.gradation.zmnnoory.domain.member.repository.MemberRepository;
-import com.gradation.zmnnoory.domain.participation.dto.EndParticipationRequest;
-import com.gradation.zmnnoory.domain.participation.dto.ParticipationResponse;
-import com.gradation.zmnnoory.domain.participation.dto.StartParticipationRequest;
+import com.gradation.zmnnoory.domain.participation.dto.request.EndParticipationRequest;
+import com.gradation.zmnnoory.domain.participation.dto.response.ParticipationResponse;
+import com.gradation.zmnnoory.domain.participation.dto.request.StartParticipationRequest;
 import com.gradation.zmnnoory.domain.participation.entity.Participation;
 import com.gradation.zmnnoory.domain.participation.entity.ParticipationStatus;
 import com.gradation.zmnnoory.domain.participation.exception.ParticipationNotFoundException;
 import com.gradation.zmnnoory.domain.participation.repository.ParticipationRepository;
+import com.gradation.zmnnoory.domain.video.service.VideoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +29,7 @@ public class ParticipationService {
     private final ParticipationRepository participationRepository;
     private final MemberRepository memberRepository;
     private final GameRepository gameRepository;
+    private final VideoService videoService;
 
     // 1. 게임 참여 시작
     public ParticipationResponse startParticipation(StartParticipationRequest request) {
@@ -59,9 +61,12 @@ public class ParticipationService {
 
         if (participation.getStatus() == ParticipationStatus.NOT_PARTICIPATED) {
             participation.complete();
-//          Long rewardPoint = participation.getGame().getPoint();
-//          Member member = participation.getMember();
-//          member.addPoint(rewardPoint);
+
+            videoService.createVideoForParticipation(participation);
+
+            Long rewardPoint = participation.getGame().getPoint();
+            Member member = participation.getMember();
+            member.addPoint(rewardPoint);
         }
 
         return ParticipationResponse.of(participation);
