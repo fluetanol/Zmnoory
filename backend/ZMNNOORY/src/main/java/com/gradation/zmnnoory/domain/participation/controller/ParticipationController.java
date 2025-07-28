@@ -1,9 +1,9 @@
 package com.gradation.zmnnoory.domain.participation.controller;
 
 import com.gradation.zmnnoory.common.dto.BaseResponse;
-import com.gradation.zmnnoory.domain.participation.dto.EndParticipationRequest;
-import com.gradation.zmnnoory.domain.participation.dto.ParticipationResponse;
-import com.gradation.zmnnoory.domain.participation.dto.StartParticipationRequest;
+import com.gradation.zmnnoory.domain.participation.dto.request.EndParticipationRequest;
+import com.gradation.zmnnoory.domain.participation.dto.response.ParticipationResponse;
+import com.gradation.zmnnoory.domain.participation.dto.request.StartParticipationRequest;
 import com.gradation.zmnnoory.domain.participation.service.ParticipationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

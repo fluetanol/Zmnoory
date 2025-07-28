@@ -1,6 +1,9 @@
 package com.gradation.zmnnoory.domain.game.service;
 
-import com.gradation.zmnnoory.domain.game.dto.*;
+import com.gradation.zmnnoory.domain.game.dto.request.GameCreateRequest;
+import com.gradation.zmnnoory.domain.game.dto.request.GameSearchRequest;
+import com.gradation.zmnnoory.domain.game.dto.request.GameUpdateRequest;
+import com.gradation.zmnnoory.domain.game.dto.response.GameResponse;
 import com.gradation.zmnnoory.domain.game.entity.Game;
 import com.gradation.zmnnoory.domain.game.entity.GameUpdater;
 import com.gradation.zmnnoory.domain.game.exception.GameNotFoundException;
