@@ -62,7 +62,6 @@ public class Member extends BaseEntity {
 
     public void update(MemberUpdateRequest memberUpdateRequest) {
         this.email = memberUpdateRequest.email();
-        this.password = memberUpdateRequest.password();
         this.gender = memberUpdateRequest.gender();
         this.nickname = memberUpdateRequest.nickname();
         this.birthday = memberUpdateRequest.birthday();
@@ -78,5 +77,9 @@ public class Member extends BaseEntity {
         }
 
         this.point -= point;
+    }
+
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
     }
 }

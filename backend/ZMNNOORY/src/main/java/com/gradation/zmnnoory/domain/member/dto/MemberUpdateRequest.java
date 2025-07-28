@@ -14,10 +14,6 @@ public record MemberUpdateRequest(
         @NotBlank(message = "이메일은 필수 값입니다.")
         String email,
 
-
-        @NotBlank(message = "비밀번호는 필수 값입니다.")
-        String password,
-
         @NotNull(message = "성별은 필수 값입니다.")
         Gender gender,
 

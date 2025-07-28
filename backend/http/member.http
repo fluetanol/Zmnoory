@@ -80,13 +80,12 @@ Content-Type: application/json
     client.global.set("auth", response.body.body.data);
 %}
 
-
-### response test1
-GET http://localhost:8080/api/members/1
+### password update
+PATCH http://localhost:8080/api/members/password
 Content-Type: application/json
-Authorization: Bearer {{auth}}
+Authorization: bearer {{auth}}
 
-### response test2
-GET http://localhost:8080/api/members
-Content-Type: application/json
-Authorization: Bearer {{auth}}
+{
+  "originPassword": "123123123",
+  "updatedPassword" : "321321321"
+}
