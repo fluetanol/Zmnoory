@@ -220,7 +220,12 @@ deploy_backend_dev:
        --set-string jwt.issuer=$JWT_ISSUER \
        --set-string jwt.prefix=$JWT_TOKEN_PREFIX \
        --set-string jwt.header=$JWT_HEADER \
-       --wait
+       --wait --debug
+
+     echo "Deployment completed. Checking status..."
+     kubectl get pods -n $NAMESPACE
+     kubectl get svc -n $NAMESPACE
+     kubectl rollout status deployment/backend-dev -n $NAMESPACE
    after_script:
      - rm -f ~/.kube/config
    dependencies:
