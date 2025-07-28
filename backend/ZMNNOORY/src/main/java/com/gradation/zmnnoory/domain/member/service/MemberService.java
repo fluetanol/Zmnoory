@@ -55,14 +55,14 @@ public class MemberService {
     }
 
     @Transactional
-    public MemberResponse updateUserInfoWith(String email, MemberUpdateRequest memberUpdateRequest) {
+    public MemberResponse updateMemberInfoWith(String email, MemberUpdateRequest memberUpdateRequest) {
         Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
         member.update(memberUpdateRequest);
         return MemberResponse.of(member);
     }
 
     @Transactional
-    public MemberResponse updateUserPassword(Member member, PasswordUpdateRequest passwordUpdateRequest) {
+    public MemberResponse updateMemberPassword(Member member, PasswordUpdateRequest passwordUpdateRequest) {
         if (passwordResolver.isInvalidPasswordOf(member, passwordUpdateRequest.getOriginPassword())) {
             throw new InvalidPasswordException();
         }
@@ -75,5 +75,11 @@ public class MemberService {
 
     public Member findByEmail(String email) {
         return memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
+    }
+
+    public MemberResponse updateMemberRole(Long targetId) {
+        Member member = memberRepository.findById(targetId).orElseThrow(MemberNotFoundException::new);
+        member.updateRole();
+        return MemberResponse.of(member);
     }
 }
