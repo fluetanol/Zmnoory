@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
-public enum GameExceptionConstants {
+public enum GameExceptionConstant {
 
     GAME_NOT_FOUND_EXCEPTION("존재하지 않는 게임입니다.", HttpStatus.NOT_FOUND),
     ;
