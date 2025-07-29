@@ -74,6 +74,9 @@ public class ParticipationService {
 
     // 3. 한 멤버의 전체 참여 리스트
     public List<ParticipationResponse> getParticipationsByMember(Long memberId) {
+        if (!memberRepository.existsById(memberId)) {
+            throw new MemberNotFoundException();
+        }
         return participationRepository.findByMemberId(memberId).stream()
                 .map(ParticipationResponse::of)
                 .toList();
