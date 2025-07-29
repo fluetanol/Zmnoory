@@ -5,6 +5,8 @@ import com.gradation.zmnnoory.domain.comment.dto.request.CommentCreateRequest;
 import com.gradation.zmnnoory.domain.comment.dto.request.CommentUpdateRequest;
 import com.gradation.zmnnoory.domain.comment.dto.response.CommentResponse;
 import com.gradation.zmnnoory.domain.comment.service.CommentService;
+import com.gradation.zmnnoory.domain.member.annotation.LoginMember;
+import com.gradation.zmnnoory.domain.member.entity.Member;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -24,6 +26,7 @@ public class CommentController {
 
     private final CommentService commentService;
 
+    // 1. 특정 비디오에 댓글 작성
     @Operation(
             summary = "댓글 작성",
             description = """
@@ -35,15 +38,16 @@ public class CommentController {
     @PostMapping("/videos/{videoId}")
     public BaseResponse<CommentResponse> createComment(
             @PathVariable Long videoId,
-            @RequestParam Long memberId,
+            @LoginMember Member member,
             @Valid @RequestBody CommentCreateRequest request) {
 
         return BaseResponse.<CommentResponse>builder()
                 .status(HttpStatus.CREATED)
-                .data(commentService.createComment(videoId, memberId, request))
+                .data(commentService.createComment(videoId, member.getId(), request))
                 .build();
     }
 
+    // 2. 특정 비디오의 전체 댓글 조회
     @Operation(
             summary = "비디오 댓글 목록 조회",
             description = """
@@ -60,6 +64,7 @@ public class CommentController {
                 .build();
     }
 
+    // 3. 자신이 작성한 댓글 수정
     @Operation(
             summary = "댓글 수정",
             description = """
@@ -71,15 +76,16 @@ public class CommentController {
     @PutMapping("/{commentId}")
     public BaseResponse<CommentResponse> updateComment(
             @PathVariable Long commentId,
-            @RequestParam Long memberId,
+            @LoginMember Member member,
             @Valid @RequestBody CommentUpdateRequest request) {
 
         return BaseResponse.<CommentResponse>builder()
                 .status(HttpStatus.OK)
-                .data(commentService.updateComment(commentId, memberId, request))
+                .data(commentService.updateComment(commentId, member.getId(), request))
                 .build();
     }
 
+    // 4. 자신이 작성한 댓글 삭제
     @Operation(
             summary = "댓글 삭제",
             description = """
@@ -90,14 +96,15 @@ public class CommentController {
     @DeleteMapping("/{commentId}")
     public BaseResponse<Void> deleteComment(
             @PathVariable Long commentId,
-            @RequestParam Long memberId) {
+            @LoginMember Member member) {
 
-        commentService.deleteComment(commentId, memberId);
+        commentService.deleteComment(commentId, member.getId());
         return BaseResponse.<Void>builder()
                 .status(HttpStatus.NO_CONTENT)
                 .build();
     }
 
+    // 5. 비디오 댓글 수 조회
     @Operation(
             summary = "비디오 댓글 수 조회",
             description = "특정 비디오의 총 댓글 수를 조회합니다."

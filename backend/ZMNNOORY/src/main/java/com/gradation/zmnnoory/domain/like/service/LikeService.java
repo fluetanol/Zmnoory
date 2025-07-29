@@ -2,7 +2,6 @@ package com.gradation.zmnnoory.domain.like.service;
 
 import com.gradation.zmnnoory.domain.like.dto.response.LikeResponse;
 import com.gradation.zmnnoory.domain.like.entity.Like;
-import com.gradation.zmnnoory.domain.like.exception.LikeAlreadyExistsException;
 import com.gradation.zmnnoory.domain.like.exception.LikeNotFoundException;
 import com.gradation.zmnnoory.domain.like.repository.LikeRepository;
 import com.gradation.zmnnoory.domain.member.entity.Member;
@@ -41,7 +40,9 @@ public class LikeService {
             
             likeRepository.delete(like);
             log.info("좋아요 취소 완료. Video ID: {}, Member ID: {}", videoId, memberId);
-            isLiked = false;
+            
+            long likeCount = likeRepository.countByVideoId(videoId);
+            return LikeResponse.notLiked(videoId, memberId, likeCount);
         } else {
             Like like = Like.builder()
                     .video(video)
@@ -50,11 +51,10 @@ public class LikeService {
             
             likeRepository.save(like);
             log.info("좋아요 추가 완료. Video ID: {}, Member ID: {}", videoId, memberId);
-            isLiked = true;
+            
+            long likeCount = likeRepository.countByVideoId(videoId);
+            return LikeResponse.of(like, likeCount);
         }
-
-        long likeCount = likeRepository.countByVideoId(videoId);
-        return LikeResponse.of(videoId, memberId, isLiked, likeCount);
     }
 
     @Transactional(readOnly = true)
@@ -70,7 +70,13 @@ public class LikeService {
         boolean isLiked = likeRepository.existsByVideoIdAndMemberId(videoId, memberId);
         long likeCount = likeRepository.countByVideoId(videoId);
         
-        return LikeResponse.of(videoId, memberId, isLiked, likeCount);
+        if (isLiked) {
+            Like like = likeRepository.findByVideoIdAndMemberId(videoId, memberId)
+                    .orElseThrow(() -> new LikeNotFoundException(videoId, memberId));
+            return LikeResponse.of(like, likeCount);
+        } else {
+            return LikeResponse.notLiked(videoId, memberId, likeCount);
+        }
     }
 
     @Transactional(readOnly = true)
