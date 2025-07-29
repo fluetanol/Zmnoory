@@ -82,6 +82,10 @@ build_backend:
     DB_URL: "jdbc:postgresql://postgres:5432/development_db"
     REDIS_HOST: "redis"
     REDIS_PORT: "6379"
+    AWS_S3_BUCKET_NAME: "zmnnoory-media"
+    AWS_S3_BUCKET_REGION: "ap-northeast-2"
+    AWS_ACCESS_KEY_BACK: "AKIAXZMEDYBHI26S4HM3"
+    AWS_SECRET_KEY_BACK: "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"
   before_script:
     - cd backend/ZMNNOORY
     - chmod +x ./gradlew  # gradlew 실행 권한 부여
