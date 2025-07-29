@@ -3,6 +3,7 @@ package com.gradation.zmnnoory.domain.member.controller;
 import com.gradation.zmnnoory.common.dto.BaseResponse;
 import com.gradation.zmnnoory.domain.member.annotation.LoginMember;
 import com.gradation.zmnnoory.domain.member.dto.MemberUpdateRequest;
+import com.gradation.zmnnoory.domain.member.dto.request.LoginRequest;
 import com.gradation.zmnnoory.domain.member.dto.request.PasswordUpdateRequest;
 import com.gradation.zmnnoory.domain.member.dto.request.SignUpRequest;
 import com.gradation.zmnnoory.domain.member.dto.response.MemberResponse;
@@ -136,6 +137,28 @@ public class MemberController {
                 .status(HttpStatus.OK)
                 .message(String.format("%d 유저의 권한을 변경하였습니다.", targetId))
                 .data(memberService.updateMemberRole(targetId))
+                .build();
+    }
+
+    @PostMapping("/login")
+    @Operation(
+            summary = "로그인",
+            description = """
+                    사용자 로그인을 처리합니다.
+                    - 요청 본문에 이메일과 비밀번호가 포함되어야 합니다.
+                    - 인증 성공 시 JWT 토큰이 반환됩니다.
+                    - 인증 실패 시 401 Unauthorized 에러가 발생합니다.
+                    - 실제 로그인 처리는 JwtLoginFilter에서 수행됩니다.
+                    """
+    )
+    public BaseResponse<String> login(
+            @RequestBody @Validated LoginRequest loginRequest
+    ) {
+        // 이 메서드는 실제로 호출되지 않습니다. JwtLoginFilter에서 처리됩니다.
+        // Swagger 문서화를 위한 메서드입니다.
+        return BaseResponse.<String>builder()
+                .status(HttpStatus.ACCEPTED)
+                .data("JWT_TOKEN")
                 .build();
     }
 }
