@@ -7,16 +7,17 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
+@EnableMethodSecurity
 @EnableWebSecurity
 public class SecurityConfig {
 
@@ -24,8 +25,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             JwtAuthenticationFilter jwtAuthenticationFilter,
-            JwtLoginFilter jwtLoginFilter,
-            AccessDeniedHandler accessDeniedHandler) throws Exception {
+            JwtLoginFilter jwtLoginFilter) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable); // csrf 무효화
         http.formLogin(AbstractHttpConfigurer::disable); // formLogin 무효화
         http.httpBasic(AbstractHttpConfigurer::disable); // basic 로그인 무효화
@@ -54,7 +54,6 @@ public class SecurityConfig {
                                 "/api/members/sign-up"
                         ).anonymous() // 해당 주소는 로그인 안 한 사람만 접근 가능
                         .requestMatchers(
-                                "/api/members/admin",
                                 "/api/members/admin/**",
                                 "/api/games/admin/**",
                                 "/api/rewards/admin/**",
@@ -75,8 +74,6 @@ public class SecurityConfig {
 
         http.addFilterBefore(jwtAuthenticationFilter, JwtLoginFilter.class);
         http.addFilterAt(jwtLoginFilter, UsernamePasswordAuthenticationFilter.class);
-
-        http.exceptionHandling(e -> e.accessDeniedHandler(accessDeniedHandler));
 
         return http.build();
     }

@@ -25,16 +25,16 @@ public class Video extends BaseEntity {
     @Column(length = 30)
     private String title;
 
-    @Column(length = 255)
+    @Column(nullable = false)
     private String description;
 
     @Column(nullable = false)
     private boolean isPublic;
 
-    @Column(length = 255)
+    @Column(nullable = false)
     private String videoUrl;
 
-    @Column(length = 255)
+    @Column(nullable = false)
     private String thumbnailUrl;
 
     @Builder
