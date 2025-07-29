@@ -38,4 +38,11 @@ public class Product extends BaseEntity {
         this.price = price;
         this.thumbnail = thumbnail;
     }
+    
+    public void update(String title, Category category, Long price, String thumbnail) {
+        this.title = title;
+        this.category = category;
+        this.price = price;
+        this.thumbnail = thumbnail;
+    }
 }

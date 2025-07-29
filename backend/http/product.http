@@ -1,0 +1,56 @@
+### login success
+POST http://localhost:8080/api/members/login
+Content-Type: application/json
+
+{
+  "email" : "test1@test.com",
+  "password" : "123123123"
+}
+
+> {%
+    // Authorization 헤더 값을 가져와 전역 변수에 저장
+    client.global.set("auth", response.body.body.data);
+%}
+
+### 상품 생성
+POST http://localhost:8080/api/products
+Content-Type: application/json
+
+{
+  "title": "스타벅스 아메리카노",
+  "category": "CAFE",
+  "price": 4500,
+  "thumbnail": "https://example.com/americano.jpg"
+}
+
+### 상품 생성
+POST http://localhost:8080/api/products
+Content-Type: application/json
+Authorization: Bearer {{auth}}
+
+{
+  "title": "스타벅스 아메리카노",
+  "category": "CAFE",
+  "price": 4500,
+  "thumbnail": "https://example.com/americano.jpg"
+}
+
+### 모든 상품 조회
+GET http://localhost:8080/api/products
+
+### 상품 단건 조회
+GET http://localhost:8080/api/products/1
+
+### 상품 수정
+PUT http://localhost:8080/api/products/1
+Content-Type: application/json
+
+{
+  "title": "스타벅스 카페라떼",
+  "category": "CAFE",
+  "price": 5000,
+  "thumbnail": "https://example.com/latte.jpg"
+}
+
+### 상품 삭제
+DELETE http://localhost:8080/api/products/1

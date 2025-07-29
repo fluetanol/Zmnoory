@@ -1,7 +1,9 @@
 package com.gradation.zmnnoory.domain.product.entity;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+@Getter
 @RequiredArgsConstructor
 public enum Category {
 
