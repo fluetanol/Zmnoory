@@ -47,7 +47,7 @@
             log.info("댓글 생성 완료. Comment ID: {}, Video ID: {}, Member ID: {}",
                     savedComment.getId(), videoId, memberId);
 
-            return CommentResponse.from(savedComment);
+            return CommentResponse.of(savedComment);
         }
 
         @Transactional(readOnly = true)
@@ -57,7 +57,7 @@
             }
 
             return commentRepository.findByVideoIdOrderByCreatedAtAsc(videoId).stream()
-                    .map(CommentResponse::from)
+                    .map(CommentResponse::of)
                     .toList();
         }
 
@@ -72,7 +72,7 @@
             comment.updateContent(request.content());
             log.info("댓글 수정 완료. Comment ID: {}, Member ID: {}", commentId, memberId);
 
-            return CommentResponse.from(comment);
+            return CommentResponse.of(comment);
         }
 
         public void deleteComment(Long commentId, Long memberId) {
