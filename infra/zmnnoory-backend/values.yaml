@@ -24,6 +24,14 @@ jwt:
   prefix: "__JWT_PREFIX__"
   header: "__JWT_HEADER__"
 
+# AWS S3 Configuration (will be overridden by CI/CD)
+aws:
+  s3:
+    bucketName: "__AWS_S3_BUCKET_NAME__"
+    region: "__AWS_S3_REGION__"
+  accessKey: "__AWS_ACCESS_KEY_BACK__"
+  secretKey: "__AWS_SECRET_KEY_BACK__"
+
 # Application Configuration
 app:
   name: "__APP_NAME__"
