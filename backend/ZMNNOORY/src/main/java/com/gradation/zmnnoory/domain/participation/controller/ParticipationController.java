@@ -1,6 +1,8 @@
 package com.gradation.zmnnoory.domain.participation.controller;
 
 import com.gradation.zmnnoory.common.dto.BaseResponse;
+import com.gradation.zmnnoory.domain.member.annotation.LoginMember;
+import com.gradation.zmnnoory.domain.member.entity.Member;
 import com.gradation.zmnnoory.domain.participation.dto.request.EndParticipationRequest;
 import com.gradation.zmnnoory.domain.participation.dto.response.ParticipationResponse;
 import com.gradation.zmnnoory.domain.participation.dto.request.StartParticipationRequest;
@@ -77,6 +79,25 @@ public class ParticipationController {
         return BaseResponse.<List<ParticipationResponse>>builder()
                 .status(HttpStatus.OK)
                 .data(participationService.getParticipationsByMember(memberId))
+                .build();
+    }
+    
+    // 4. 로그인한 멤버의 모든 참여 조회
+    @Operation(
+            summary = "로그인한 멤버의 모든 참여 내역 조회",
+            description = """
+            현재 로그인한 사용자의 모든 참여 정보를 조회합니다.
+            - 참여한 게임, 상태(NOT_PARTICIPATED, COMPLETED) 등의 정보를 포함합니다.
+            - 로그인하지 않은 경우 인증 에러가 발생할 수 있습니다.
+            """
+    )
+    @GetMapping("/member/me")
+    public BaseResponse<List<ParticipationResponse>> getMyParticipations(
+            @LoginMember Member member) {
+
+        return BaseResponse.<List<ParticipationResponse>>builder()
+                .status(HttpStatus.OK)
+                .data(participationService.getParticipationsByMember(member.getId()))
                 .build();
     }
 }
