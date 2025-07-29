@@ -23,4 +23,8 @@ data:
   # JWT Configuration (non-sensitive)
   JWT_ISSUER: "{{ .Values.jwt.issuer }}"
   JWT_TOKEN_PREFIX: "{{ .Values.jwt.prefix }}"
-  JWT_HEADER: "{{ .Values.jwt.header }}" 
+  JWT_HEADER: "{{ .Values.jwt.header }}"
+  
+  # AWS S3 Configuration (non-sensitive)
+  AWS_S3_BUCKET_NAME: "{{ .Values.aws.s3.bucketName }}"
+  AWS_S3_REGION: "{{ .Values.aws.s3.region }}" 
