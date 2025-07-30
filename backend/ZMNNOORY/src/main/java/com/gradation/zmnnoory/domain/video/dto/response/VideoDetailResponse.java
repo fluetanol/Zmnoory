@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 public record VideoDetailResponse(
         Long id,
         Long participationId,
+        String memberNickname,
+        String gameTitle,
         String title,
         String description,
         Boolean isPublic,
@@ -20,6 +22,8 @@ public record VideoDetailResponse(
         return new VideoDetailResponse(
                 video.getId(),
                 video.getParticipation().getId(),
+                video.getParticipation().getMember().getNickname(),
+                video.getParticipation().getGame().getTitle(),
                 video.getTitle(),
                 video.getDescription(),
                 video.isPublic(),
