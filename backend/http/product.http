@@ -15,17 +15,6 @@ Content-Type: application/json
 ### 상품 생성
 POST http://localhost:8080/api/products
 Content-Type: application/json
-
-{
-  "title": "스타벅스 아메리카노",
-  "category": "CAFE",
-  "price": 4500,
-  "thumbnail": "https://example.com/americano.jpg"
-}
-
-### 상품 생성
-POST http://localhost:8080/api/products
-Content-Type: application/json
 Authorization: Bearer {{auth}}
 
 {
