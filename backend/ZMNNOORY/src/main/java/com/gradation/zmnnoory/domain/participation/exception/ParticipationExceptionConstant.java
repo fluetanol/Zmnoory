@@ -12,6 +12,8 @@ public enum ParticipationExceptionConstant {
 
     ALREADY_PARTICIPATED_EXCEPTION("이미 리워드를 받은 게임입니다", HttpStatus.CONFLICT),
 
+    PARTICIPATION_ALREADY_COMPLETED("이미 완료된 참여입니다.", HttpStatus.CONFLICT),
+
     GAME_NOT_FOUND_EXCEPTION("게임을 찾을 수 없습니다", HttpStatus.NOT_FOUND);
 
     private final String message;
