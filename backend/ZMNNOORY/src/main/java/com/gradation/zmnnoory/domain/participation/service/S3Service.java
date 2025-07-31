@@ -51,7 +51,8 @@
                 return PresignedUrlResponse.of(
                         participationId,
                         presignedRequest.url().toString(),
-                        key
+                        key,
+                        "Pre-signed URL이 생성되었습니다. 15분 내에 업로드를 완료해주세요."
                 );
 
 

@@ -67,21 +67,14 @@ public ParticipationResponse startParticipation(StartParticipationRequest reques
             throw new ParticipationAlreadyCompletedException();
         }
 
-        PresignedUrlResponse s3Response = s3Service.generatePreSignedUrl(
+        return s3Service.generatePreSignedUrl(
                 participation.getId(),
                 participation.getMember().getId(),
                 participation.getGame().getId(),
                 request.fileName(),
                 request.contentType()
         );
-
-        return PresignedUrlResponse.of(
-                participation.getId(),
-                s3Response.uploadUrl(),
-                s3Response.objectKey()
-        );
     }
-
 
     // 3. 참여 완료 처리 (업로드 성공 후)
     public ParticipationResponse completeParticipation(CompleteParticipationRequest request) {
