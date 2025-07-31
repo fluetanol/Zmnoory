@@ -4,8 +4,8 @@ import com.gradation.zmnnoory.common.dto.BaseResponse;
 import com.gradation.zmnnoory.domain.member.annotation.LoginMember;
 import com.gradation.zmnnoory.domain.member.entity.Member;
 import com.gradation.zmnnoory.domain.participation.dto.request.EndParticipationRequest;
-import com.gradation.zmnnoory.domain.participation.dto.response.ParticipationResponse;
 import com.gradation.zmnnoory.domain.participation.dto.request.StartParticipationRequest;
+import com.gradation.zmnnoory.domain.participation.dto.response.ParticipationResponse;
 import com.gradation.zmnnoory.domain.participation.service.ParticipationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -45,7 +45,7 @@ public class ParticipationController {
                 .build();
     }
 
-    // 2. 게임 참여 종료 및 리워드 지급
+    // 2. 게임 참여 종료
     @Operation(
             summary = "게임 참여 종료 및 리워드 지급",
             description = """
