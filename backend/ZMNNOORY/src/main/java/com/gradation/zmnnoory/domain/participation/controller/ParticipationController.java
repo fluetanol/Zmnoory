@@ -3,9 +3,11 @@ package com.gradation.zmnnoory.domain.participation.controller;
 import com.gradation.zmnnoory.common.dto.BaseResponse;
 import com.gradation.zmnnoory.domain.member.annotation.LoginMember;
 import com.gradation.zmnnoory.domain.member.entity.Member;
-import com.gradation.zmnnoory.domain.participation.dto.request.EndParticipationRequest;
+import com.gradation.zmnnoory.domain.participation.dto.request.CompleteParticipationRequest;
+import com.gradation.zmnnoory.domain.participation.dto.request.PresignedUrlRequest;
 import com.gradation.zmnnoory.domain.participation.dto.request.StartParticipationRequest;
 import com.gradation.zmnnoory.domain.participation.dto.response.ParticipationResponse;
+import com.gradation.zmnnoory.domain.participation.dto.response.PresignedUrlResponse;
 import com.gradation.zmnnoory.domain.participation.service.ParticipationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -45,25 +47,46 @@ public class ParticipationController {
                 .build();
     }
 
-    // 2. 게임 참여 종료
+    // 2. 영상 업로드용 Presigned URL 생성
     @Operation(
-            summary = "게임 참여 종료 및 리워드 지급",
+            summary = "영상 업로드용 Presigned URL 생성",
             description = """
-            사용자의 게임 참여를 완료 처리하고, 처음 참여한 경우 리워드를 지급합니다.
-            - 이미 완료된 참여인 경우, 중복 지급은 방지됩니다.
+            참여한 게임에 대한 영상 업로드용 S3 Presigned URL을 생성합니다.
+            - 이미 완료된 참여에 대해서는 URL을 생성할 수 없습니다.
+            - 생성된 URL은 제한된 시간 동안만 유효합니다.
             """
     )
-    @PutMapping("/end")
-    public BaseResponse<ParticipationResponse> endParticipation(
-            @Valid @RequestBody EndParticipationRequest request) {
+    @PostMapping("/presigned-url")
+    public BaseResponse<PresignedUrlResponse> getPresignedUrl(
+            @Valid @RequestBody PresignedUrlRequest request) {
 
-        return BaseResponse.<ParticipationResponse>builder()
+        return BaseResponse.<PresignedUrlResponse>builder()
                 .status(HttpStatus.OK)
-                .data(participationService.endParticipation(request))
+                .data(participationService.getPresignedUrl(request))
                 .build();
     }
 
-    // 3. 특정 멤버의 모든 참여 조회
+    // 3. 참여 완료 처리 (업로드 성공 후)
+    @Operation(
+            summary = "참여 완료 및 리워드 지급",
+            description = """
+            영상 업로드 완료 후 참여를 완료 처리하고 리워드를 지급합니다.
+            - 업로드 완료된 영상 URL과 메타데이터를 포함해야 합니다.
+            - 이미 완료된 참여에 대해서는 중복 처리를 방지합니다.
+            """
+    )
+    @PutMapping("/complete")
+    public BaseResponse<ParticipationResponse> completeParticipation(
+            @Valid @RequestBody CompleteParticipationRequest request) {
+
+        return BaseResponse.<ParticipationResponse>builder()
+                .status(HttpStatus.OK)
+                .data(participationService.completeParticipation(request))
+                .build();
+    }
+
+
+    // 4. 특정 멤버의 모든 참여 조회
     @Operation(
             summary = "특정 멤버의 모든 참여 내역 조회",
             description = """
@@ -82,7 +105,7 @@ public class ParticipationController {
                 .build();
     }
     
-    // 4. 로그인한 멤버의 모든 참여 조회
+    // 5. 로그인한 멤버의 모든 참여 조회
     @Operation(
             summary = "로그인한 멤버의 모든 참여 내역 조회",
             description = """

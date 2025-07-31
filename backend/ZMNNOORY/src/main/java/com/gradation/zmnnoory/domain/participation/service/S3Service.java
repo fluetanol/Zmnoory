@@ -1,6 +1,6 @@
-    package com.gradation.zmnnoory.domain.video.service;
+    package com.gradation.zmnnoory.domain.participation.service;
 
-    import com.gradation.zmnnoory.domain.video.dto.response.PreSignedUrlResponse;
+    import com.gradation.zmnnoory.domain.participation.dto.response.PresignedUrlResponse;
     import com.gradation.zmnnoory.domain.video.exception.VideoUploadFailedException;
     import lombok.RequiredArgsConstructor;
     import lombok.extern.slf4j.Slf4j;
@@ -24,8 +24,8 @@
     
         private final S3Presigner presigner;
 
-        public PreSignedUrlResponse generatePreSignedUrl(
-                Long videoId, Long userId, Long gameId,
+        public PresignedUrlResponse generatePreSignedUrl(
+                Long participationId, Long userId, Long gameId,
                 String originalFileName, String contentType) {
 
             try {
@@ -45,7 +45,15 @@
 
                 PresignedPutObjectRequest presignedRequest = presigner.presignPutObject(presignRequest);
 
-                return PreSignedUrlResponse.of(videoId, presignedRequest.url().toString(), key);
+                log.info("Pre-signed URL 생성 완료 - participationId: {}, key: {}, url: {}",
+                        participationId, key, presignedRequest.url());
+
+                return PresignedUrlResponse.of(
+                        participationId,
+                        presignedRequest.url().toString(),
+                        key
+                );
+
 
             } catch (Exception e) {
                 log.error("Pre-signed URL 생성 실패: {}", e.getMessage(), e);
