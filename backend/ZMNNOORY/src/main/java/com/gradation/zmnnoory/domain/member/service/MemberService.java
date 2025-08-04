@@ -82,4 +82,18 @@ public class MemberService {
         member.updateRole();
         return MemberResponse.of(member);
     }
+
+    /**
+     * 닉네임 사용 가능 여부 반환
+     */
+    public boolean isNicknameAvailable(String nickname) {
+        return !memberRepository.existsByNickname(nickname);
+    }
+
+    /**
+     * 이메일 사용 가능 여부 반환
+     */
+    public boolean isEmailAvailable(String email) {
+        return !memberRepository.existsByEmail(email);
+    }
 }

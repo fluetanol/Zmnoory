@@ -29,6 +29,30 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    @Operation(summary = "닉네임 중복 체크", description = "주어진 닉네임이 사용 가능한지 확인합니다.")
+    @GetMapping("/check-nickname")
+    public BaseResponse<Boolean> checkNickname(
+            @RequestParam("nickname") String nickname
+    ) {
+        boolean available = memberService.isNicknameAvailable(nickname);
+        return BaseResponse.<Boolean>builder()
+                .status(HttpStatus.OK)
+                .data(available)
+                .build();
+    }
+
+    @Operation(summary = "이메일 중복 체크", description = "주어진 이메일이 사용 가능한지 확인합니다.")
+    @GetMapping("/check-email")
+    public BaseResponse<Boolean> checkEmail(
+            @RequestParam("email") String email
+    ) {
+        boolean available = memberService.isEmailAvailable(email);
+        return BaseResponse.<Boolean>builder()
+                .status(HttpStatus.OK)
+                .data(available)
+                .build();
+    }
+
     @PostMapping("/sign-up")
     @Operation(
             summary = "회원가입",
