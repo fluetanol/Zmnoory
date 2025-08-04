@@ -48,7 +48,9 @@ public class SecurityConfig {
                                 "/actuator/metrics",
                                 "/actuator/prometheus",
                                 "/swagger-ui/**",
-                                "/api-docs/**"
+                                "/api-docs/**",
+                                "/api/members/check-email/**",
+                                "/api/members/check-nickname/**"
                         ).permitAll() // 해당 주소는 아무나 접근 가능
                         .requestMatchers(
                                 "/api/members/sign-up"
@@ -71,7 +73,6 @@ public class SecurityConfig {
                         .anyRequest()
                         .denyAll() // 그외 주소는 로그인 해야만 접근 가능
                 );
-
         http.addFilterBefore(jwtAuthenticationFilter, JwtLoginFilter.class);
         http.addFilterAt(jwtLoginFilter, UsernamePasswordAuthenticationFilter.class);
 

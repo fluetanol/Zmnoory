@@ -10,6 +10,12 @@ Content-Type: application/json
   "birthday": "2000-01-01"
 }
 
+### check nickname duplicated
+GET http://localhost:8080/api/members/check-nickname?nickname=tester
+Content-Type: application/json
+
+### check email duplicated
+GET http://localhost:8080/api/members/check-email?email=test1@test.com
 
 ### create member1
 POST http://localhost:8080/api/members/sign-up
