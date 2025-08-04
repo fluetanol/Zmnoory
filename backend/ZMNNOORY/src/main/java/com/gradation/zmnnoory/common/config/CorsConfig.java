@@ -10,7 +10,7 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:8080") // 프론트 경로 넣으세요
+                .allowedOrigins("http://localhost:5173") // 프론트 경로 넣으세요
                 .allowedMethods("*")
                 .allowCredentials(true);
     }
