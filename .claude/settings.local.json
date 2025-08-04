@@ -5,7 +5,8 @@
       "Bash(./gradlew:*)",
       "Bash(touch:*)",
       "Bash(rm:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(find:*)"
     ],
     "deny": []
   }
