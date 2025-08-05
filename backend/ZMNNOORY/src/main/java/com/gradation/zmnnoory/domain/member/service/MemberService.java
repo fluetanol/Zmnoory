@@ -42,23 +42,23 @@ public class MemberService {
 
         Member newMember = memberCreateHandler.createMemberWith(signUpRequest, recommender);
         memberRepository.save(newMember);
-        return MemberResponse.of(newMember);
+        return MemberResponse.from(newMember);
     }
 
     public MemberResponse findById(Long id) {
         Member foundMember = memberRepository.findById(id).orElseThrow(MemberNotFoundException::new);
-        return MemberResponse.of(foundMember);
+        return MemberResponse.from(foundMember);
     }
 
     public List<MemberResponse> findAll() {
-        return memberRepository.findAll().stream().map(MemberResponse::of).toList();
+        return memberRepository.findAll().stream().map(MemberResponse::from).toList();
     }
 
     @Transactional
     public MemberResponse updateMemberInfoWith(String email, MemberUpdateRequest memberUpdateRequest) {
         Member member = memberRepository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
         member.update(memberUpdateRequest);
-        return MemberResponse.of(member);
+        return MemberResponse.from(member);
     }
 
     @Transactional
@@ -70,7 +70,7 @@ public class MemberService {
         String newPassword = passwordResolver.encodePassword(passwordUpdateRequest.getUpdatedPassword());
         member.updatePassword(newPassword);
 
-        return MemberResponse.of(member);
+        return MemberResponse.from(member);
     }
 
     public Member findByEmail(String email) {
@@ -80,7 +80,7 @@ public class MemberService {
     public MemberResponse updateMemberRole(Long targetId) {
         Member member = memberRepository.findById(targetId).orElseThrow(MemberNotFoundException::new);
         member.updateRole();
-        return MemberResponse.of(member);
+        return MemberResponse.from(member);
     }
 
     /**
@@ -98,6 +98,6 @@ public class MemberService {
     }
 
     public MemberResponse myInfo(Member me) {
-        return MemberResponse.of(me);
+        return MemberResponse.from(me);
     }
 }

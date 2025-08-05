@@ -2,6 +2,7 @@ package com.gradation.zmnnoory.domain.member.dto.response;
 
 import com.gradation.zmnnoory.domain.member.entity.Gender;
 import com.gradation.zmnnoory.domain.member.entity.Member;
+import com.gradation.zmnnoory.domain.member.entity.Role;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -16,18 +17,20 @@ public class MemberResponse {
     private final Gender gender;
     private final String recommenderEmail;
     private final Long point;
+    private final Role role;
 
     @Builder
-    private MemberResponse(String email, String nickname, LocalDate birthday, Gender gender, String recommenderEmail, Long point) {
+    private MemberResponse(String email, String nickname, LocalDate birthday, Gender gender, String recommenderEmail, Long point, Role role) {
         this.email = email;
         this.nickname = nickname;
         this.birthday = birthday;
         this.gender = gender;
         this.recommenderEmail = recommenderEmail;
         this.point = point;
+        this.role = role;
     }
 
-    public static MemberResponse of(Member member) {
+    public static MemberResponse from(Member member) {
         return MemberResponse.builder()
                 .email(member.getEmail())
                 .nickname(member.getNickname())
@@ -35,6 +38,7 @@ public class MemberResponse {
                 .gender(member.getGender())
                 .recommenderEmail(member.getRecommender() != null ? member.getRecommender().getEmail() : "추천인 없음")
                 .point(member.getPoint())
+                .role(member.getRole())
                 .build();
     }
 }
