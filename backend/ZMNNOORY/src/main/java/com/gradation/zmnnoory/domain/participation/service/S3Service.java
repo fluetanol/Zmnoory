@@ -30,7 +30,7 @@
 
             try {
                 String uuidFileName = generateUniqueFileName(originalFileName);
-                String key = String.format("즈문누리/%d/%d/%s", userId, gameId, uuidFileName);
+                String key = String.format("zmnnoory/%d/%d/%s", userId, gameId, uuidFileName);
 
                 PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                         .bucket(bucketName)
