@@ -1,12 +1,12 @@
 package com.gradation.zmnnoory.domain.video.service;
 
+import com.gradation.zmnnoory.domain.video.dto.request.Base64ImageRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.GetUrlRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.util.Base64;
@@ -23,23 +23,27 @@ public class VideoImageUploadService {
 
     private final S3Client s3Client;
 
-    public List<String> uploadBase64Images(List<String> base64Images) {
-        return base64Images.stream()
-                .map(this::uploadSingleImage)
-                .toList();
+    public void uploadBase64Images(Long userId, Long gameId, List<Base64ImageRequest> images) {
+        images.forEach(image -> uploadSingleImage(userId, gameId, image));
     }
 
-    private String uploadSingleImage(String base64String) {
+    private void uploadSingleImage(Long userId, Long gameId, Base64ImageRequest image) {
         try {
+            String fileName = image.fileName();
+            String base64String = image.data();
+
             String[] parts = base64String.split(",");
-            String metadata = parts[0]; // ex: data:image/png;base64
+            String metadata = parts[0];
             String base64Data = parts[1];
 
-            String contentType = metadata.split(":")[1].split(";")[0]; // image/png
-            String extension = contentType.split("/")[1];              // png
+            String contentType = metadata.split(":")[1].split(";")[0];
 
             byte[] bytes = Base64.getDecoder().decode(base64Data);
-            String key = "video/images/" + UUID.randomUUID() + "." + extension;
+            String extension = fileName.substring(fileName.lastIndexOf("."));
+            String nameWithoutExtension = fileName.substring(0, fileName.lastIndexOf("."));
+            String newFileName = nameWithoutExtension + "_" + UUID.randomUUID() + extension;
+
+            String key = String.format("zmnnoory/%d/%d/%s", userId, gameId, newFileName);
 
             s3Client.putObject(
                     PutObjectRequest.builder()
@@ -50,17 +54,10 @@ public class VideoImageUploadService {
                     RequestBody.fromBytes(bytes)
             );
 
-            String uploadedUrl = s3Client.utilities().getUrl(
-                    GetUrlRequest.builder()
-                            .bucket(bucketName)
-                            .key(key)
-                            .build()).toExternalForm();
-
-            log.info("이미지 업로드 성공: {}", uploadedUrl);
-            return uploadedUrl;
+            log.info("이미지 업로드 성공 - key: {}", key);
 
         } catch (Exception e) {
-            log.error("이미지 업로드 실패", e);
+            log.error("이미지 업로드 실패 - {}", image.fileName(), e);
             throw new RuntimeException("이미지 업로드 실패", e);
         }
     }

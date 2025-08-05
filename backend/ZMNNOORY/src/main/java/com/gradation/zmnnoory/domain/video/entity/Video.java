@@ -31,8 +31,7 @@ public class Video extends BaseEntity {
     @Column(nullable = false)
     private boolean isPublic;
 
-    @Lob
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(nullable = false)
     private String videoUrl;
 
     @Column(nullable = false)

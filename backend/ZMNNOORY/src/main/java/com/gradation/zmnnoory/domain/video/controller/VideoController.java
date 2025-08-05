@@ -1,18 +1,23 @@
     package com.gradation.zmnnoory.domain.video.controller;
 
     import com.gradation.zmnnoory.common.dto.BaseResponse;
+    import com.gradation.zmnnoory.domain.participation.entity.Participation;
+    import com.gradation.zmnnoory.domain.participation.repository.ParticipationRepository;
+    import com.gradation.zmnnoory.domain.video.dto.request.VideoImageUploadRequest;
     import com.gradation.zmnnoory.domain.video.dto.response.VideoDetailResponse;
     import com.gradation.zmnnoory.domain.video.dto.response.VideoSummaryResponse;
+    import com.gradation.zmnnoory.domain.video.entity.Video;
+    import com.gradation.zmnnoory.domain.video.exception.VideoNotFoundException;
+    import com.gradation.zmnnoory.domain.video.repository.VideoRepository;
+    import com.gradation.zmnnoory.domain.video.service.VideoImageUploadService;
     import com.gradation.zmnnoory.domain.video.service.VideoService;
     import io.swagger.v3.oas.annotations.Operation;
     import io.swagger.v3.oas.annotations.tags.Tag;
     import lombok.RequiredArgsConstructor;
     import org.springframework.http.HttpStatus;
+    import org.springframework.http.ResponseEntity;
     import org.springframework.validation.annotation.Validated;
-    import org.springframework.web.bind.annotation.GetMapping;
-    import org.springframework.web.bind.annotation.PathVariable;
-    import org.springframework.web.bind.annotation.RequestMapping;
-    import org.springframework.web.bind.annotation.RestController;
+    import org.springframework.web.bind.annotation.*;
 
     import java.util.List;
 
@@ -24,7 +29,9 @@
     public class VideoController {
 
         private final VideoService videoService;
-
+        private final ParticipationRepository participationRepository;
+        private final VideoRepository videoRepository;
+        private final VideoImageUploadService videoImageUploadService;
 
         // 1. 비디오 상세 페이지
         @Operation(summary = "비디오 상세 조회", description = "비디오 ID를 통해 상세 정보를 조회합니다.")
@@ -70,4 +77,24 @@
                     .data(videoService.getPublicVideos())
                     .build();
         }
+
+        @PostMapping("/images")
+        public ResponseEntity<Void> uploadVideoImages(
+                @RequestBody VideoImageUploadRequest request) {
+
+            // 1. videoId 기반으로 Video 조회
+            Video video = videoRepository.findById(request.videoId())
+                    .orElseThrow(() -> new VideoNotFoundException(request.videoId()));
+
+            Participation participation = video.getParticipation();
+            Long userId = participation.getMember().getId();
+            Long gameId = participation.getGame().getId();
+
+            // 2. 이미지 업로드
+            videoImageUploadService.uploadBase64Images(userId, gameId, request.images());
+
+            // 3. 성공 응답
+            return ResponseEntity.ok().build();
+        }
+
     }

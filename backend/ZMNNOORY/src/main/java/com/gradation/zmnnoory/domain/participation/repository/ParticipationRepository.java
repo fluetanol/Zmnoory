@@ -1,6 +1,7 @@
 package com.gradation.zmnnoory.domain.participation.repository;
 
 import com.gradation.zmnnoory.domain.participation.entity.Participation;
+import com.gradation.zmnnoory.domain.participation.entity.ParticipationStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,6 +12,8 @@ import java.util.Optional;
 public interface ParticipationRepository extends JpaRepository<Participation, Long> {
 
     List<Participation> findByMemberId(Long memberId);
+    
+    Optional<Participation> findByMemberIdAndStatus(Long memberId, ParticipationStatus status);
     
     Optional<Participation> findByMemberEmailAndGameTitle(String email, String gameTitle);
     
