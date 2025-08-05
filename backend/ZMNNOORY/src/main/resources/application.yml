@@ -11,8 +11,8 @@ spring:
 
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: ${REDIS_HOST_DEV}
+      port: ${REDIS_PORT_DEV}
   jpa:
     hibernate:
       ddl-auto: create-drop
