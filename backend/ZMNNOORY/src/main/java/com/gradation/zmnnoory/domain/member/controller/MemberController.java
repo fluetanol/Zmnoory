@@ -96,7 +96,7 @@ public class MemberController {
                     - 로그인이 필요합니다.
                     """
     )
-    @GetMapping
+    @GetMapping("/me")
     public BaseResponse<MemberResponse> me(
             @LoginMember Member me
     ) {
