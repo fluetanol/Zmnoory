@@ -6,7 +6,9 @@
       "Bash(touch:*)",
       "Bash(rm:*)",
       "Bash(mkdir:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(java:*)"
     ],
     "deny": []
   }
