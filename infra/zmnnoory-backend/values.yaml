@@ -12,8 +12,8 @@ database:
   
 # Redis Configuration (will be overridden by CI/CD)
 redis:
-  host: "__REDIS_HOST__"
-  port: "__REDIS_PORT__"
+  host: "__REDIS_HOST_DEV__"
+  port: "__REDIS_PORT_DEV__"
   password: "__REDIS_PASSWORD__"
 
 # JWT Configuration (will be overridden by CI/CD)
