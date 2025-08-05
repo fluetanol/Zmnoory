@@ -90,6 +90,23 @@ public class MemberController {
     }
 
     @Operation(
+            summary = "내 정보 조회",
+            description = """
+                    내 정보를 조회합니다.
+                    - 로그인이 필요합니다.
+                    """
+    )
+    @GetMapping("/me")
+    public BaseResponse<MemberResponse> me(
+            @LoginMember Member me
+    ) {
+        return BaseResponse.<MemberResponse>builder()
+                .status(HttpStatus.OK)
+                .data(memberService.myInfo(me))
+                .build();
+    }
+
+    @Operation(
             summary = "전체 사용자 목록 조회",
             description = """
                     시스템에 등록된 모든 사용자의 정보를 리스트 형태로 반환합니다.
