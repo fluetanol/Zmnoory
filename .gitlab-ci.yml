@@ -216,7 +216,8 @@ deploy_backend_dev:
        --set-string database.url=$DB_URL \
        --set-string database.username=$DB_USERNAME \
        --set-string database.password=$DB_PASSWORD \
-       --set-string redis.password=$REDIS_PASSWORD \
+       --set-string redis.host=$REDIS_HOST_DEV \
+       --set-string redis.port=$REDIS_PORT_DEV \
        --set-string jwt.secret=$JWT_SECRET \
        --set-string jwt.issuer=$JWT_ISSUER \
        --set-string jwt.prefix=$JWT_TOKEN_PREFIX \
