@@ -96,4 +96,8 @@ public class MemberService {
     public boolean isEmailAvailable(String email) {
         return !memberRepository.existsByEmail(email);
     }
+
+    public MemberResponse myInfo(Member me) {
+        return MemberResponse.of(me);
+    }
 }

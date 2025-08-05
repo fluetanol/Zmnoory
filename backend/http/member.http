@@ -77,6 +77,11 @@ Content-Type: application/json
     client.global.set("auth", response.body.body.data);
 %}
 
+###
+GET http://localhost:8080/api/members/me
+Content-Type: application/json
+Authorization: Bearer {{auth}}
+
 ### login success
 POST http://localhost:8080/api/members/login
 Content-Type: application/json
