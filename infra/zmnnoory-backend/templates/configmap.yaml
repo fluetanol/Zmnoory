@@ -17,8 +17,9 @@ data:
   DB_USERNAME: "{{ .Values.database.username }}"
   
   # Redis Configuration (non-sensitive)
-  REDIS_HOST: "{{ .Values.redis.host }}"
-  REDIS_PORT: "{{ .Values.redis.port }}"
+  REDIS_HOST_DEV: "{{ .Values.redis.host }}"
+  REDIS_PORT_DEV: "{{ .Values.redis.port }}"
+
   
   # JWT Configuration (non-sensitive)
   JWT_ISSUER: "{{ .Values.jwt.issuer }}"

@@ -1,13 +1,10 @@
     package com.gradation.zmnnoory.domain.video.controller;
 
     import com.gradation.zmnnoory.common.dto.BaseResponse;
-    import com.gradation.zmnnoory.domain.participation.entity.Participation;
     import com.gradation.zmnnoory.domain.participation.repository.ParticipationRepository;
     import com.gradation.zmnnoory.domain.video.dto.request.VideoImageUploadRequest;
     import com.gradation.zmnnoory.domain.video.dto.response.VideoDetailResponse;
     import com.gradation.zmnnoory.domain.video.dto.response.VideoSummaryResponse;
-    import com.gradation.zmnnoory.domain.video.entity.Video;
-    import com.gradation.zmnnoory.domain.video.exception.VideoNotFoundException;
     import com.gradation.zmnnoory.domain.video.repository.VideoRepository;
     import com.gradation.zmnnoory.domain.video.service.VideoImageUploadService;
     import com.gradation.zmnnoory.domain.video.service.VideoService;
@@ -78,23 +75,23 @@
                     .build();
         }
 
+        // 4. 이미지 업로드
+        @Operation(
+                summary = "비디오 관련 이미지 업로드",
+                description = """
+                비디오에 연관된 이미지들을 Base64 형식으로 업로드합니다.
+                - 요청 본문에는 비디오 ID와 Base64 인코딩된 이미지 리스트가 포함되어야 합니다.
+                - 이미지들은 S3에 저장되며, 고유한 파일명(UUID 기반)으로 업로드됩니다.
+                - 업로드는 모두 성공해야 하며, 실패 시 전체 트랜잭션이 롤백됩니다.
+                """
+        )
         @PostMapping("/images")
         public ResponseEntity<Void> uploadVideoImages(
                 @RequestBody VideoImageUploadRequest request) {
 
-            // 1. videoId 기반으로 Video 조회
-            Video video = videoRepository.findById(request.videoId())
-                    .orElseThrow(() -> new VideoNotFoundException(request.videoId()));
-
-            Participation participation = video.getParticipation();
-            Long userId = participation.getMember().getId();
-            Long gameId = participation.getGame().getId();
-
-            // 2. 이미지 업로드
-            videoImageUploadService.uploadBase64Images(userId, gameId, request.images());
-
-            // 3. 성공 응답
+            videoService.uploadVideoImages(request.videoId(), request.images());
             return ResponseEntity.ok().build();
         }
+
 
     }

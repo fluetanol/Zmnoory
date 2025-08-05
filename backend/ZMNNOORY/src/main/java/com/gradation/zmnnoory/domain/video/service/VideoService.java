@@ -1,7 +1,7 @@
     package com.gradation.zmnnoory.domain.video.service;
 
     import com.gradation.zmnnoory.domain.participation.entity.Participation;
-    import com.gradation.zmnnoory.domain.participation.service.S3Service;
+    import com.gradation.zmnnoory.domain.video.dto.request.Base64ImageRequest;
     import com.gradation.zmnnoory.domain.video.dto.response.VideoDetailResponse;
     import com.gradation.zmnnoory.domain.video.dto.response.VideoResponse;
     import com.gradation.zmnnoory.domain.video.dto.response.VideoSummaryResponse;
@@ -22,7 +22,7 @@
     public class VideoService {
 
         private final VideoRepository videoRepository;
-        private final S3Service s3Service;
+        private final VideoImageUploadService videoImageUploadService;
 
         // 1. 업로드 완료 후 Video 엔티티 생성 (실제 URL과 함께)
         public VideoResponse createVideoWithUploadedData(
@@ -70,6 +70,20 @@
                     .map(VideoSummaryResponse::from)
                     .toList();
         }
+
+        // 5. 이미지 업로드
+        @Transactional
+        public void uploadVideoImages(Long videoId, List<Base64ImageRequest> images) {
+            Video video = videoRepository.findById(videoId)
+                    .orElseThrow(() -> new VideoNotFoundException(videoId));
+
+            Participation participation = video.getParticipation();
+            Long userId = participation.getMember().getId();
+            Long gameId = participation.getGame().getId();
+
+            videoImageUploadService.uploadBase64Images(userId, gameId, images);
+        }
+
 
 
     }
