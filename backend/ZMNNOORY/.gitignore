@@ -1,5 +1,7 @@
 ### ZMNNOORY ###
 .env
+.env.prod
+.env.dev
 
 HELP.md
 .gradle

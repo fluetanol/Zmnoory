@@ -36,7 +36,7 @@ public class ProductController {
             - 관리자 권한이 필요합니다.
             """
     )
-    @PreAuthorize("hasRole('ADMIN')")
+    @AdminOnly
     @PostMapping
     public BaseResponse<ProductResponse> createProduct(
             @Valid @RequestBody ProductCreateRequest request) {
@@ -94,7 +94,7 @@ public class ProductController {
             - 관리자 권한이 필요합니다.
             """
     )
-    @PreAuthorize("hasRole('ADMIN')")
+    @AdminOnly
     @PutMapping("/{id}")
     public BaseResponse<ProductResponse> updateProduct(
             @PathVariable Long id, @Valid @RequestBody ProductUpdateRequest request) {
@@ -115,7 +115,7 @@ public class ProductController {
             - 관리자 권한이 필요합니다.
             """
     )
-    @PreAuthorize("hasRole('ADMIN')")
+    @AdminOnly
     @DeleteMapping("/{id}")
     public BaseResponse<Void> deleteProduct(
             @PathVariable Long id) {

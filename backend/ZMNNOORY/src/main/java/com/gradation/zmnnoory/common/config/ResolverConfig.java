@@ -1,6 +1,5 @@
 package com.gradation.zmnnoory.common.config;
 
-import com.gradation.zmnnoory.domain.member.resolver.AdminMemberArgumentResolver;
 import com.gradation.zmnnoory.domain.member.resolver.LoginMemberArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -14,11 +13,9 @@ import java.util.List;
 public class ResolverConfig implements WebMvcConfigurer {
 
     private final LoginMemberArgumentResolver loginMemberArgumentResolver;
-    private final AdminMemberArgumentResolver adminMemberArgumentResolver;
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(loginMemberArgumentResolver);
-        resolvers.add(adminMemberArgumentResolver);
     }
 }
