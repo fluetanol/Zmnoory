@@ -1,9 +1,7 @@
 package com.gradation.zmnnoory.domain.member.annotation;
 
-import java.lang.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
-@Target({ElementType.PARAMETER, ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
+@PreAuthorize("hasRole('ADMIN')")
 public @interface AdminOnly {
 }

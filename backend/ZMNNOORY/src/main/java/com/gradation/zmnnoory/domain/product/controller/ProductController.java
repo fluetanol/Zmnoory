@@ -36,7 +36,7 @@ public class ProductController {
             - 관리자 권한이 필요합니다.
             """
     )
-    @PreAuthorize("hasRole('ADMIN')")
+    @AdminOnly
     @PostMapping
     public BaseResponse<ProductResponse> createProduct(
             @Valid @RequestBody ProductCreateRequest request) {
