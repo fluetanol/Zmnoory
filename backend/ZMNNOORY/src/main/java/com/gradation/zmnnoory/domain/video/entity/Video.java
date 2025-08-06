@@ -34,7 +34,8 @@ public class Video extends BaseEntity {
     @Column(nullable = false)
     private String videoUrl;
 
-    @Column(nullable = false)
+    @Lob
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String thumbnailUrl;
 
     @Builder
