@@ -1,6 +1,7 @@
 package com.gradation.zmnnoory.domain.member.controller;
 
 import com.gradation.zmnnoory.common.dto.BaseResponse;
+import com.gradation.zmnnoory.domain.member.annotation.AdminOnly;
 import com.gradation.zmnnoory.domain.member.annotation.LoginMember;
 import com.gradation.zmnnoory.domain.member.dto.MemberUpdateRequest;
 import com.gradation.zmnnoory.domain.member.dto.request.LoginRequest;
@@ -115,6 +116,7 @@ public class MemberController {
                     - 권한은 운영팀에 문의하세요.
                     """
     )
+    @AdminOnly
     @GetMapping("/admin")
     public BaseResponse<List<MemberResponse>> getMembers() {
         return BaseResponse.<List<MemberResponse>>builder()
@@ -172,6 +174,7 @@ public class MemberController {
                     - 권한은 운영팀에 문의하세요
                     """
     )
+    @AdminOnly
     @PatchMapping("/admin/role-change/{targetId}")
     public BaseResponse<MemberResponse> updateMemberRole(@PathVariable Long targetId) {
         return BaseResponse.<MemberResponse>builder()

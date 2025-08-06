@@ -236,15 +236,13 @@ class ProductControllerTest {
         @DisplayName("일반 사용자는 상품을 삭제할 수 없다")
         void deleteProductTest() throws Exception {
             // when
-            clearAuthentication();
             ResultActions result = mockMvc.perform(
                     delete(BASE_URL + "/1")
                             .contentType(MediaType.APPLICATION_JSON)
             );
 
             // then
-            result.andExpect(status().isForbidden())
-                    .andDo(print());
+            result.andExpect(status().isForbidden());
         }
     }
 
