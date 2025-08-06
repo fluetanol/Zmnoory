@@ -68,7 +68,8 @@ public class SecurityConfig {
                                 "/api/games/**",
                                 "/api/rewards/**",
                                 "/api/participations/**",
-                                "/api/products/**"
+                                "/api/products/**",
+                                "/api/videos/**"
                         ).authenticated()
                         .anyRequest()
                         .denyAll() // 그외 주소는 로그인 해야만 접근 가능
