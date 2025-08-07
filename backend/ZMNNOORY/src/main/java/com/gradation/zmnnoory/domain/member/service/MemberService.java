@@ -105,18 +105,18 @@ public class MemberService {
         return MemberResponse.from(me);
     }
 
-    @PostConstruct
-    @Transactional
-    protected void initAdmin() {
-        Member adminUser = Member.builder()
-                .email("admin@admin.com")
-                .password(passwordResolver.encodePassword("123123123"))
-                .nickname("adminUser")
-                .gender(Gender.MALE)
-                .birthday(LocalDate.now())
-                .recommender(null)
-                .role(Role.ADMIN)
-                .build();
-        memberRepository.save(adminUser);
-    }
+//    @PostConstruct
+//    @Transactional
+//    protected void initAdmin() {
+//        Member adminUser = Member.builder()
+//                .email("admin@admin.com")
+//                .password(passwordResolver.encodePassword("123123123"))
+//                .nickname("adminUser")
+//                .gender(Gender.MALE)
+//                .birthday(LocalDate.now())
+//                .recommender(null)
+//                .role(Role.ADMIN)
+//                .build();
+//        memberRepository.save(adminUser);
+//    }
 }
