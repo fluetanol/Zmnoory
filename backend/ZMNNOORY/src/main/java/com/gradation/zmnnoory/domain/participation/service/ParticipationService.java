@@ -9,6 +9,7 @@ import com.gradation.zmnnoory.domain.member.repository.MemberRepository;
 import com.gradation.zmnnoory.domain.participation.dto.request.CompleteParticipationRequest;
 import com.gradation.zmnnoory.domain.participation.dto.request.PresignedUrlRequest;
 import com.gradation.zmnnoory.domain.participation.dto.request.StartParticipationRequest;
+import com.gradation.zmnnoory.domain.participation.dto.response.ParticipationEndResponse;
 import com.gradation.zmnnoory.domain.participation.dto.response.ParticipationResponse;
 import com.gradation.zmnnoory.domain.participation.dto.response.PresignedUrlResponse;
 import com.gradation.zmnnoory.domain.participation.entity.Participation;
@@ -17,6 +18,7 @@ import com.gradation.zmnnoory.domain.participation.exception.AlreadyParticipated
 import com.gradation.zmnnoory.domain.participation.exception.ParticipationAlreadyCompletedException;
 import com.gradation.zmnnoory.domain.participation.exception.ParticipationNotFoundException;
 import com.gradation.zmnnoory.domain.participation.repository.ParticipationRepository;
+import com.gradation.zmnnoory.domain.video.dto.response.VideoResponse;
 import com.gradation.zmnnoory.domain.video.service.VideoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,33 +31,33 @@ import java.util.List;
 @Transactional
 public class ParticipationService {
 
-private final ParticipationRepository participationRepository;
-private final MemberRepository memberRepository;
-private final GameRepository gameRepository;
-private final VideoService videoService;
-private final S3Service s3Service;
+    private final ParticipationRepository participationRepository;
+    private final MemberRepository memberRepository;
+    private final GameRepository gameRepository;
+    private final VideoService videoService;
+    private final S3Service s3Service;
 
-// 1. 게임 참여 시작
-public ParticipationResponse startParticipation(StartParticipationRequest request) {
-    Member member = memberRepository.findByEmail(request.email())
-            .orElseThrow(MemberNotFoundException::new);
+    // 1. 게임 참여 시작
+    public ParticipationResponse startParticipation(StartParticipationRequest request) {
+        Member member = memberRepository.findByEmail(request.email())
+                .orElseThrow(MemberNotFoundException::new);
 
-    Game game = gameRepository.findByTitle(request.gameTitle())
-            .orElseThrow(() -> new GameNotFoundException(request.gameTitle()));
+        Game game = gameRepository.findByTitle(request.gameTitle())
+                .orElseThrow(() -> new GameNotFoundException(request.gameTitle()));
 
-    // 중복 참여 검증
-    if (participationRepository.existsByMemberEmailAndGameTitle(request.email(), request.gameTitle())) {
-        throw new AlreadyParticipatedException();
+        // 중복 참여 검증
+        if (participationRepository.existsByMemberEmailAndGameTitle(request.email(), request.gameTitle())) {
+            throw new AlreadyParticipatedException();
+        }
+
+        Participation participation = Participation.builder()
+                .member(member)
+                .game(game)
+                .status(ParticipationStatus.NOT_PARTICIPATED)
+                .build();
+
+        return ParticipationResponse.of(participationRepository.save(participation));
     }
-
-    Participation participation = Participation.builder()
-            .member(member)
-            .game(game)
-            .status(ParticipationStatus.NOT_PARTICIPATED)
-            .build();
-
-    return ParticipationResponse.of(participationRepository.save(participation));
-}
 
     // 2. Presigned URL 생성
     public PresignedUrlResponse getPresignedUrl(PresignedUrlRequest request) {
@@ -77,7 +79,7 @@ public ParticipationResponse startParticipation(StartParticipationRequest reques
     }
 
     // 3. 참여 완료 처리 (업로드 성공 후)
-    public ParticipationResponse completeParticipation(CompleteParticipationRequest request) {
+    public ParticipationEndResponse completeParticipation(CompleteParticipationRequest request) {
         Participation participation = participationRepository
                 .findByMemberEmailAndGameTitle(request.email(), request.gameTitle())
                 .orElseThrow(ParticipationNotFoundException::new);
@@ -91,7 +93,7 @@ public ParticipationResponse startParticipation(StartParticipationRequest reques
         participation.complete();
 
         // 비디오 엔티티 생성 (실제 URL과 함께)
-        videoService.createVideoWithUploadedData(
+        VideoResponse video = videoService.createVideoWithUploadedData(
                 participation,
                 request.videoUrl(),
                 request.thumbnailUrl(),
@@ -104,7 +106,7 @@ public ParticipationResponse startParticipation(StartParticipationRequest reques
         Member member = participation.getMember();
         member.addPoint(rewardPoint);
 
-        return ParticipationResponse.of(participation);
+        return ParticipationEndResponse.of(participation, video.id());
     }
 
 
@@ -117,7 +119,7 @@ public ParticipationResponse startParticipation(StartParticipationRequest reques
                 .map(ParticipationResponse::of)
                 .toList();
     }
-    
+
     public String deleteParticipation(Member member) {
         participationRepository.findAllByMember(member).forEach(videoService::deleteVideo);
         participationRepository.deleteAllByMember(member);
