@@ -85,5 +85,7 @@
         }
 
 
-
+        public void deleteVideo(Participation participation) {
+            videoRepository.deleteByParticipation(participation);
+        }
     }

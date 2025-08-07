@@ -123,4 +123,20 @@ public class ParticipationController {
                 .data(participationService.getParticipationsByMember(member.getId()))
                 .build();
     }
+
+    @Operation(
+            summary = "참여한 게임 모두 삭제",
+            description = """
+            내가 참여한 게임의 기록을 모두 삭제합니다.
+            - 로그인 해야합니다.
+            """
+    )
+    @DeleteMapping("/me")
+    public BaseResponse<?> deleteMyParticipations(
+            @LoginMember Member member) {
+        return BaseResponse.builder()
+                .status(HttpStatus.OK)
+                .data(participationService.deleteParticipation(member))
+                .build();
+    }
 }

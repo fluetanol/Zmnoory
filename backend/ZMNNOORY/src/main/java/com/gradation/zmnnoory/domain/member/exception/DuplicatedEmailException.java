@@ -3,7 +3,7 @@ package com.gradation.zmnnoory.domain.member.exception;
 import com.gradation.zmnnoory.common.exception.BaseException;
 import org.springframework.http.HttpStatus;
 
-import static com.gradation.zmnnoory.domain.member.exception.MemberExceptionConstant.*;
+import static com.gradation.zmnnoory.domain.member.exception.MemberExceptionConstant.DUPLICATED_EMAIL_EXCEPTION;
 
 public class DuplicatedEmailException extends BaseException {
 
