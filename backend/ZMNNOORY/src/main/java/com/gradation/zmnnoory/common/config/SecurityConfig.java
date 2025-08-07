@@ -1,5 +1,6 @@
 package com.gradation.zmnnoory.common.config;
 
+import com.gradation.zmnnoory.common.jwt.JwtAccessDeniedHandler;
 import com.gradation.zmnnoory.common.jwt.JwtAuthenticationEntryPoint;
 import com.gradation.zmnnoory.common.jwt.JwtAuthenticationFilter;
 import com.gradation.zmnnoory.common.jwt.JwtLoginFilter;
@@ -23,75 +24,81 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(
-		    HttpSecurity http,
-		    JwtAuthenticationFilter jwtAuthenticationFilter,
-		    JwtLoginFilter jwtLoginFilter,
-		    JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint
-    ) throws Exception {
+	@Bean
+	public SecurityFilterChain securityFilterChain(
+			HttpSecurity http,
+			JwtAuthenticationFilter jwtAuthenticationFilter,
+			JwtLoginFilter jwtLoginFilter,
+			JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
+			JwtAccessDeniedHandler jwtAccessDeniedHandler
+	) throws Exception {
 
-        http.csrf(AbstractHttpConfigurer::disable); // csrf 무효화
-        http.formLogin(AbstractHttpConfigurer::disable); // formLogin 무효화
-        http.httpBasic(AbstractHttpConfigurer::disable); // basic 로그인 무효화
-        http.cors(Customizer.withDefaults());
-        http.headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)); // H2 콘솔 iframe 허용
+		http.csrf(AbstractHttpConfigurer::disable); // csrf 무효화
+		http.formLogin(AbstractHttpConfigurer::disable); // formLogin 무효화
+		http.httpBasic(AbstractHttpConfigurer::disable); // basic 로그인 무효화
+		http.cors(Customizer.withDefaults());
+		http.headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)); // H2 콘솔 iframe 허용
 
-        http
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        // 무상태 세션 사용 설정
+		http
+				.sessionManagement(session ->
+						session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+		// 무상태 세션 사용 설정
 
-        http
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/",
-                                "/h2-console/**",
-                                "/actuator/health",
-                                "/actuator/health/**",
-                                "/actuator/info",
-                                "/actuator/metrics",
-                                "/actuator/prometheus",
-                                "/swagger-ui/**",
-                                "/api-docs/**"
-                        ).permitAll() // 해당 주소는 아무나 접근 가능
-                        .requestMatchers(HttpMethod.GET,
-                                "/api/games",
-                                "/api/members/check-email/**",
-                                "/api/members/check-nickname/**")
-                        .permitAll() // 위 주소는 GET 요청만 로그인 안 해도 아무나 가능
-                        .requestMatchers(
-                                "/api/members/sign-up"
-                        ).anonymous() // 해당 주소는 로그인 안 한 사람만 접근 가능
-                        .requestMatchers(
-                                "/api/members/admin/**",
-                                "/api/games/admin/**",
-                                "/api/rewards/admin/**",
-                                "/api/participations/admin/**",
-                                "/api/products/admin/**"
-                        )
-                        .hasRole("ADMIN")
-                        .requestMatchers(
-                                "/api/members/**",
-                                "/api/games/**",
-                                "/api/rewards/**",
-                                "/api/participations/**",
-                                "/api/products/**",
-                                "/api/videos/**"
-                        ).authenticated()
-                        .anyRequest()
-                        .denyAll() // 그외 주소는 로그인 해야만 접근 가능
-                );
-        http.addFilterBefore(jwtAuthenticationFilter, JwtLoginFilter.class);
-        http.addFilterAt(jwtLoginFilter, UsernamePasswordAuthenticationFilter.class);
+		http
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers(
+								"/actuator/health",
+								"/actuator/health/**",
+								"/actuator/info",
+								"/actuator/metrics",
+								"/actuator/prometheus",
+								"/swagger-ui/**",
+								"/api-docs/**"
+						).permitAll() // 해당 주소는 아무나 접근 가능
+						.requestMatchers(HttpMethod.GET,
+								"/api/games",
+								"/api/members/check-email/**",
+								"/api/members/check-nickname/**")
+						.permitAll() // 위 주소는 GET 요청만 로그인 안 해도 아무나 가능
+						.requestMatchers(
+								"/api/members/sign-up"
+						).anonymous() // 해당 주소는 로그인 안 한 사람만 접근 가능
+						.requestMatchers(
+								"/",
+								"/h2-console/**",
+								"/api/members/admin/**",
+								"/api/games/admin/**",
+								"/api/rewards/admin/**",
+								"/api/participations/admin/**",
+								"/api/products/admin/**"
+						)
+						.hasRole("ADMIN")
+						.requestMatchers(
+								"/api/members/**",
+								"/api/games/**",
+								"/api/rewards/**",
+								"/api/participations/**",
+								"/api/products/**",
+								"/api/videos/**"
+						).authenticated()
+						.anyRequest()
+						.denyAll() // 그외 주소는 접근 거부
+				);
 
-	    http.exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint));
+		http.addFilterBefore(jwtAuthenticationFilter, JwtLoginFilter.class);
+		http.addFilterAt(jwtLoginFilter, UsernamePasswordAuthenticationFilter.class);
 
-        return http.build();
-    }
+		http.exceptionHandling(ex ->
+				ex
+						.authenticationEntryPoint(jwtAuthenticationEntryPoint)
+						.accessDeniedHandler(jwtAccessDeniedHandler)
+		);
 
-    @Bean
-    public RoleHierarchy roleHierarchy() {
-        return RoleHierarchyImpl.fromHierarchy("ROLE_ADMIN > ROLE_USER");
-    }
+		return http.build();
+	}
+
+	@Bean
+	public RoleHierarchy roleHierarchy() {
+		return RoleHierarchyImpl.fromHierarchy("ROLE_ADMIN > ROLE_USER");
+	}
 }
