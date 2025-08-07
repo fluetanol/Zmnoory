@@ -1,5 +1,6 @@
 package com.gradation.zmnnoory.domain.participation.repository;
 
+import com.gradation.zmnnoory.domain.member.entity.Member;
 import com.gradation.zmnnoory.domain.participation.entity.Participation;
 import com.gradation.zmnnoory.domain.participation.entity.ParticipationStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,4 +19,8 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
     Optional<Participation> findByMemberEmailAndGameTitle(String email, String gameTitle);
     
     boolean existsByMemberEmailAndGameTitle(String email, String gameTitle);
+
+    void deleteAllByMember(Member member);
+
+    List<Participation> findAllByMember(Member member);
 }

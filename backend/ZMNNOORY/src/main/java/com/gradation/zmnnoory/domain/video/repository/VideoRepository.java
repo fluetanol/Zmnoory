@@ -1,5 +1,6 @@
 package com.gradation.zmnnoory.domain.video.repository;
 
+import com.gradation.zmnnoory.domain.participation.entity.Participation;
 import com.gradation.zmnnoory.domain.member.entity.Member;
 import com.gradation.zmnnoory.domain.video.entity.Video;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,8 +11,11 @@ import java.util.List;
 @Repository
 public interface VideoRepository extends JpaRepository<Video, Long> {
 
+    List<Video> findByParticipationMemberIdAndVideoUrlIsNotNull(Long memberId);
+
     List<Video> findByIsPublicTrueAndVideoUrlIsNotNull();
 
     List<Video> findAllByParticipation_Member(Member member);
 
+    void deleteByParticipation(Participation participation);
 }

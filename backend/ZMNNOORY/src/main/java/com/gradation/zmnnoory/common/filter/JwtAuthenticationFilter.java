@@ -1,7 +1,6 @@
 package com.gradation.zmnnoory.common.filter;
 
 import com.gradation.zmnnoory.common.jwt.JwtUtil;
-import com.gradation.zmnnoory.domain.member.repository.MemberRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

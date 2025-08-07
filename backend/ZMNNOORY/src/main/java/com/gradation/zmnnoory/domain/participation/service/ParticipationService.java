@@ -117,5 +117,10 @@ public ParticipationResponse startParticipation(StartParticipationRequest reques
                 .map(ParticipationResponse::of)
                 .toList();
     }
-
+    
+    public String deleteParticipation(Member member) {
+        participationRepository.findAllByMember(member).forEach(videoService::deleteVideo);
+        participationRepository.deleteAllByMember(member);
+        return "삭제 완료";
+    }
 }

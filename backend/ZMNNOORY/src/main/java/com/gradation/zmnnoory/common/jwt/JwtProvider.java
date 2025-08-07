@@ -1,6 +1,5 @@
 package com.gradation.zmnnoory.common.jwt;
 
-import com.gradation.zmnnoory.domain.member.entity.Member;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
