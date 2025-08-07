@@ -1,4 +1,4 @@
-package com.gradation.zmnnoory.common.filter;
+package com.gradation.zmnnoory.common.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gradation.zmnnoory.common.dto.BaseResponse;

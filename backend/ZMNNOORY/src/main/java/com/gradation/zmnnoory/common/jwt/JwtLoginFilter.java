@@ -1,8 +1,7 @@
-package com.gradation.zmnnoory.common.filter;
+package com.gradation.zmnnoory.common.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gradation.zmnnoory.common.dto.BaseResponse;
-import com.gradation.zmnnoory.common.jwt.JwtProvider;
 import com.gradation.zmnnoory.domain.member.dto.request.LoginRequest;
 import com.gradation.zmnnoory.domain.member.exception.InvalidLoginRequestException;
 import jakarta.servlet.FilterChain;
