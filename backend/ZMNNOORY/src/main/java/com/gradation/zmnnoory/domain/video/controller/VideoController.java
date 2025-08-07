@@ -42,21 +42,19 @@ public class VideoController {
                 .build();
     }
 
-    // 2. 멤버의 업로드 완료된 비디오 목록 조회
+    // 2. 현재 로그인 사용자의 모든 비디오 조회
     @Operation(
-            summary = "멤버별 업로드 완료 비디오 목록 조회",
+            summary = "내 업로드 완료 비디오 목록 조회",
             description = """
-            특정 멤버가 업로드 완료한 모든 비디오를 조회합니다.
-            - 업로드가 완료된 비디오만 반환합니다 (videoUrl이 존재하는 비디오).
+            로그인한 사용자가 업로드를 완료한 비디오 목록을 조회합니다.
+            - videoUrl이 존재하는 (즉, 실제 업로드가 완료된) 비디오만 반환합니다.
             """
     )
-    @GetMapping("/member/{memberId}")
-    public BaseResponse<List<VideoSummaryResponse>> getUploadedVideosByMember(
-            @PathVariable Long memberId) {
-
+    @GetMapping("/my")
+    public BaseResponse<List<VideoSummaryResponse>> getMyUploadedVideos(@LoginMember Member member) {
         return BaseResponse.<List<VideoSummaryResponse>>builder()
                 .status(HttpStatus.OK)
-                .data(videoService.getUploadedVideosByMember(memberId))
+                .data(videoService.getVideosByMember(member))
                 .build();
     }
 
@@ -93,21 +91,5 @@ public class VideoController {
 
         videoService.uploadVideoImages(request.videoId(), request.images());
         return ResponseEntity.ok().build();
-    }
-
-    // 5. 현재 로그인 사용자의 모든 비디오 조회
-    @Operation(
-            summary = "내 업로드 완료 비디오 목록 조회",
-            description = """
-            로그인한 사용자가 업로드를 완료한 비디오 목록을 조회합니다.
-            - videoUrl이 존재하는 (즉, 실제 업로드가 완료된) 비디오만 반환합니다.
-            """
-    )
-    @GetMapping("/my")
-    public BaseResponse<List<VideoSummaryResponse>> getMyUploadedVideos(@LoginMember Member member) {
-        return BaseResponse.<List<VideoSummaryResponse>>builder()
-                .status(HttpStatus.OK)
-                .data(videoService.getUploadedVideosByMember(member.getId()))
-                .build();
     }
 }

@@ -57,12 +57,13 @@
         }
 
 
-        // 3. 멤버의 업로드 완료된 비디오 목록 조회
+        // 3. 현재 맴버의 모든 비디오 조회
         @Transactional(readOnly = true)
-        public List<VideoSummaryResponse> getUploadedVideosByMember(Long memberId) {
-            return videoRepository.findByParticipationMemberIdAndVideoUrlIsNotNull(memberId).stream()
+        public List<VideoSummaryResponse> getVideosByMember(Member member) {
+            List<Video> videos = videoRepository.findAllByParticipation_Member(member);
+            return videos.stream()
                     .map(VideoSummaryResponse::from)
-                    .toList();
+                    .collect(Collectors.toList());
         }
 
         // 4. 공개된 전체 영상 리스트 조회
@@ -85,16 +86,4 @@
 
             videoImageUploadService.uploadBase64Images(userId, gameId, images);
         }
-
-        // 6. 로그인한 회원의 모든 영상 조회
-        @Transactional(readOnly = true)
-        public List<VideoSummaryResponse> getVideosByMember(Member member) {
-            List<Video> videos = videoRepository.findAllByParticipation_Member(member);
-            return videos.stream()
-                    .map(VideoSummaryResponse::from)
-                    .collect(Collectors.toList());
-        }
-
-
-
     }
