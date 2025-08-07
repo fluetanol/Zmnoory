@@ -32,12 +32,8 @@ public record GameUpdateRequest(
         @Max(value = 10000, message = "포인트는 10000 이하여야 합니다")
         Long point,
 
-        @Schema(description = "썸네일 이미지 URL", example = "https://example.com/image.png")
-        @Size(max = 255, message = "썸네일 URL은 255자 이하여야 합니다")
-        @Pattern(
-                regexp = "^(https?://).+",
-                message = "올바른 URL 형식이어야 합니다"
-        )
+        @Schema(description = "썸네일 이미지", example = "image.png")
+        @NotBlank(message = "썸네일은 필수입니다.")
         String thumbnail,
 
         @Schema(description = "요구 데이터 유형", example = "얼굴 데이터")
