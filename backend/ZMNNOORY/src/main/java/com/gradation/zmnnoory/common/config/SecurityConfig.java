@@ -1,5 +1,6 @@
 package com.gradation.zmnnoory.common.config;
 
+import com.gradation.zmnnoory.common.filter.JwtAuthenticationEntryPoint;
 import com.gradation.zmnnoory.common.filter.JwtAuthenticationFilter;
 import com.gradation.zmnnoory.common.filter.JwtLoginFilter;
 import org.springframework.context.annotation.Bean;
@@ -24,9 +25,12 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(
-            HttpSecurity http,
-            JwtAuthenticationFilter jwtAuthenticationFilter,
-            JwtLoginFilter jwtLoginFilter) throws Exception {
+		    HttpSecurity http,
+		    JwtAuthenticationFilter jwtAuthenticationFilter,
+		    JwtLoginFilter jwtLoginFilter,
+		    JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint
+    ) throws Exception {
+
         http.csrf(AbstractHttpConfigurer::disable); // csrf 무효화
         http.formLogin(AbstractHttpConfigurer::disable); // formLogin 무효화
         http.httpBasic(AbstractHttpConfigurer::disable); // basic 로그인 무효화
@@ -80,6 +84,8 @@ public class SecurityConfig {
                 );
         http.addFilterBefore(jwtAuthenticationFilter, JwtLoginFilter.class);
         http.addFilterAt(jwtLoginFilter, UsernamePasswordAuthenticationFilter.class);
+
+	    http.exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint));
 
         return http.build();
     }
