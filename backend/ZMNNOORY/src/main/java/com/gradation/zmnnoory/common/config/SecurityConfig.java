@@ -1,8 +1,8 @@
 package com.gradation.zmnnoory.common.config;
 
-import com.gradation.zmnnoory.common.filter.JwtAuthenticationEntryPoint;
-import com.gradation.zmnnoory.common.filter.JwtAuthenticationFilter;
-import com.gradation.zmnnoory.common.filter.JwtLoginFilter;
+import com.gradation.zmnnoory.common.jwt.JwtAuthenticationEntryPoint;
+import com.gradation.zmnnoory.common.jwt.JwtAuthenticationFilter;
+import com.gradation.zmnnoory.common.jwt.JwtLoginFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

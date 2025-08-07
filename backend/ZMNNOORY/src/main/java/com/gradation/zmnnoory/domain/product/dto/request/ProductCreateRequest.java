@@ -3,7 +3,10 @@ package com.gradation.zmnnoory.domain.product.dto.request;
 import com.gradation.zmnnoory.domain.product.entity.Category;
 import com.gradation.zmnnoory.domain.product.entity.Product;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 
 @Schema(description = "상품 생성 요청 DTO")
 public record ProductCreateRequest(
