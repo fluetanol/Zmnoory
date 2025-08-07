@@ -4,17 +4,21 @@ import com.gradation.zmnnoory.domain.member.dto.MemberUpdateRequest;
 import com.gradation.zmnnoory.domain.member.dto.request.PasswordUpdateRequest;
 import com.gradation.zmnnoory.domain.member.dto.request.SignUpRequest;
 import com.gradation.zmnnoory.domain.member.dto.response.MemberResponse;
+import com.gradation.zmnnoory.domain.member.entity.Gender;
 import com.gradation.zmnnoory.domain.member.entity.Member;
+import com.gradation.zmnnoory.domain.member.entity.Role;
 import com.gradation.zmnnoory.domain.member.exception.DuplicatedEmailException;
 import com.gradation.zmnnoory.domain.member.exception.InvalidPasswordException;
 import com.gradation.zmnnoory.domain.member.exception.MemberNotFoundException;
 import com.gradation.zmnnoory.domain.member.handler.MemberCreateHandler;
 import com.gradation.zmnnoory.domain.member.repository.MemberRepository;
 import com.gradation.zmnnoory.domain.member.resolver.PasswordResolver;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -99,5 +103,19 @@ public class MemberService {
 
     public MemberResponse myInfo(Member me) {
         return MemberResponse.from(me);
+    }
+
+    @PostConstruct
+    private void initAdmin() {
+        Member adminUser = Member.builder()
+                .email("admin@admin.com")
+                .password(passwordResolver.encodePassword("123123123"))
+                .nickname("adminUser")
+                .gender(Gender.MALE)
+                .birthday(LocalDate.now())
+                .recommender(null)
+                .role(Role.ADMIN)
+                .build();
+        memberRepository.save(adminUser);
     }
 }

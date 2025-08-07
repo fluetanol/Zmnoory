@@ -4,6 +4,7 @@ import com.gradation.zmnnoory.common.filter.JwtAuthenticationFilter;
 import com.gradation.zmnnoory.common.filter.JwtLoginFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.Customizer;
@@ -48,10 +49,13 @@ public class SecurityConfig {
                                 "/actuator/metrics",
                                 "/actuator/prometheus",
                                 "/swagger-ui/**",
-                                "/api-docs/**",
-                                "/api/members/check-email/**",
-                                "/api/members/check-nickname/**"
+                                "/api-docs/**"
                         ).permitAll() // 해당 주소는 아무나 접근 가능
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/games",
+                                "/api/members/check-email/**",
+                                "/api/members/check-nickname/**")
+                        .permitAll() // 위 주소는 GET 요청만 로그인 안 해도 아무나 가능
                         .requestMatchers(
                                 "/api/members/sign-up"
                         ).anonymous() // 해당 주소는 로그인 안 한 사람만 접근 가능
