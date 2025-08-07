@@ -1,5 +1,6 @@
     package com.gradation.zmnnoory.domain.video.service;
 
+    import com.gradation.zmnnoory.domain.member.entity.Member;
     import com.gradation.zmnnoory.domain.participation.entity.Participation;
     import com.gradation.zmnnoory.domain.video.dto.request.Base64ImageRequest;
     import com.gradation.zmnnoory.domain.video.dto.response.VideoDetailResponse;
@@ -55,10 +56,10 @@
         }
 
 
-        // 3. 멤버의 업로드 완료된 비디오 목록 조회
+        // 3. 현재 로그인 멤버의 모든 비디오 조회
         @Transactional(readOnly = true)
-        public List<VideoSummaryResponse> getUploadedVideosByMember(Long memberId) {
-            return videoRepository.findByParticipationMemberIdAndVideoUrlIsNotNull(memberId).stream()
+        public List<VideoSummaryResponse> getVideosByMember(Member member) {
+            return videoRepository.findAllByParticipation_Member(member).stream()
                     .map(VideoSummaryResponse::from)
                     .toList();
         }

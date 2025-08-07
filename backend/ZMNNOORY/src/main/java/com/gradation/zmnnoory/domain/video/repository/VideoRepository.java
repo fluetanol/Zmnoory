@@ -11,8 +11,6 @@ import java.util.List;
 @Repository
 public interface VideoRepository extends JpaRepository<Video, Long> {
 
-    List<Video> findByParticipationMemberIdAndVideoUrlIsNotNull(Long memberId);
-
     List<Video> findByIsPublicTrueAndVideoUrlIsNotNull();
 
     List<Video> findAllByParticipation_Member(Member member);
