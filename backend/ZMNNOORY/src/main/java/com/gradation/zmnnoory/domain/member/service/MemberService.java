@@ -106,7 +106,8 @@ public class MemberService {
     }
 
     @PostConstruct
-    private void initAdmin() {
+    @Transactional
+    protected void initAdmin() {
         Member adminUser = Member.builder()
                 .email("admin@admin.com")
                 .password(passwordResolver.encodePassword("123123123"))
