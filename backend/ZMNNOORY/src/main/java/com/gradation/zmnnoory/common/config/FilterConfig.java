@@ -1,6 +1,7 @@
 package com.gradation.zmnnoory.common.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gradation.zmnnoory.common.filter.JwtAuthenticationEntryPoint;
 import com.gradation.zmnnoory.common.filter.JwtAuthenticationFilter;
 import com.gradation.zmnnoory.common.filter.JwtLoginFilter;
 import com.gradation.zmnnoory.common.jwt.JwtProvider;
@@ -23,4 +24,8 @@ public class FilterConfig {
         return new JwtAuthenticationFilter(jwtUtil, userDetailsService);
     }
 
+	@Bean
+	public JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint(ObjectMapper objectMapper) {
+		return new JwtAuthenticationEntryPoint(objectMapper);
+	}
 }
