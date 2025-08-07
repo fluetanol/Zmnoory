@@ -1,4 +1,4 @@
-package com.gradation.zmnnoory.common.filter;
+package com.gradation.zmnnoory.common.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gradation.zmnnoory.common.dto.BaseResponse;
@@ -9,35 +9,35 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.web.access.AccessDeniedHandler;
 
 import java.io.IOException;
 
 @Slf4j
 @RequiredArgsConstructor
-public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
+public class JwtAccessDeniedHandler implements AccessDeniedHandler {
 
 	private final ObjectMapper objectMapper;
 
 	@Override
-	public void commence(HttpServletRequest request,
-	                     HttpServletResponse response,
-	                     AuthenticationException authException
+	public void handle(HttpServletRequest request,
+	                   HttpServletResponse response,
+	                   AccessDeniedException accessDeniedException
 	) throws IOException, ServletException {
-		log.error("Authentication Failed: URI = {}, message = {}", request.getRequestURI(), authException.getMessage());
+		log.error("Access Failed: URI = {}, message = {}", request.getRequestURI(), accessDeniedException.getMessage());
 		response.setContentType("application/json");
 		response.setCharacterEncoding("UTF-8");
 
 		BaseResponse<String> baseResponse = BaseResponse.<String>builder()
-				.status(HttpStatus.UNAUTHORIZED)
-				.data("Invalid username or password")
-				.message(authException.getMessage())
+				.status(HttpStatus.FORBIDDEN)
+				.data("권한이 없습니다.")
+				.message(accessDeniedException.getMessage())
 				.build();
 
-		ResponseEntity<BaseResponse<?>> responseEntity = ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(baseResponse);
+		ResponseEntity<BaseResponse<?>> responseEntity = ResponseEntity.status(HttpStatus.FORBIDDEN).body(baseResponse);
 
-		response.setStatus(HttpStatus.UNAUTHORIZED.value()); // 실제 HTTP 상태 코드 설정
+		response.setStatus(HttpStatus.FORBIDDEN.value()); // 실제 HTTP 상태 코드 설정
 		String responseBody = objectMapper.writeValueAsString(responseEntity);
 		response.getWriter().write(responseBody);
 	}
