@@ -1,5 +1,6 @@
     package com.gradation.zmnnoory.domain.video.service;
 
+    import com.gradation.zmnnoory.domain.member.entity.Member;
     import com.gradation.zmnnoory.domain.participation.entity.Participation;
     import com.gradation.zmnnoory.domain.video.dto.request.Base64ImageRequest;
     import com.gradation.zmnnoory.domain.video.dto.response.VideoDetailResponse;
@@ -14,6 +15,7 @@
     import org.springframework.transaction.annotation.Transactional;
 
     import java.util.List;
+    import java.util.stream.Collectors;
 
     @Slf4j
     @Service
@@ -82,6 +84,15 @@
             Long gameId = participation.getGame().getId();
 
             videoImageUploadService.uploadBase64Images(userId, gameId, images);
+        }
+
+        // 6. 로그인한 회원의 모든 영상 조회
+        @Transactional(readOnly = true)
+        public List<VideoSummaryResponse> getVideosByMember(Member member) {
+            List<Video> videos = videoRepository.findAllByParticipation_Member(member);
+            return videos.stream()
+                    .map(VideoSummaryResponse::from)
+                    .collect(Collectors.toList());
         }
 
 
