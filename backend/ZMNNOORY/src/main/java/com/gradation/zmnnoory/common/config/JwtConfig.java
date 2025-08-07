@@ -8,7 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 @Configuration
-public class FilterConfig {
+public class JwtConfig {
 
     @Bean
     public JwtLoginFilter jwtLoginFilter(ObjectMapper objectMapper, JwtProvider jwtProvider, AuthenticationManager authenticationManager) {
@@ -23,5 +23,10 @@ public class FilterConfig {
 	@Bean
 	public JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint(ObjectMapper objectMapper) {
 		return new JwtAuthenticationEntryPoint(objectMapper);
+	}
+
+	@Bean
+	public JwtAccessDeniedHandler jwtAccessDeniedHandler(ObjectMapper objectMapper) {
+		return new JwtAccessDeniedHandler(objectMapper);
 	}
 }
