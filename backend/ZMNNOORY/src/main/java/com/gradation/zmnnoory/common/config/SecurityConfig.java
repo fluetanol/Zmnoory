@@ -71,15 +71,17 @@ public class SecurityConfig {
 								"/api/rewards/admin/**",
 								"/api/participations/admin/**",
 								"/api/products/admin/**"
-						)
-						.hasRole("ADMIN")
+						).hasRole("ADMIN")
 						.requestMatchers(
 								"/api/members/**",
 								"/api/games/**",
-								"/api/rewards/**",
 								"/api/participations/**",
 								"/api/products/**",
-								"/api/videos/**"
+								"/api/videos/**",
+                                "/api/orders/**",
+                                "/api/watches/**",
+                                "/api/comments/**",
+                                "/api/likes/**"
 						).authenticated()
 						.anyRequest()
 						.denyAll() // 그외 주소는 접근 거부
