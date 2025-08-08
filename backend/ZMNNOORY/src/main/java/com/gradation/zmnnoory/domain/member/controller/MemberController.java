@@ -137,7 +137,7 @@ public class MemberController {
     @PutMapping("/{email}")
     public BaseResponse<MemberResponse> updateUserInfo(
             @PathVariable String email,
-            @Validated MemberUpdateRequest memberUpdateRequest
+            @RequestBody @Validated MemberUpdateRequest memberUpdateRequest
     ) {
         return BaseResponse.<MemberResponse>builder()
                 .status(HttpStatus.OK)
@@ -158,7 +158,7 @@ public class MemberController {
     @PatchMapping("/password")
     public BaseResponse<MemberResponse> updateUserPassword(
             @LoginMember Member member,
-            @Validated PasswordUpdateRequest passwordUpdateRequest
+            @RequestBody @Validated PasswordUpdateRequest passwordUpdateRequest
     ) {
         return BaseResponse.<MemberResponse>builder()
                 .status(HttpStatus.OK)
