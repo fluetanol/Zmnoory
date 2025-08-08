@@ -1,6 +1,7 @@
 package com.gradation.zmnnoory.domain.participation.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public record CompleteParticipationRequest(
         @NotBlank(message = "이메일은 필수입니다.")
@@ -16,6 +17,9 @@ public record CompleteParticipationRequest(
         
         String title,
         
-        String description
+        String description,
+
+        @NotNull(message = "공개 여부는 필수입니다.")
+        Boolean isPublic
 ) {
 }
