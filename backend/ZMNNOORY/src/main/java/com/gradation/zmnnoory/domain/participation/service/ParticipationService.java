@@ -98,7 +98,8 @@ public class ParticipationService {
                 request.videoUrl(),
                 request.thumbnailUrl(),
                 request.title(),
-                request.description()
+                request.description(),
+                request.isPublic()
         );
 
         // 리워드 포인트 지급

@@ -68,24 +68,24 @@ public class ParticipationController {
     }
 
     // 3. 참여 완료 처리 (업로드 성공 후)
-    @Operation(
-            summary = "참여 완료 및 리워드 지급",
-            description = """
-            영상 업로드 완료 후 참여를 완료 처리하고 리워드를 지급합니다.
-            - 업로드 완료된 영상 URL과 메타데이터를 포함해야 합니다.
-            - 이미 완료된 참여에 대해서는 중복 처리를 방지합니다.
-            - 응답에는 생성된 비디오 ID가 포함됩니다.
-            """
-    )
-    @PutMapping("/complete")
-    public BaseResponse<ParticipationEndResponse> completeParticipation(
-            @Valid @RequestBody CompleteParticipationRequest request) {
+        @Operation(
+                summary = "참여 완료 및 리워드 지급",
+                description = """
+                영상 업로드 완료 후 참여를 완료 처리하고 리워드를 지급합니다.
+                - 업로드 완료된 영상 URL과 메타데이터를 포함해야 합니다.
+                - 이미 완료된 참여에 대해서는 중복 처리를 방지합니다.
+                - 응답에는 생성된 비디오 ID가 포함됩니다.
+                """
+        )
+        @PutMapping("/complete")
+        public BaseResponse<ParticipationEndResponse> completeParticipation(
+                @Valid @RequestBody CompleteParticipationRequest request) {
 
-        return BaseResponse.<ParticipationEndResponse>builder()
-                .status(HttpStatus.OK)
-                .data(participationService.completeParticipation(request))
-                .build();
-    }
+            return BaseResponse.<ParticipationEndResponse>builder()
+                    .status(HttpStatus.OK)
+                    .data(participationService.completeParticipation(request))
+                    .build();
+        }
 
 
     // 4. 특정 멤버의 모든 참여 조회
