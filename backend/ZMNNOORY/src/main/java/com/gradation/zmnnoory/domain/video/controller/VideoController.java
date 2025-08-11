@@ -28,9 +28,6 @@ import java.util.List;
 public class VideoController {
 
     private final VideoService videoService;
-    private final ParticipationRepository participationRepository;
-    private final VideoRepository videoRepository;
-    private final VideoImageUploadService videoImageUploadService;
 
     // 1. 비디오 상세 페이지
     @Operation(summary = "비디오 상세 조회", description = "비디오 ID를 통해 상세 정보를 조회합니다.")

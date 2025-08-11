@@ -8,10 +8,12 @@ import com.gradation.zmnnoory.domain.member.exception.MemberNotFoundException;
 import com.gradation.zmnnoory.domain.member.repository.MemberRepository;
 import com.gradation.zmnnoory.domain.participation.dto.request.CompleteParticipationRequest;
 import com.gradation.zmnnoory.domain.participation.dto.request.PresignedUrlRequest;
+import com.gradation.zmnnoory.domain.participation.dto.request.PublicUploadPresignedUrlRequest;
 import com.gradation.zmnnoory.domain.participation.dto.request.StartParticipationRequest;
 import com.gradation.zmnnoory.domain.participation.dto.response.ParticipationEndResponse;
 import com.gradation.zmnnoory.domain.participation.dto.response.ParticipationResponse;
 import com.gradation.zmnnoory.domain.participation.dto.response.PresignedUrlResponse;
+import com.gradation.zmnnoory.domain.participation.dto.response.PublicUploadPresignedUrlResponse;
 import com.gradation.zmnnoory.domain.participation.entity.Participation;
 import com.gradation.zmnnoory.domain.participation.entity.ParticipationStatus;
 import com.gradation.zmnnoory.domain.participation.exception.AlreadyParticipatedException;
@@ -20,6 +22,7 @@ import com.gradation.zmnnoory.domain.participation.exception.ParticipationNotFou
 import com.gradation.zmnnoory.domain.participation.repository.ParticipationRepository;
 import com.gradation.zmnnoory.domain.video.dto.response.VideoResponse;
 import com.gradation.zmnnoory.domain.video.service.VideoService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -125,5 +128,23 @@ public class ParticipationService {
         participationRepository.findAllByMember(member).forEach(videoService::deleteVideo);
         participationRepository.deleteAllByMember(member);
         return "삭제 완료";
+    }
+
+    public PublicUploadPresignedUrlResponse getPublicUploadPresignedUrl(PublicUploadPresignedUrlRequest request) {
+        Participation participation = participationRepository
+                .findByMemberEmailAndGameTitle(request.email(), request.gameTitle())
+                .orElseThrow(ParticipationNotFoundException::new);
+
+        if (participation.getStatus() == ParticipationStatus.COMPLETED) {
+            throw new ParticipationAlreadyCompletedException();
+        }
+
+//        return s3Service.ge(
+//                participation.getId(),
+//                participation.getMember().getId(),
+//                participation.getGame().getId()
+//        );
+
+        return new PublicUploadPresignedUrlResponse(null, null, null, null, null, null);
     }
 }

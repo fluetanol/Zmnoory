@@ -5,6 +5,7 @@ import com.gradation.zmnnoory.domain.member.annotation.LoginMember;
 import com.gradation.zmnnoory.domain.member.entity.Member;
 import com.gradation.zmnnoory.domain.participation.dto.request.CompleteParticipationRequest;
 import com.gradation.zmnnoory.domain.participation.dto.request.PresignedUrlRequest;
+import com.gradation.zmnnoory.domain.participation.dto.request.PublicUploadPresignedUrlRequest;
 import com.gradation.zmnnoory.domain.participation.dto.request.StartParticipationRequest;
 import com.gradation.zmnnoory.domain.participation.dto.response.ParticipationEndResponse;
 import com.gradation.zmnnoory.domain.participation.dto.response.ParticipationResponse;
@@ -64,6 +65,24 @@ public class ParticipationController {
         return BaseResponse.<PresignedUrlResponse>builder()
                 .status(HttpStatus.OK)
                 .data(participationService.getPresignedUrl(request))
+                .build();
+    }
+
+    @Operation(
+            summary = "공개 영상 업로드용 Presigned URL, 공개 영상 섬네일 업로드용 Presigned URL",
+            description = """
+            공개 영상 업로드와 섬네일 업로드에 필요한 presignedURL을 반환합니다.
+            - 이미 완료된 참여에 대해서는 URL을 생성할 수 없습니다.
+            - 생성된 URL은 제한된 시간 동안만 유효합니다.
+            """
+    )
+    @PostMapping("/presigned-url")
+    public BaseResponse<PresignedUrlResponse> getPublicUploadPresignedUrl(
+            @Valid @RequestBody PublicUploadPresignedUrlRequest request) {
+
+        return BaseResponse.<PresignedUrlResponse>builder()
+                .status(HttpStatus.OK)
+                .data(participationService.getPublicUploadPresignedUrl(request))
                 .build();
     }
 
