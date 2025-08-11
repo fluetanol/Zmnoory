@@ -3,7 +3,10 @@ package com.gradation.zmnnoory.domain.product.dto.request;
 import com.gradation.zmnnoory.domain.product.entity.Category;
 import com.gradation.zmnnoory.domain.product.entity.Product;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 
 @Schema(description = "상품 생성 요청 DTO")
 public record ProductCreateRequest(
@@ -21,13 +24,8 @@ public record ProductCreateRequest(
         @Positive(message = "가격은 양수여야 합니다")
         Long price,
 
-        @Schema(description = "상품 썸네일 이미지 URL", example = "https://example.com/image.png")
+        @Schema(description = "상품 썸네일 이미지", example = "image.png")
         @NotBlank(message = "썸네일은 필수입니다")
-        @Size(max = 255, message = "썸네일 URL은 255자 이하여야 합니다")
-        @Pattern(
-                regexp = "^(https?://).+",
-                message = "올바른 URL 형식이어야 합니다"
-        )
         String thumbnail
 ) {
     public Product toEntity() {

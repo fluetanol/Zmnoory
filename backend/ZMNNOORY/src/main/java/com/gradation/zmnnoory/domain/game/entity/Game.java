@@ -33,7 +33,8 @@ public class Game extends BaseEntity {
     @Column(nullable = false)
     private Long point;
 
-    @Column(length = 255)
+    @Lob
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String thumbnail;
 
     @Column

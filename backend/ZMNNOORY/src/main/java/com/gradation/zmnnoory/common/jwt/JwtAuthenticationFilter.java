@@ -1,6 +1,5 @@
-package com.gradation.zmnnoory.common.filter;
+package com.gradation.zmnnoory.common.jwt;
 
-import com.gradation.zmnnoory.common.jwt.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -8,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -48,6 +48,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             } catch (Exception e) {
                 log.error("Failed to authenticate JWT token", e);
+	            SecurityContextHolder.clearContext();
+				throw new InsufficientAuthenticationException("Invalid JWT token", e);
             }
         }
 

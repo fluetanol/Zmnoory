@@ -28,13 +28,13 @@
         // 1. 업로드 완료 후 Video 엔티티 생성 (실제 URL과 함께)
         public VideoResponse createVideoWithUploadedData(
                 Participation participation, String videoUrl, String thumbnailUrl, 
-                String title, String description) {
+                String title, String description, Boolean isPublic) {
             
             Video video = Video.builder()
                     .participation(participation)
                     .title(title != null && !title.trim().isEmpty() ? title : "게임 플레이 영상")
                     .description(description != null && !description.trim().isEmpty() ? description : "게임 참여 영상입니다.")
-                    .isPublic(false)
+                    .isPublic(isPublic != null ? isPublic : false)
                     .videoUrl(videoUrl)
                     .thumbnailUrl(thumbnailUrl != null && !thumbnailUrl.trim().isEmpty() ? thumbnailUrl : "")
                     .build();

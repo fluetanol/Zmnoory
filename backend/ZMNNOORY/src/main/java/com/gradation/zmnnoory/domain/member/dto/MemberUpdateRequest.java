@@ -1,5 +1,6 @@
 package com.gradation.zmnnoory.domain.member.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gradation.zmnnoory.domain.member.entity.Gender;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -20,8 +21,8 @@ public record MemberUpdateRequest(
         @NotBlank(message = "닉네임은 필수 값입니다.")
         String nickname,
 
-
-        @NotBlank(message = "생년월일은 필수 값입니다.")
+        @NotNull(message = "생년월일은 필수 값입니다.")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
         LocalDate birthday
 ) {
 }

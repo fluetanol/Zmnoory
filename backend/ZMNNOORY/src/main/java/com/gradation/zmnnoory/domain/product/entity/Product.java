@@ -25,7 +25,8 @@ public class Product extends BaseEntity {
     @Column(nullable = false)
     private Long price;
 
-    @Column(nullable = false)
+    @Lob
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String thumbnail;
 
     @Builder
