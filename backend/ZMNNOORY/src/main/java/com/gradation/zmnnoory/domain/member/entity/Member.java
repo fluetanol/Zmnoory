@@ -50,8 +50,6 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    private String profileImageUrl;
-
     @Builder
     private Member(String email,
                    String password,
@@ -59,8 +57,7 @@ public class Member extends BaseEntity {
                    String nickname,
                    LocalDate birthday,
                    Member recommender,
-                   Role role,
-                   String profileImageUrl
+                   Role role
     ) {
         this.email = email;
         this.password = password;
@@ -69,7 +66,6 @@ public class Member extends BaseEntity {
         this.birthday = birthday;
         this.recommender = recommender;
         this.role = role;
-        this.profileImageUrl = profileImageUrl;
     }
 
     public void update(MemberUpdateRequest memberUpdateRequest) {
@@ -97,9 +93,5 @@ public class Member extends BaseEntity {
 
     public void updateRole() {
         this.role = Role.ADMIN;
-    }
-
-    public void updateProfileImageUrl(String profileImageUrl) {
-        this.profileImageUrl = profileImageUrl;
     }
 }

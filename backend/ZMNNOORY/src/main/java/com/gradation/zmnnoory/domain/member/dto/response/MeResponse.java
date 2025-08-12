@@ -13,8 +13,7 @@ public record MeResponse(
         LocalDate birthday,
         Gender gender,
         Long point,
-        Role role,
-        String profileImageUrl
+        Role role
 ) {
     public static MeResponse of(Member m) {
         return new MeResponse(
@@ -24,8 +23,7 @@ public record MeResponse(
                 m.getBirthday(),
                 m.getGender(),
                 m.getPoint(),
-                m.getRole(),
-                m.getProfileImageUrl()
+                m.getRole()
         );
     }
 }
