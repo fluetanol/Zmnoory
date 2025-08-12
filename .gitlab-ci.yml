@@ -31,7 +31,7 @@ variables:
   # AWS S3 설정
   AWS_S3_BUCKET_NAME: "zmnnoory-media"
   AWS_S3_REGION: "ap-northeast-2"
-  AWS_S3_BUCKET_UPLOAD_NAME: "zmnnoory-media-upload"
+  AWS_S3_BUCKET_UPLOAD_NAME: "zmnnoory-upload"
   AWS_ACCESS_KEY_BACK: "AKIAXZMEDYBHI26S4HM3"
   AWS_SECRET_KEY_BACK: "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"
 
