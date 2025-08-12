@@ -223,6 +223,7 @@ deploy_backend_dev:
        --set-string jwt.prefix=$JWT_TOKEN_PREFIX \
        --set-string jwt.header=$JWT_HEADER \
        --set-string aws.s3.bucketName=$AWS_S3_BUCKET_NAME \
+       --set-string aws.s3.bucketUploadName=$AWS_S3_BUCKET_UPLOAD_NAME \
        --set-string aws.s3.region=$AWS_S3_REGION \
        --set-string aws.accessKey=$AWS_ACCESS_KEY_BACK \
        --set-string aws.secretKey=$AWS_SECRET_KEY_BACK \
