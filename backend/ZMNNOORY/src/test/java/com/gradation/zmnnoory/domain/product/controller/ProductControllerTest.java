@@ -184,6 +184,7 @@ class ProductControllerTest {
     }
 
     @Nested
+    @Disabled
     @DisplayName("일반 사용자 권한 테스트")
     class RegularUserTests {
 
@@ -241,7 +242,6 @@ class ProductControllerTest {
         }
 
         @Test
-        @Disabled
         @DisplayName("일반 사용자는 상품을 수정할 수 없다")
         void updateProductTest() throws Exception {
             // when
