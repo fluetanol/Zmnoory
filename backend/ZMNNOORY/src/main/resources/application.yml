@@ -15,7 +15,7 @@ spring:
       port: ${REDIS_PORT_DEV}
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     properties:
       hibernate:
         show_sql: false
@@ -59,6 +59,7 @@ jwt:
 aws:
   s3:
     bucket-name: ${AWS_S3_BUCKET_NAME}
+    bucket-upload-name: ${AWS_S3_BUCKET_UPLOAD_NAME}
     region: ${AWS_S3_REGION}
   access-key: ${AWS_ACCESS_KEY_BACK}
   secret-key: ${AWS_SECRET_KEY_BACK}
