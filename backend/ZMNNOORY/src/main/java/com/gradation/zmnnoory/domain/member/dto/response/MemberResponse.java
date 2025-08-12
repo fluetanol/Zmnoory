@@ -19,9 +19,10 @@ public class MemberResponse {
     private final String recommenderNickname;
     private final Long point;
     private final Role role;
+    private final String profileImageUrl;
 
     @Builder
-    private MemberResponse(String email, String nickname, LocalDate birthday, Gender gender, String recommenderNickname, Long point, Role role) {
+    private MemberResponse(String email, String nickname, LocalDate birthday, Gender gender, String recommenderNickname, Long point, Role role, String profileImageUrl) {
         this.email = email;
         this.nickname = nickname;
         this.birthday = birthday;
@@ -29,6 +30,7 @@ public class MemberResponse {
         this.recommenderNickname = recommenderNickname;
         this.point = point;
         this.role = role;
+        this.profileImageUrl = profileImageUrl;
     }
 
     public static MemberResponse from(Member member) {
@@ -49,6 +51,7 @@ public class MemberResponse {
                 .recommenderNickname(recommenderNickname)
                 .point(member.getPoint())
                 .role(member.getRole())
+                .profileImageUrl(member.getProfileImageUrl())
                 .build();
     }
 }

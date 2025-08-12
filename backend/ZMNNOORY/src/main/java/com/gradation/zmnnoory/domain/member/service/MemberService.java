@@ -105,6 +105,11 @@ public class MemberService {
         return MemberResponse.from(me);
     }
 
+    @Transactional
+    public void updateProfileImageUrl(Member member, String profileImageUrl) {
+        member.updateProfileImageUrl(profileImageUrl);
+    }
+
 //    @PostConstruct
 //    @Transactional
 //    protected void initAdmin() {
