@@ -33,8 +33,7 @@ public record SignUpRequest(
         @DateTimeFormat(pattern = "yyyy-MM-dd")
         LocalDate birthday,
 
-        @Schema(description = "추천인 이메일", example = "recommender@test.com")
-        @Email(message = "추천인은 이메일이어야 합니다.")
-        String recommenderEmail
+        @Schema(description = "추천인 닉네임", example = "recommender123")
+        String recommenderNickname
 ) {
 }
