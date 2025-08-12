@@ -53,7 +53,8 @@ public class SecurityConfig {
 								"/actuator/metrics",
 								"/actuator/prometheus",
 								"/swagger-ui/**",
-								"/api-docs/**"
+								"/api-docs/**",
+								"/api/members/profile-image/upload-url"
 						).permitAll() // 해당 주소는 아무나 접근 가능
 						.requestMatchers(HttpMethod.GET,
 								"/api/games",
