@@ -16,10 +16,10 @@ public class ReferralRewardService {
 
     private final ReferralRewardRepository referralRewardRepository;
     
-    @Value("${app.referral.recommender-reward:1000}")
+    @Value("${app.referral.recommender-reward:500}")
     private Long recommenderRewardAmount;
     
-    @Value("${app.referral.recommended-reward:500}")
+    @Value("${app.referral.recommended-reward:1000}")
     private Long recommendedRewardAmount;
 
     @Transactional
