@@ -1,5 +1,6 @@
 package com.gradation.zmnnoory.domain.member.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gradation.zmnnoory.common.entity.BaseEntity;
 import com.gradation.zmnnoory.domain.member.dto.MemberUpdateRequest;
 import com.gradation.zmnnoory.domain.member.exception.IllegalPointUsageException;
@@ -37,6 +38,7 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private LocalDate birthday;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recommender_id")
     private Member recommender;
