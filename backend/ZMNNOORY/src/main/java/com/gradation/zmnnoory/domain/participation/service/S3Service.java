@@ -24,7 +24,7 @@ public class S3Service {
     private String bucketName;
 
     @Value("${aws.s3.bucket-upload-name}")
-    private String bucketPublicUploadName;
+    private String bucketUploadName;
 
     private final S3Presigner presigner;
 
@@ -88,7 +88,7 @@ public class S3Service {
             
             // Generate presigned URL for video
             PutObjectRequest videoRequest = PutObjectRequest.builder()
-                    .bucket(bucketPublicUploadName)
+                    .bucket(bucketUploadName)
                     .key(videoKey)
                     .contentType("video/mp4")
                     .build();
@@ -102,7 +102,7 @@ public class S3Service {
             
             // Generate presigned URL for thumbnail
             PutObjectRequest thumbnailRequest = PutObjectRequest.builder()
-                    .bucket(bucketPublicUploadName)
+                    .bucket(bucketUploadName)
                     .key(thumbnailKey)
                     .contentType("image/jpeg")
                     .build();
