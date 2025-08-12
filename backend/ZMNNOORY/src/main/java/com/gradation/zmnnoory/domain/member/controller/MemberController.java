@@ -11,6 +11,8 @@ import com.gradation.zmnnoory.domain.member.dto.response.MemberResponse;
 import com.gradation.zmnnoory.domain.member.dto.response.MeResponse;
 import com.gradation.zmnnoory.domain.member.entity.Member;
 import com.gradation.zmnnoory.domain.member.service.MemberService;
+import com.gradation.zmnnoory.domain.member.service.MemberProfileImageService;
+import com.gradation.zmnnoory.domain.participation.dto.response.PresignedUrlResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,7 @@ import java.util.List;
 public class MemberController {
 
     private final MemberService memberService;
+    private final MemberProfileImageService memberProfileImageService;
 
     @Operation(summary = "닉네임 중복 체크", description = "주어진 닉네임이 사용 가능한지 확인합니다.")
     @GetMapping("/check-nickname")
@@ -184,6 +187,52 @@ public class MemberController {
                 .status(HttpStatus.OK)
                 .message(String.format("%d 유저의 권한을 변경하였습니다.", targetId))
                 .data(memberService.updateMemberRole(targetId))
+                .build();
+    }
+
+    @Operation(
+            summary = "프로필 이미지 업로드 URL 생성",
+            description = """
+                    프로필 이미지 업로드를 위한 Pre-signed URL을 생성합니다.
+                    - 마이페이지에서 프로필 이미지 업로드/수정 시 사용합니다.
+                    - 반환된 URL로 직접 이미지를 업로드할 수 있습니다.
+                    - URL은 15분간 유효합니다.
+                    """
+    )
+    @PostMapping("/profile-image/upload-url")
+    public BaseResponse<PresignedUrlResponse> generateProfileImageUploadUrl(
+            @RequestParam("fileName") String fileName,
+            @RequestParam("contentType") String contentType
+    ) {
+        PresignedUrlResponse response = memberProfileImageService.generatePreSignedUrlForProfile(
+                fileName, contentType);
+        
+        return BaseResponse.<PresignedUrlResponse>builder()
+                .status(HttpStatus.OK)
+                .data(response)
+                .build();
+    }
+
+    @Operation(
+            summary = "프로필 이미지 URL 업데이트",
+            description = """
+                    S3에 업로드된 프로필 이미지의 URL을 사용자 정보에 저장합니다.
+                    - 로그인이 필요합니다.
+                    - S3 업로드 완료 후 이 API를 호출해야 합니다.
+                    """
+    )
+    @PatchMapping("/profile-image")
+    public BaseResponse<String> updateProfileImageUrl(
+            @LoginMember Member member,
+            @RequestParam("key") String key
+    ) {
+        String publicUrl = memberProfileImageService.getPublicUrl(key);
+        memberService.updateProfileImageUrl(member, publicUrl);
+        
+        return BaseResponse.<String>builder()
+                .status(HttpStatus.OK)
+                .message("프로필 이미지가 업데이트되었습니다.")
+                .data(publicUrl)
                 .build();
     }
 
