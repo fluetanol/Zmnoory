@@ -21,15 +21,18 @@ public class AdminInitializer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        Member adminUser = Member.builder()
-                .email("admin@admin.com")
-                .password(passwordResolver.encodePassword("123123123"))
-                .nickname("adminUser")
-                .gender(Gender.MALE)
-                .birthday(LocalDate.now())
-                .recommender(null)
-                .role(Role.ADMIN)
-                .build();
-        memberRepository.save(adminUser);
+        // 이미 관리자 계정이 존재하는지 확인
+        if (!memberRepository.existsByEmail("admin@admin.com")) {
+            Member adminUser = Member.builder()
+                    .email("admin@admin.com")
+                    .password(passwordResolver.encodePassword("123123123"))
+                    .nickname("adminUser")
+                    .gender(Gender.MALE)
+                    .birthday(LocalDate.now())
+                    .recommender(null)
+                    .role(Role.ADMIN)
+                    .build();
+            memberRepository.save(adminUser);
+        }
     }
 }

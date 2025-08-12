@@ -4,6 +4,7 @@ import com.gradation.zmnnoory.domain.member.dto.request.SignUpRequest;
 import com.gradation.zmnnoory.domain.member.entity.Member;
 import com.gradation.zmnnoory.domain.member.entity.Role;
 import com.gradation.zmnnoory.domain.member.resolver.PasswordResolver;
+import com.gradation.zmnnoory.domain.member.service.ReferralRewardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 public class MemberCreateHandler {
 
     private final PasswordResolver passwordResolver;
+    private final ReferralRewardService referralRewardService;
 
     public Member createMemberWith(SignUpRequest signUpRequest, Member recommender) {
         return Member.builder()
@@ -23,5 +25,9 @@ public class MemberCreateHandler {
                 .recommender(recommender)
                 .role(Role.USER)
                 .build();
+    }
+    
+    public void processReferralRewardFor(Member recommender, Member newMember) {
+        referralRewardService.processReferralReward(recommender, newMember);
     }
 }

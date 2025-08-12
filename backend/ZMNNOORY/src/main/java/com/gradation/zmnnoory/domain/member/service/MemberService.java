@@ -33,15 +33,19 @@ public class MemberService {
         }
 
         Member recommender = null;
-        String recommenderEmail = signUpRequest.recommenderEmail();
+        String recommenderNickname = signUpRequest.recommenderNickname();
 
-        if (recommenderEmail != null && !recommenderEmail.isBlank()) {
-            recommender = memberRepository.findByEmail(recommenderEmail)
+        if (recommenderNickname != null && !recommenderNickname.isBlank()) {
+            recommender = memberRepository.findByNickname(recommenderNickname)
                     .orElseThrow(() -> new MemberNotFoundException("추천인을 찾을 수 없습니다."));
         }
 
         Member newMember = memberCreateHandler.createMemberWith(signUpRequest, recommender);
         memberRepository.save(newMember);
+        
+        // Member 저장 후 추천인 보상 처리
+        memberCreateHandler.processReferralRewardFor(recommender, newMember);
+        
         return MemberResponse.from(newMember);
     }
 
