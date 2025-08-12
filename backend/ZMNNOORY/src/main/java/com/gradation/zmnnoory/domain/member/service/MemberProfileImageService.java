@@ -23,6 +23,9 @@ public class MemberProfileImageService {
     @Value("${aws.s3.bucket-upload-name}")
     private String bucketUploadName;
 
+    @Value("${aws.s3.region}")
+    private String region;
+
     private final S3Presigner presigner;
 
     public PresignedUrlResponse generatePreSignedUrlForProfile(
@@ -48,7 +51,7 @@ public class MemberProfileImageService {
             log.info("프로필 이미지 Pre-signed URL 생성 완료 - key: {}, url: {}",
                     key, presignedRequest.url());
 
-            String publicUrl = String.format("https://%s.s3.ap-northeast-2.amazonaws.com/%s", bucketUploadName, key);
+            String publicUrl = String.format("https://%s.s3.%s.amazonaws.com/%s", bucketUploadName, region, key);
 
             return PresignedUrlResponse.of(
                     null,
@@ -64,7 +67,7 @@ public class MemberProfileImageService {
     }
 
     public String getPublicUrl(String key) {
-        return String.format("https://%s.s3.ap-northeast-2.amazonaws.com/%s", bucketUploadName, key);
+        return String.format("https://%s.s3.%s.amazonaws.com/%s", bucketUploadName, region, key);
     }
 
     private String generateUniqueFileName(String originalFileName) {
