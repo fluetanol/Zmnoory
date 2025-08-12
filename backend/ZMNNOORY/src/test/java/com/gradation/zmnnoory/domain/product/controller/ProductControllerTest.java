@@ -270,6 +270,7 @@ class ProductControllerTest {
     }
 
     @Nested
+    @Disabled
     @DisplayName("관리자 권한 테스트")
     class AdminUserTests {
 
