@@ -29,6 +29,12 @@ public class ReferralRewardService {
             return;
         }
 
+        // 추천인이 이미 리워드를 받은 적이 있는지 확인
+        if (referralRewardRepository.existsByRecommenderId(recommender.getId())) {
+            log.info("추천인이 이미 리워드를 받은 적이 있어 지급하지 않습니다. 추천인: {}", recommender.getNickname());
+            return;
+        }
+
         // 추천인에게 포인트 지급
         recommender.addPoint(recommenderRewardAmount);
         

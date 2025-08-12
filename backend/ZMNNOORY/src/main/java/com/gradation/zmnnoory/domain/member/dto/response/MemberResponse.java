@@ -3,6 +3,7 @@ package com.gradation.zmnnoory.domain.member.dto.response;
 import com.gradation.zmnnoory.domain.member.entity.Gender;
 import com.gradation.zmnnoory.domain.member.entity.Member;
 import com.gradation.zmnnoory.domain.member.entity.Role;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -31,12 +32,21 @@ public class MemberResponse {
     }
 
     public static MemberResponse from(Member member) {
+        String recommenderNickname;
+        try {
+            // member.getRecommender()가 프록시 객체일 수 있으며, 실제 데이터 접근 시 예외 발생 가능
+            recommenderNickname = member.getRecommender() != null ? member.getRecommender().getNickname() : "추천인 없음";
+        } catch (EntityNotFoundException e) {
+            // 추천인 ID는 존재하지만, 실제 해당 회원이 DB에 없는 경우(데이터 정합성 문제)
+            recommenderNickname = "알 수 없는 추천인";
+        }
+
         return MemberResponse.builder()
                 .email(member.getEmail())
                 .nickname(member.getNickname())
                 .birthday(member.getBirthday())
                 .gender(member.getGender())
-                .recommenderNickname(member.getRecommender() != null ? member.getRecommender().getNickname() : "추천인 없음")
+                .recommenderNickname(recommenderNickname)
                 .point(member.getPoint())
                 .role(member.getRole())
                 .build();
