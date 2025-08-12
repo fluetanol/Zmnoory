@@ -27,6 +27,7 @@ jwt:
 # AWS S3 Configuration (will be overridden by CI/CD)
 aws:
   s3:
+    bucketUploadName: "__AWS_S3_BUCKET_UPLOAD_NAME__"
     bucketName: "__AWS_S3_BUCKET_NAME__"
     region: "__AWS_S3_REGION__"
   accessKey: "__AWS_ACCESS_KEY_BACK__"

@@ -28,4 +28,5 @@ data:
   
   # AWS S3 Configuration (non-sensitive)
   AWS_S3_BUCKET_NAME: "{{ .Values.aws.s3.bucketName }}"
+  AWS_S3_BUCKET_UPLOAD_NAME: "{{ .Values.aws.s3.bucketUploadName }}"
   AWS_S3_REGION: "{{ .Values.aws.s3.region }}" 
