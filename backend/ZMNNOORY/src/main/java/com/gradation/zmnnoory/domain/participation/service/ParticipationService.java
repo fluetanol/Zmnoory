@@ -139,12 +139,10 @@ public class ParticipationService {
             throw new ParticipationAlreadyCompletedException();
         }
 
-//        return s3Service.ge(
-//                participation.getId(),
-//                participation.getMember().getId(),
-//                participation.getGame().getId()
-//        );
-
-        return new PublicUploadPresignedUrlResponse(null, null, null, null, null, null);
+        return s3Service.generatePublicUploadPresignedUrls(
+                participation.getId(),
+                participation.getMember().getId(),
+                participation.getGame().getId()
+        );
     }
 }

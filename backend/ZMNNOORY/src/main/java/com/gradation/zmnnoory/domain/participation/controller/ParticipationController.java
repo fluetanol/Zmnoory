@@ -10,6 +10,7 @@ import com.gradation.zmnnoory.domain.participation.dto.request.StartParticipatio
 import com.gradation.zmnnoory.domain.participation.dto.response.ParticipationEndResponse;
 import com.gradation.zmnnoory.domain.participation.dto.response.ParticipationResponse;
 import com.gradation.zmnnoory.domain.participation.dto.response.PresignedUrlResponse;
+import com.gradation.zmnnoory.domain.participation.dto.response.PublicUploadPresignedUrlResponse;
 import com.gradation.zmnnoory.domain.participation.service.ParticipationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -76,11 +77,11 @@ public class ParticipationController {
             - 생성된 URL은 제한된 시간 동안만 유효합니다.
             """
     )
-    @PostMapping("/presigned-url")
-    public BaseResponse<PresignedUrlResponse> getPublicUploadPresignedUrl(
+    @PostMapping("/public-presigned-url")
+    public BaseResponse<PublicUploadPresignedUrlResponse> getPublicUploadPresignedUrl(
             @Valid @RequestBody PublicUploadPresignedUrlRequest request) {
 
-        return BaseResponse.<PresignedUrlResponse>builder()
+        return BaseResponse.<PublicUploadPresignedUrlResponse>builder()
                 .status(HttpStatus.OK)
                 .data(participationService.getPublicUploadPresignedUrl(request))
                 .build();
