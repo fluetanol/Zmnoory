@@ -15,17 +15,17 @@ public class MemberResponse {
     private final String nickname;
     private final LocalDate birthday;
     private final Gender gender;
-    private final String recommenderEmail;
+    private final String recommenderNickname;
     private final Long point;
     private final Role role;
 
     @Builder
-    private MemberResponse(String email, String nickname, LocalDate birthday, Gender gender, String recommenderEmail, Long point, Role role) {
+    private MemberResponse(String email, String nickname, LocalDate birthday, Gender gender, String recommenderNickname, Long point, Role role) {
         this.email = email;
         this.nickname = nickname;
         this.birthday = birthday;
         this.gender = gender;
-        this.recommenderEmail = recommenderEmail;
+        this.recommenderNickname = recommenderNickname;
         this.point = point;
         this.role = role;
     }
@@ -36,7 +36,7 @@ public class MemberResponse {
                 .nickname(member.getNickname())
                 .birthday(member.getBirthday())
                 .gender(member.getGender())
-                .recommenderEmail(member.getRecommender() != null ? member.getRecommender().getEmail() : "추천인 없음")
+                .recommenderNickname(member.getRecommender() != null ? member.getRecommender().getNickname() : "추천인 없음")
                 .point(member.getPoint())
                 .role(member.getRole())
                 .build();
