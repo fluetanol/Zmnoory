@@ -184,7 +184,6 @@ class ProductControllerTest {
     }
 
     @Nested
-    @Disabled
     @DisplayName("일반 사용자 권한 테스트")
     class RegularUserTests {
 
