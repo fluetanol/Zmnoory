@@ -34,6 +34,10 @@ public record SignUpRequest(
         LocalDate birthday,
 
         @Schema(description = "추천인 닉네임", example = "recommender123")
-        String recommenderNickname
+        String recommenderNickname,
+
+        @Schema(description = "선택 약관 동의 여부", example = "true")
+        @NotNull(message = "선택 약관 동의 여부는 필수 값입니다.")
+        Boolean optionalConsent
 ) {
 }

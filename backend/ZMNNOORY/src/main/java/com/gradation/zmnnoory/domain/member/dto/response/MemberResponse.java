@@ -20,9 +20,10 @@ public class MemberResponse {
     private final Long point;
     private final Role role;
     private final String profileImageUrl;
+    private final Boolean optionalConsent;
 
     @Builder
-    private MemberResponse(String email, String nickname, LocalDate birthday, Gender gender, String recommenderNickname, Long point, Role role, String profileImageUrl) {
+    private MemberResponse(String email, String nickname, LocalDate birthday, Gender gender, String recommenderNickname, Long point, Role role, String profileImageUrl, Boolean optionalConsent) {
         this.email = email;
         this.nickname = nickname;
         this.birthday = birthday;
@@ -31,6 +32,7 @@ public class MemberResponse {
         this.point = point;
         this.role = role;
         this.profileImageUrl = profileImageUrl;
+        this.optionalConsent = optionalConsent;
     }
 
     public static MemberResponse from(Member member) {
@@ -52,6 +54,7 @@ public class MemberResponse {
                 .point(member.getPoint())
                 .role(member.getRole())
                 .profileImageUrl(member.getProfileImageUrl())
+                .optionalConsent(member.isOptionalConsent())
                 .build();
     }
 }

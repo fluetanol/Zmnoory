@@ -14,7 +14,8 @@ public record MeResponse(
         Gender gender,
         Long point,
         Role role,
-        String profileImageUrl
+        String profileImageUrl,
+        Boolean optionalConsent
 ) {
     public static MeResponse of(Member m) {
         return new MeResponse(
@@ -25,7 +26,8 @@ public record MeResponse(
                 m.getGender(),
                 m.getPoint(),
                 m.getRole(),
-                m.getProfileImageUrl()
+                m.getProfileImageUrl(),
+                m.isOptionalConsent()
         );
     }
 }
