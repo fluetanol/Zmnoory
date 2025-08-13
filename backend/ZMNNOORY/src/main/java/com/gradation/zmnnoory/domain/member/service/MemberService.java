@@ -107,7 +107,9 @@ public class MemberService {
 
     @Transactional
     public void updateProfileImageUrl(Member member, String profileImageUrl) {
-        member.updateProfileImageUrl(profileImageUrl);
+        Member managedMember = memberRepository.findById(member.getId())
+                .orElseThrow(MemberNotFoundException::new);
+        managedMember.updateProfileImageUrl(profileImageUrl);
     }
 
 //    @PostConstruct
