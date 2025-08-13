@@ -10,10 +10,10 @@ public record CompleteParticipationRequest(
         @NotBlank(message = "게임 제목은 필수입니다.")
         String gameTitle,
 
-        @NotBlank(message = "비디오 URL은 필수입니다.")
-        String videoUrl,
+        @NotBlank(message = "비디오 Object Key는 필수입니다.")
+        String videoObjectKey,
 
-        String thumbnailUrl,
+        String thumbnailObjectKey,
         
         String title,
         

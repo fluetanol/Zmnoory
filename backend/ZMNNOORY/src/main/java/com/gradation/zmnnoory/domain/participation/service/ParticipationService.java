@@ -24,6 +24,7 @@ import com.gradation.zmnnoory.domain.video.dto.response.VideoResponse;
 import com.gradation.zmnnoory.domain.video.service.VideoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +40,12 @@ public class ParticipationService {
     private final GameRepository gameRepository;
     private final VideoService videoService;
     private final S3Service s3Service;
+    
+    @Value("${aws.s3.bucket-upload-name}")
+    private String bucketUploadName;
+    
+    @Value("${aws.s3.region}")
+    private String region;
 
     // 1. 게임 참여 시작
     public ParticipationResponse startParticipation(StartParticipationRequest request) {
@@ -95,11 +102,16 @@ public class ParticipationService {
         // 참여 완료 처리
         participation.complete();
 
+        // Object Key를 Public URL로 변환
+        String videoUrl = getPublicUrl(request.videoObjectKey());
+        String thumbnailUrl = request.thumbnailObjectKey() != null ? 
+                getPublicUrl(request.thumbnailObjectKey()) : null;
+
         // 비디오 엔티티 생성 (실제 URL과 함께)
         VideoResponse video = videoService.createVideoWithUploadedData(
                 participation,
-                request.videoUrl(),
-                request.thumbnailUrl(),
+                videoUrl,
+                thumbnailUrl,
                 request.title(),
                 request.description(),
                 request.isPublic()
@@ -144,5 +156,12 @@ public class ParticipationService {
                 participation.getMember().getId(),
                 participation.getGame().getId()
         );
+    }
+    
+    /**
+     * Object Key를 Public URL로 변환
+     */
+    private String getPublicUrl(String objectKey) {
+        return String.format("https://%s.s3.%s.amazonaws.com/%s", bucketUploadName, region, objectKey);
     }
 }
