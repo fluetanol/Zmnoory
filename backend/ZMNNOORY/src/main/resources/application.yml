@@ -15,6 +15,7 @@ spring:
       port: ${REDIS_PORT_DEV}
   jpa:
     hibernate:
+#오류 테스트
       ddl-auto: create-drop
     properties:
       hibernate:
