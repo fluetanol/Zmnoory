@@ -38,6 +38,9 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private LocalDate birthday;
 
+    @Column(nullable = false)
+    private boolean optionalConsent;
+
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recommender_id")
@@ -58,6 +61,7 @@ public class Member extends BaseEntity {
                    Gender gender,
                    String nickname,
                    LocalDate birthday,
+                   boolean optionalConsent,
                    Member recommender,
                    Role role,
                    String profileImageUrl
@@ -67,6 +71,7 @@ public class Member extends BaseEntity {
         this.gender = gender;
         this.nickname = nickname;
         this.birthday = birthday;
+        this.optionalConsent = optionalConsent;
         this.recommender = recommender;
         this.role = role;
         this.profileImageUrl = profileImageUrl;
@@ -77,6 +82,7 @@ public class Member extends BaseEntity {
         this.gender = memberUpdateRequest.gender();
         this.nickname = memberUpdateRequest.nickname();
         this.birthday = memberUpdateRequest.birthday();
+        this.optionalConsent = memberUpdateRequest.optionalConsent();
     }
 
     public void addPoint(long point) {

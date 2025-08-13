@@ -23,6 +23,9 @@ public record MemberUpdateRequest(
 
         @NotNull(message = "생년월일은 필수 값입니다.")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-        LocalDate birthday
+        LocalDate birthday,
+
+        @NotNull(message = "선택 약관 동의 여부는 필수 값입니다.")
+        Boolean optionalConsent
 ) {
 }

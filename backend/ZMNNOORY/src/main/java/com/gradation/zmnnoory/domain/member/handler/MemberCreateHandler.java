@@ -22,6 +22,7 @@ public class MemberCreateHandler {
                 .nickname(signUpRequest.nickname())
                 .gender(signUpRequest.gender())
                 .birthday(signUpRequest.birthday())
+                .optionalConsent(signUpRequest.optionalConsent())
                 .recommender(recommender)
                 .role(Role.USER)
                 .build();
