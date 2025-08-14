@@ -14,7 +14,7 @@ import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
-public class AdminInitializer implements ApplicationRunner {
+public class UserInitializer implements ApplicationRunner {
 
     private final MemberRepository memberRepository;
     private final PasswordResolver passwordResolver;
@@ -22,18 +22,18 @@ public class AdminInitializer implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         // 이미 관리자 계정이 존재하는지 확인
-        if (!memberRepository.existsByEmail("admin@admin.com")) {
-            Member adminUser = Member.builder()
-                    .email("admin@admin.com")
+        if (!memberRepository.existsByEmail("user@user.com")) {
+            Member userUser = Member.builder()
+                    .email("user@user.com")
                     .password(passwordResolver.encodePassword("123123123"))
-                    .nickname("adminUser")
+                    .nickname("userUser")
                     .gender(Gender.MALE)
                     .birthday(LocalDate.now())
                     .optionalConsent(true)
                     .recommender(null)
-                    .role(Role.ADMIN)
+                    .role(Role.USER)
                     .build();
-            memberRepository.save(adminUser);
+            memberRepository.save(userUser);
         }
     }
 }
