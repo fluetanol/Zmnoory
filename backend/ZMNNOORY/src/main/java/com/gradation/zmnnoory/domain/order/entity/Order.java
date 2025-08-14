@@ -2,6 +2,7 @@
 
 
     import com.gradation.zmnnoory.common.entity.BaseEntity;
+    import com.gradation.zmnnoory.domain.giftcard.entity.GiftCard;
     import com.gradation.zmnnoory.domain.member.entity.Member;
     import com.gradation.zmnnoory.domain.product.entity.Product;
     import jakarta.persistence.*;
@@ -33,5 +34,4 @@
             this.member = member;
             this.product = product;
         }
-
     }

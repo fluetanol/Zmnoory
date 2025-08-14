@@ -1,5 +1,7 @@
 package com.gradation.zmnnoory.domain.order.service;
 
+import com.gradation.zmnnoory.domain.giftcard.entity.GiftCard;
+import com.gradation.zmnnoory.domain.giftcard.service.GiftCardService;
 import com.gradation.zmnnoory.domain.member.entity.Member;
 import com.gradation.zmnnoory.domain.order.dto.response.OrderResponse;
 import com.gradation.zmnnoory.domain.order.entity.Order;
@@ -19,6 +21,7 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
+    private final GiftCardService giftCardService;
 
     @Transactional
     public OrderResponse purchaseProduct(Member member, String productTitle) {
@@ -32,15 +35,18 @@ public class OrderService {
         }
         member.usePoint(product.getPrice());
 
-        // 3. 주문 생성 및 저장
+        // 3. 사용 가능한 기프티콘 할당
+        giftCardService.assignGiftCardToOrder(product, member);
+
+        // 4. 주문 생성 및 저장
         Order order = Order.builder()
                 .member(member)
                 .product(product)
                 .build();
         
-        orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
 
-        // 4. 응답 반환
+        // 5. 응답 반환
         return OrderResponse.of(product);
     }
 }

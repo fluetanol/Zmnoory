@@ -81,7 +81,8 @@ public class SecurityConfig {
                                 "/api/orders/**",
                                 "/api/watches/**",
                                 "/api/comments/**",
-                                "/api/likes/**"
+                                "/api/likes/**",
+                                "/api/giftcards/**"
 						).authenticated()
 						.anyRequest()
 						.denyAll() // 그외 주소는 접근 거부

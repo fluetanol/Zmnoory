@@ -8,6 +8,9 @@ import lombok.Getter;
 @Getter
 public class ProductResponse {
 
+    @Schema(description = "상품 ID", example = "1")
+    private final Long id;
+
     @Schema(description = "상품 제목", example = "스타벅스 아메리카노")
     private final String title;
 
@@ -21,7 +24,8 @@ public class ProductResponse {
     private final String thumbnail;
 
     @Builder
-    private ProductResponse(String title, String category, Long price, String thumbnail) {
+    private ProductResponse(Long id, String title, String category, Long price, String thumbnail) {
+        this.id = id;
         this.title = title;
         this.category = category;
         this.price = price;
@@ -30,6 +34,7 @@ public class ProductResponse {
 
     public static ProductResponse of(Product product) {
         return ProductResponse.builder()
+                .id(product.getId())
                 .title(product.getTitle())
                 .category(product.getCategory().getDesc())
                 .price(product.getPrice())
