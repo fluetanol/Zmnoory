@@ -1,11 +1,14 @@
 package com.gradation.zmnnoory.domain.game.entity;
 
 import com.gradation.zmnnoory.common.entity.BaseEntity;
+import com.gradation.zmnnoory.domain.participation.entity.Participation;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Table(name = "games")
@@ -39,6 +42,9 @@ public class Game extends BaseEntity {
 
     @Column
     private String requiredDataType;
+
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Participation> participations;
 
     @Builder
     public Game(String title, String description, String explanation,
