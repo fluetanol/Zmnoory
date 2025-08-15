@@ -20,7 +20,6 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/giftcards")
 @Validated
 @Tag(name = "기프티콘 API", description = "기프티콘 관리 및 조회 API")
 public class GiftCardController {
@@ -35,7 +34,7 @@ public class GiftCardController {
                     - 중복된 기프티콘 번호는 등록할 수 없습니다.
                     """
     )
-    @PostMapping
+    @PostMapping("/api/admin/giftcards")
     @AdminOnly
     public BaseResponse<GiftCardResponse> createGiftCard(
             @Valid @RequestBody GiftCardCreateRequest request) {
@@ -54,7 +53,7 @@ public class GiftCardController {
                     관리자가 시스템에 등록된 모든 기프티콘을 조회합니다.
                     """
     )
-    @GetMapping
+    @GetMapping("/api/admin/giftcards")
     @AdminOnly
     public BaseResponse<List<GiftCardResponse>> getAllGiftCards() {
 
@@ -72,7 +71,7 @@ public class GiftCardController {
                     특정 기프티콘의 상세 정보를 조회합니다.
                     """
     )
-    @GetMapping("/{id}")
+    @GetMapping("/api/admin/giftcards/{id}")
     @AdminOnly
     public BaseResponse<GiftCardResponse> getGiftCard(@PathVariable Long id) {
 
@@ -92,7 +91,7 @@ public class GiftCardController {
                     - 사용 상태와 만료 여부를 확인할 수 있습니다.
                     """
     )
-    @GetMapping("/my")
+    @GetMapping("/api/giftcards/my")
     public BaseResponse<List<MyGiftCardResponse>> getMyGiftCards(
             @LoginMember Member member) {
 
@@ -113,7 +112,7 @@ public class GiftCardController {
                     - 이미 할당된 기프티콘은 삭제할 수 없습니다.
                     """
     )
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/api/admin/giftcards/{id}")
     @AdminOnly
     public BaseResponse<Void> deleteGiftCard(@PathVariable Long id) {
 

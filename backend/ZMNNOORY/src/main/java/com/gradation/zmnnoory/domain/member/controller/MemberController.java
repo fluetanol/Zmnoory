@@ -13,6 +13,8 @@ import com.gradation.zmnnoory.domain.member.entity.Member;
 import com.gradation.zmnnoory.domain.member.service.MemberService;
 import com.gradation.zmnnoory.domain.member.service.MemberProfileImageService;
 import com.gradation.zmnnoory.domain.participation.dto.response.PresignedUrlResponse;
+import com.gradation.zmnnoory.domain.datarequest.service.DataRequestService;
+import com.gradation.zmnnoory.domain.datarequest.dto.response.DataRequestSummaryResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +36,7 @@ public class MemberController {
 
     private final MemberService memberService;
     private final MemberProfileImageService memberProfileImageService;
+    private final DataRequestService dataRequestService;
 
     @Operation(summary = "닉네임 중복 체크", description = "주어진 닉네임이 사용 가능한지 확인합니다.")
     @GetMapping("/check-nickname")
@@ -110,6 +113,27 @@ public class MemberController {
         return BaseResponse.<MeResponse>builder()
                 .status(HttpStatus.OK)
                 .data(MeResponse.of(me))
+                .build();
+    }
+
+    @Operation(
+            summary = "내 데이터 요청 목록 조회",
+            description = """
+                    로그인된 사용자의 데이터 요청 목록을 조회합니다.
+                    - 로그인이 필요합니다.
+                    - 회원의 이메일과 일치하는 contactInfo로 제출된 데이터 요청들을 반환합니다.
+                    """
+    )
+    @GetMapping("/me/data-requests")
+    @Transactional(readOnly = true)
+    public BaseResponse<List<DataRequestSummaryResponse>> getMyDataRequests(
+            @LoginMember Member me
+    ) {
+        List<DataRequestSummaryResponse> dataRequests = dataRequestService.getMyDataRequests(me.getEmail());
+        
+        return BaseResponse.<List<DataRequestSummaryResponse>>builder()
+                .status(HttpStatus.OK)
+                .data(dataRequests)
                 .build();
     }
 
