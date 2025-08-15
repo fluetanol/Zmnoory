@@ -58,7 +58,8 @@ public class SecurityConfig {
 						.requestMatchers(HttpMethod.GET,
 								"/api/games",
 								"/api/members/check-email/**",
-								"/api/members/check-nickname/**")
+								"/api/members/check-nickname/**",
+								"/api/videos/public")
 						.permitAll() // 위 주소는 GET 요청만 로그인 안 해도 아무나 가능
 						.requestMatchers(
 								"/api/members/sign-up"
@@ -70,7 +71,9 @@ public class SecurityConfig {
 								"/api/games/admin/**",
 								"/api/rewards/admin/**",
 								"/api/participations/admin/**",
-								"/api/products/admin/**"
+								"/api/products/admin/**",
+								"/api/admin/giftcards/**",
+								"/api/admin/data-requests/**"
 						).hasRole("ADMIN")
 						.requestMatchers(
 								"/api/members/**",
@@ -82,7 +85,8 @@ public class SecurityConfig {
                                 "/api/watches/**",
                                 "/api/comments/**",
                                 "/api/likes/**",
-                                "/api/giftcards/**"
+                                "/api/giftcards/**",
+                                "/api/data-requests/**"
 						).authenticated()
 						.anyRequest()
 						.denyAll() // 그외 주소는 접근 거부
