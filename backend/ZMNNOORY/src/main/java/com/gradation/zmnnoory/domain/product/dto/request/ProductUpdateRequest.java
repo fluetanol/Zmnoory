@@ -20,13 +20,8 @@ public record ProductUpdateRequest(
         @Positive(message = "가격은 양수여야 합니다")
         Long price,
 
-        @Schema(description = "상품 썸네일 이미지 URL", example = "https://example.com/image.png")
+        @Schema(description = "상품 썸네일 이미지", example = "image.png")
         @NotBlank(message = "썸네일은 필수입니다")
-        @Size(max = 255, message = "썸네일 URL은 255자 이하여야 합니다")
-        @Pattern(
-                regexp = "^(https?://).+",
-                message = "올바른 URL 형식이어야 합니다"
-        )
         String thumbnail
 ) {
 }
