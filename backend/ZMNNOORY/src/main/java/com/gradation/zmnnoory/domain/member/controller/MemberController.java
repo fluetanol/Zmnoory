@@ -14,7 +14,7 @@ import com.gradation.zmnnoory.domain.member.service.MemberService;
 import com.gradation.zmnnoory.domain.member.service.MemberProfileImageService;
 import com.gradation.zmnnoory.domain.participation.dto.response.PresignedUrlResponse;
 import com.gradation.zmnnoory.domain.datarequest.service.DataRequestService;
-import com.gradation.zmnnoory.domain.datarequest.dto.response.DataRequestSummaryResponse;
+import com.gradation.zmnnoory.domain.datarequest.dto.response.DataRequestResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -126,12 +126,12 @@ public class MemberController {
     )
     @GetMapping("/me/data-requests")
     @Transactional(readOnly = true)
-    public BaseResponse<List<DataRequestSummaryResponse>> getMyDataRequests(
+    public BaseResponse<List<DataRequestResponse>> getMyDataRequests(
             @LoginMember Member me
     ) {
-        List<DataRequestSummaryResponse> dataRequests = dataRequestService.getMyDataRequests(me.getEmail());
+        List<DataRequestResponse> dataRequests = dataRequestService.getMyDataRequests(me.getEmail());
         
-        return BaseResponse.<List<DataRequestSummaryResponse>>builder()
+        return BaseResponse.<List<DataRequestResponse>>builder()
                 .status(HttpStatus.OK)
                 .data(dataRequests)
                 .build();

@@ -59,13 +59,13 @@ public class DataRequestController {
                     """
     )
     @GetMapping("/api/data-requests/my")
-    public BaseResponse<List<DataRequestSummaryResponse>> getMyDataRequests(
+    public BaseResponse<List<DataRequestResponse>> getMyDataRequests(
             @Parameter(description = "연락처(이메일)", required = true)
             @RequestParam String contactInfo) {
 
-        List<DataRequestSummaryResponse> response = dataRequestService.getMyDataRequests(contactInfo);
+        List<DataRequestResponse> response = dataRequestService.getMyDataRequests(contactInfo);
 
-        return BaseResponse.<List<DataRequestSummaryResponse>>builder()
+        return BaseResponse.<List<DataRequestResponse>>builder()
                 .status(HttpStatus.OK)
                 .data(response)
                 .build();

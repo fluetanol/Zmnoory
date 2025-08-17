@@ -62,10 +62,10 @@ public class DataRequestService {
                 .toList();
     }
 
-    public List<DataRequestSummaryResponse> getMyDataRequests(String contactInfo) {
+    public List<DataRequestResponse> getMyDataRequests(String contactInfo) {
         return dataRequestRepository.findByContactInfoOrderByCreatedAtDesc(contactInfo)
                 .stream()
-                .map(DataRequestSummaryResponse::of)
+                .map(DataRequestResponse::of)
                 .toList();
     }
 
