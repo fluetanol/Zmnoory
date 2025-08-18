@@ -1,0 +1,122 @@
+namespace: backend-dev
+environment: dev
+
+spring:
+  profile: k8s
+
+# Database Configuration (will be overridden by CI/CD)
+database:
+  url: "__DB_URL__"
+  username: "__DB_USERNAME__"
+  password: "__DB_PASSWORD__"
+  
+# Redis Configuration (will be overridden by CI/CD)
+redis:
+  host: "__REDIS_HOST__"
+  port: "__REDIS_PORT__"
+  password: "__REDIS_PASSWORD__"
+
+# JWT Configuration (will be overridden by CI/CD)
+jwt:
+  secret: "__JWT_SECRET__"
+  issuer: "__JWT_ISSUER__"
+  expiration: "__JWT_EXPIRATION__"
+  prefix: "__JWT_PREFIX__"
+  header: "__JWT_HEADER__"
+
+# AWS S3 Configuration (will be overridden by CI/CD)
+aws:
+  s3:
+    bucketUploadName: "__AWS_S3_BUCKET_UPLOAD_NAME__"
+    bucketName: "__AWS_S3_BUCKET_NAME__"
+    region: "__AWS_S3_REGION__"
+  accessKey: "__AWS_ACCESS_KEY_BACK__"
+  secretKey: "__AWS_SECRET_KEY_BACK__"
+
+# Application Configuration
+app:
+  name: "__APP_NAME__"
+
+# Default values for zmnnoory-backend.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+image:
+  repository: "localhost:32000/zmnnoory-backend"
+  tag: "__TAG__"
+  pullPolicy: Always
+
+replicaCount: 3
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+  host: "ec2-3-38-95-2.ap-northeast-2.compute.amazonaws.com"
+  path: "/"
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

@@ -1,6 +1,7 @@
 ### ZMNNOORY ###
-*.yml
-
+.env
+.env.prod
+.env.dev
 
 HELP.md
 .gradle
@@ -41,3 +42,4 @@ out/
 ### VS Code ###
 .vscode/
 
+.claude

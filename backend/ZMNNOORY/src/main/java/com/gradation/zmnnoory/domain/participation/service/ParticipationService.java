@@ -1,19 +1,34 @@
 package com.gradation.zmnnoory.domain.participation.service;
 
+import com.gradation.zmnnoory.domain.game.entity.Game;
+import com.gradation.zmnnoory.domain.game.exception.GameNotFoundException;
+import com.gradation.zmnnoory.domain.game.repository.GameRepository;
 import com.gradation.zmnnoory.domain.member.entity.Member;
+import com.gradation.zmnnoory.domain.member.exception.MemberNotFoundException;
 import com.gradation.zmnnoory.domain.member.repository.MemberRepository;
-import com.gradation.zmnnoory.domain.participation.dto.UpdateParticipationRequest;
+import com.gradation.zmnnoory.domain.participation.dto.request.CompleteParticipationRequest;
+import com.gradation.zmnnoory.domain.participation.dto.request.PresignedUrlRequest;
+import com.gradation.zmnnoory.domain.participation.dto.request.PublicUploadPresignedUrlRequest;
+import com.gradation.zmnnoory.domain.participation.dto.request.StartParticipationRequest;
+import com.gradation.zmnnoory.domain.participation.dto.response.ParticipationEndResponse;
+import com.gradation.zmnnoory.domain.participation.dto.response.ParticipationResponse;
+import com.gradation.zmnnoory.domain.participation.dto.response.PresignedUrlResponse;
+import com.gradation.zmnnoory.domain.participation.dto.response.PublicUploadPresignedUrlResponse;
 import com.gradation.zmnnoory.domain.participation.entity.Participation;
+import com.gradation.zmnnoory.domain.participation.entity.ParticipationStatus;
+import com.gradation.zmnnoory.domain.participation.exception.AlreadyParticipatedException;
+import com.gradation.zmnnoory.domain.participation.exception.ParticipationAlreadyCompletedException;
+import com.gradation.zmnnoory.domain.participation.exception.ParticipationNotFoundException;
 import com.gradation.zmnnoory.domain.participation.repository.ParticipationRepository;
-import com.gradation.zmnnoory.domain.participation.status.ParticipationStatus;
-import com.gradation.zmnnoory.domain.stage.entity.Stage;
-import com.gradation.zmnnoory.domain.stage.repository.StageRepository;
+import com.gradation.zmnnoory.domain.video.dto.response.VideoResponse;
+import com.gradation.zmnnoory.domain.video.service.VideoService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.util.UUID;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,47 +37,131 @@ public class ParticipationService {
 
     private final ParticipationRepository participationRepository;
     private final MemberRepository memberRepository;
-    private final StageRepository stageRepository;
+    private final GameRepository gameRepository;
+    private final VideoService videoService;
+    private final S3Service s3Service;
+    
+    @Value("${aws.s3.bucket-upload-name}")
+    private String bucketUploadName;
+    
+    @Value("${aws.s3.region}")
+    private String region;
 
-    public Participation startParticipation(Long memberId, Long stageId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
-        
-        Stage stage = stageRepository.findById(stageId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 스테이지입니다."));
+    // 1. 게임 참여 시작
+    public ParticipationResponse startParticipation(StartParticipationRequest request) {
+        Member member = memberRepository.findByEmail(request.email())
+                .orElseThrow(MemberNotFoundException::new);
+
+        Game game = gameRepository.findByTitle(request.gameTitle())
+                .orElseThrow(() -> new GameNotFoundException(request.gameTitle()));
+
+        // 중복 참여 검증
+        if (participationRepository.existsByMemberEmailAndGameTitle(request.email(), request.gameTitle())) {
+            throw new AlreadyParticipatedException();
+        }
 
         Participation participation = Participation.builder()
                 .member(member)
-                .stage(stage)
-                .startedAt(LocalDate.now())
-                .status(ParticipationStatus.IN_PROGRESS)
+                .game(game)
+                .status(ParticipationStatus.NOT_PARTICIPATED)
                 .build();
 
-        return participationRepository.save(participation);
+        return ParticipationResponse.of(participationRepository.save(participation));
     }
 
-    public Participation endParticipation(UUID participationId) {
-        Participation participation = getParticipation(participationId);
-        participation.complete();
-        return participation;
-    }
+    // 2. Presigned URL 생성
+    public PresignedUrlResponse getPresignedUrl(PresignedUrlRequest request) {
+        Participation participation = participationRepository
+                .findByMemberEmailAndGameTitle(request.email(), request.gameTitle())
+                .orElseThrow(ParticipationNotFoundException::new);
 
-    public boolean isFirstParticipation(Long memberId, Long stageId) {
-        return !participationRepository.existsByMemberIdAndStageId(memberId, stageId);
-    }
+        if (participation.getStatus() == ParticipationStatus.COMPLETED) {
+            throw new ParticipationAlreadyCompletedException();
+        }
 
-    public Participation getParticipation(UUID participationId) {
-        return participationRepository.findById(participationId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 participation입니다."));
-    }
-
-    public Participation updateParticipation(UUID participationId, UpdateParticipationRequest request) {
-        Participation participation = getParticipation(participationId);
-        participation.updateMediaInfo(
-                request.getFrameCount(),
-                request.getVideoUrl(),
-                request.getThumbnailUrl()
+        return s3Service.generatePreSignedUrl(
+                participation.getId(),
+                participation.getMember().getId(),
+                participation.getGame().getId(),
+                request.fileName(),
+                request.contentType()
         );
-        return participation;
+    }
+
+    // 3. 참여 완료 처리 (업로드 성공 후)
+    public ParticipationEndResponse completeParticipation(CompleteParticipationRequest request) {
+        Participation participation = participationRepository
+                .findByMemberEmailAndGameTitle(request.email(), request.gameTitle())
+                .orElseThrow(ParticipationNotFoundException::new);
+
+        // 이미 완료된 참여 체크
+        if (participation.getStatus() == ParticipationStatus.COMPLETED) {
+            throw new ParticipationAlreadyCompletedException();
+        }
+
+        // 참여 완료 처리
+        participation.complete();
+
+        // Object Key를 Public URL로 변환
+        String videoUrl = getPublicUrl(request.videoObjectKey());
+        String thumbnailUrl = request.thumbnailObjectKey() != null ? 
+                getPublicUrl(request.thumbnailObjectKey()) : null;
+
+        // 비디오 엔티티 생성 (실제 URL과 함께)
+        VideoResponse video = videoService.createVideoWithUploadedData(
+                participation,
+                videoUrl,
+                thumbnailUrl,
+                request.title(),
+                request.description(),
+                request.isPublic()
+        );
+
+        // 리워드 포인트 지급
+        Long rewardPoint = participation.getGame().getPoint();
+        Member member = participation.getMember();
+        member.addPoint(rewardPoint);
+
+        return ParticipationEndResponse.of(participation, video.id());
+    }
+
+
+    // 4. 한 멤버의 전체 참여 리스트
+    public List<ParticipationResponse> getParticipationsByMember(Long memberId) {
+        if (!memberRepository.existsById(memberId)) {
+            throw new MemberNotFoundException();
+        }
+        return participationRepository.findByMemberId(memberId).stream()
+                .map(ParticipationResponse::of)
+                .toList();
+    }
+
+    public String deleteParticipation(Member member) {
+        participationRepository.findAllByMember(member).forEach(videoService::deleteVideo);
+        participationRepository.deleteAllByMember(member);
+        return "삭제 완료";
+    }
+
+    public PublicUploadPresignedUrlResponse getPublicUploadPresignedUrl(PublicUploadPresignedUrlRequest request) {
+        Participation participation = participationRepository
+                .findByMemberEmailAndGameTitle(request.email(), request.gameTitle())
+                .orElseThrow(ParticipationNotFoundException::new);
+
+        if (participation.getStatus() == ParticipationStatus.COMPLETED) {
+            throw new ParticipationAlreadyCompletedException();
+        }
+
+        return s3Service.generatePublicUploadPresignedUrls(
+                participation.getId(),
+                participation.getMember().getId(),
+                participation.getGame().getId()
+        );
+    }
+    
+    /**
+     * Object Key를 Public URL로 변환
+     */
+    private String getPublicUrl(String objectKey) {
+        return String.format("https://%s.s3.%s.amazonaws.com/%s", bucketUploadName, region, objectKey);
     }
 }

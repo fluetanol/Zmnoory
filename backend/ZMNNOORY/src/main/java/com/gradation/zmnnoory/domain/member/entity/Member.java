@@ -1,11 +1,16 @@
 package com.gradation.zmnnoory.domain.member.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.gradation.zmnnoory.common.entity.BaseEntity;
+import com.gradation.zmnnoory.domain.member.dto.MemberUpdateRequest;
+import com.gradation.zmnnoory.domain.member.exception.IllegalPointUsageException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -17,14 +22,90 @@ public class Member extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(unique = true, nullable = false)
     private String email;
+
+    @Column(nullable = false)
     private String password;
-    private String gender;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+
+    @Column(nullable = false, unique = true)
+    private String nickname;
+
+    @Column(nullable = false)
+    private LocalDate birthday;
+
+    @Column(nullable = false)
+    private boolean optionalConsent;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "recommender_id")
+    private Member recommender;
+
+    @Column(nullable = false)
+    private Long point = 0L;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    private String profileImageUrl;
 
     @Builder
-    private Member(String email, String password, String gender) {
+    private Member(String email,
+                   String password,
+                   Gender gender,
+                   String nickname,
+                   LocalDate birthday,
+                   boolean optionalConsent,
+                   Member recommender,
+                   Role role,
+                   String profileImageUrl
+    ) {
         this.email = email;
         this.password = password;
         this.gender = gender;
+        this.nickname = nickname;
+        this.birthday = birthday;
+        this.optionalConsent = optionalConsent;
+        this.recommender = recommender;
+        this.role = role;
+        this.profileImageUrl = profileImageUrl;
+    }
+
+    public void update(MemberUpdateRequest memberUpdateRequest) {
+        this.email = memberUpdateRequest.email();
+        this.gender = memberUpdateRequest.gender();
+        this.nickname = memberUpdateRequest.nickname();
+        this.birthday = memberUpdateRequest.birthday();
+        this.optionalConsent = memberUpdateRequest.optionalConsent();
+    }
+
+    public void addPoint(long point) {
+        this.point += point;
+    }
+
+    public void usePoint(long point) {
+        if (this.point < point) {
+            throw new IllegalPointUsageException();
+        }
+
+        this.point -= point;
+    }
+
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
+    }
+
+    public void updateRole() {
+        this.role = Role.ADMIN;
+    }
+
+    public void updateProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
     }
 }

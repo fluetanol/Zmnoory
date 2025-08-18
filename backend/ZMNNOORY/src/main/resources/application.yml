@@ -1,0 +1,65 @@
+spring:
+  config:
+    import: optional:file:.env[.properties]
+  application:
+    name: ${APP_NAME}
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  data:
+    redis:
+      host: ${REDIS_HOST_DEV}
+      port: ${REDIS_PORT_DEV}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: false
+        format_sql: true
+        highlight_sql: true
+    open-in-view: false
+
+springdoc:
+  swagger-ui:                                   # swagger-ui ?? ??
+    # path: /swagger-ui.html                    # swagger ui? ??? ? ?? ?? ??
+    groups-order: DESC                          # API ?? ??, ???? ??
+    operationsSorter: method                    # API ??? ???? ??, ???? ?? ??
+    disable-swagger-default-url: true           # ?? swagger url ?? ????
+    display-request-duration: true              # ?? ?? ?? ?? ??
+  api-docs:
+    path: /api-docs                             # API ???? ?? ??? ??
+  show-actuator: false                          # Actuator Endpoint ?? ??
+  default-consumes-media-type: application/json # ?? ?? ??? ??? ??asd
+  default-produces-media-type: application/json # ?? ?? ??? ??? ??
+  paths-to-match:                               # ?? ??? ??? ?? ?? ??
+    - /api/**
+
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug
+        type.descriptor.sql: trace
+
+
+
+jwt:
+  secret-key: ${JWT_SECRET_KEY}
+  issuer: ${JWT_ISSUER}
+  expiration-time: 3h
+  token-prefix: ${JWT_TOKEN_PREFIX}
+  header: ${JWT_HEADER}
+
+
+aws:
+  s3:
+    bucket-name: ${AWS_S3_BUCKET_NAME}
+    bucket-upload-name: ${AWS_S3_BUCKET_UPLOAD_NAME}
+    region: ${AWS_S3_REGION}
+  access-key: ${AWS_ACCESS_KEY_BACK}
+  secret-key: ${AWS_SECRET_KEY_BACK}

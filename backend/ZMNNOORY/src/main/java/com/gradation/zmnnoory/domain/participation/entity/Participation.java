@@ -1,14 +1,13 @@
 package com.gradation.zmnnoory.domain.participation.entity;
 
 import com.gradation.zmnnoory.common.entity.BaseEntity;
+import com.gradation.zmnnoory.domain.game.entity.Game;
 import com.gradation.zmnnoory.domain.member.entity.Member;
-import com.gradation.zmnnoory.domain.stage.entity.Stage;
-import com.gradation.zmnnoory.domain.participation.status.ParticipationStatus;
 import jakarta.persistence.*;
-import lombok.*;
-
-import java.time.LocalDate;
-import java.util.UUID;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
@@ -17,52 +16,32 @@ import java.util.UUID;
 public class Participation extends BaseEntity {
 
     @Id
-    @GeneratedValue
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "stage_id", nullable = false)
-    private Stage stage;
-
-    private LocalDate startedAt;
-    private LocalDate endedAt;
+    @JoinColumn(name = "game_id", nullable = false)
+    private Game game;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private ParticipationStatus status;
 
-    @Setter private Integer frameCount;
-    @Setter private String videoUrl;
-    @Setter private String thumbnailUrl;
-
-    public void updateMediaInfo(Integer frameCount, String videoUrl, String thumbnailUrl) {
-        if (frameCount != null) this.frameCount = frameCount;
-        if (videoUrl != null) this.videoUrl = videoUrl;
-        if (thumbnailUrl != null) this.thumbnailUrl = thumbnailUrl;
-    }
-
     public void complete() {
-        if (this.status != ParticipationStatus.IN_PROGRESS) {
-            throw new IllegalStateException("진행 중인 participation이 아닙니다.");
+        if (this.status != ParticipationStatus.NOT_PARTICIPATED) {
+            throw new IllegalStateException("이미 완료된 게임 참여입니다. 리워드를 다시 지급할 수 없습니다.");
         }
         this.status = ParticipationStatus.COMPLETED;
-        this.endedAt = LocalDate.now();
     }
 
     @Builder
-    public Participation(Member member, Stage stage, LocalDate startedAt, 
-                        LocalDate endedAt, ParticipationStatus status, 
-                        Integer frameCount, String videoUrl, String thumbnailUrl) {
+    public Participation(Member member, Game game, ParticipationStatus status) {
         this.member = member;
-        this.stage = stage;
-        this.startedAt = startedAt;
-        this.endedAt = endedAt;
+        this.game = game;
         this.status = status;
-        this.frameCount = frameCount;
-        this.videoUrl = videoUrl;
-        this.thumbnailUrl = thumbnailUrl;
     }
 }

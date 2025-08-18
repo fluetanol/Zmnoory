@@ -1,55 +1,61 @@
 ### create member fail 1
-POST http://localhost:8080/api/member/sign-up
+POST http://localhost:8080/api/members/sign-up
 Content-Type: application/json
 
 {
   "email" : "test1stest.com",
   "password": "123123123",
-  "gender": "male"
+  "gender": "bird",
+  "nickname": "tester",
+  "birthday": "2000-01-01"
 }
 
-### create member fail 2
-POST http://localhost:8080/api/member/sign-up
+### check nickname duplicated
+GET http://localhost:8080/api/members/check-nickname?nickname=tester
 Content-Type: application/json
 
-{
-  "email" : "",
-  "password": "",
-  "gender": "male"
-}
+### check email duplicated
+GET http://localhost:8080/api/members/check-email?email=test1@test.com
 
 ### create member1
-POST http://localhost:8080/api/member/sign-up
+POST http://localhost:8080/api/members/sign-up
 Content-Type: application/json
 
 {
   "email" : "test1@test.com",
   "password": "123123123",
-  "gender": "male"
+  "gender": "MALE",
+  "nickname" : "tester",
+  "birthday": "2000-01-01"
 }
 
 ### create member fail - duplicated
-POST http://localhost:8080/api/member/sign-up
+POST http://localhost:8080/api/members/sign-up
 Content-Type: application/json
 
 {
   "email" : "test1@test.com",
   "password": "123123123",
-  "gender": "male"
+  "gender": "MALE",
+  "nickname" : "tester",
+  "birthday": "2000-01-01"
 }
 
 ### create member2
-POST http://localhost:8080/api/member/sign-up
+POST http://localhost:8080/api/members/sign-up
 Content-Type: application/json
 
 {
   "email" : "test2@test.com",
   "password": "123123123",
-  "gender": "male"
+  "gender": "MALE",
+  "nickname" : "tester2",
+  "recommenderEmail": "test1@test.com",
+  "birthday": "2000-01-01"
 }
 
 ### login fail
-POST http://localhost:8080/api/member/login
+POST http://localhost:8080/api/members/login
 Content-Type: application/json
 
 {
@@ -57,8 +63,13 @@ Content-Type: application/json
   "password" : "123123123"
 }
 
+### member only get
+GET http://localhost:8080/api/members/me
+Content-Type: application/json
+Authorization: bearer 123
+
 ### login success
-POST http://localhost:8080/api/member/login
+POST http://localhost:8080/api/members/login
 Content-Type: application/json
 
 {
@@ -71,13 +82,36 @@ Content-Type: application/json
     client.global.set("auth", response.body.body.data);
 %}
 
-
-### response test1
-GET http://localhost:8080/api/member/1
+###
+GET http://localhost:8080/api/members/me
 Content-Type: application/json
 Authorization: Bearer {{auth}}
 
-### response test2
-GET http://localhost:8080/api/member/members
+### login success
+POST http://localhost:8080/api/members/login
+Content-Type: application/json
+
+{
+  "email" : "test2@test.com",
+  "password" : "123123123"
+}
+
+> {%
+    // Authorization 헤더 값을 가져와 전역 변수에 저장
+    client.global.set("auth", response.body.body.data);
+%}
+
+### admin required request
+GET http://localhost:8080/api/members/admin
+Authorization: Bearer {{auth}}
+
+### password update
+PATCH http://localhost:8080/api/members/password
 Content-Type: application/json
 Authorization: Bearer {{auth}}
+
+{
+  "originPassword": "123123123",
+  "updatedPassword" : "321321321"
+}
+
