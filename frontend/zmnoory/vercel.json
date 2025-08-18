@@ -1,0 +1,41 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/v1/(.*)",
+      "destination": "https://ec2-3-38-95-2.ap-northeast-2.compute.amazonaws.com/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/v1/(.*)",
+      "headers": [
+        {
+          "key": "X-Forwarded-Host",
+          "value": "zmnoory.vercel.app"
+        },
+        {
+          "key": "X-Forwarded-Proto",
+          "value": "https"
+        },
+        {
+          "key": "X-Forwarded-Prefix",
+          "value": "/v1"
+        }
+      ]
+    }
+  ]
+}

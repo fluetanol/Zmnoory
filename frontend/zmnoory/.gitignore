@@ -23,3 +23,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+.idea
+*.iml
+.vercel
+
+.claude
+.gemini
+LinearTheme.json

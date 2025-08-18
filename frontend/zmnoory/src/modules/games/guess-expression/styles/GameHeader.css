@@ -1,0 +1,170 @@
+/* GameHeader 컴포넌트 스타일 */
+@import "./common.css";
+
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.player-list-card {
+  flex: 1;
+  background-color: #1a1a1f;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #3f3f46;
+}
+
+.player-list-title {
+  color: #f8fafc;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.player-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.player-list-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background-color: #27272a;
+  border-radius: 8px;
+  border: 1px solid #3f3f46;
+  transition: all 0.2s;
+}
+
+.player-list-item:hover {
+  background-color: #3f3f46;
+}
+
+.player-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.player-avatar {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.player-name {
+  color: #f8fafc;
+  font-size: 0.9rem;
+  font-weight: 500;
+  flex: 1;
+}
+
+.player-score {
+  color: #10b981;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.room-code-card {
+  background-color: #1a1a1f;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #3f3f46;
+  min-width: 200px;
+}
+
+.room-code-title {
+  color: #f8fafc;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.room-code-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.room-code-display {
+  flex: 1;
+  background-color: #27272a;
+  border: 1px solid #3f3f46;
+  border-radius: 6px;
+  padding: 8px 12px;
+  text-align: center;
+}
+
+.room-code-value {
+  color: #f8fafc;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 1px;
+}
+
+.room-code-hidden {
+  color: #71717a;
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 2px;
+}
+
+.toggle-button {
+  background-color: #6366f1;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-size: 1rem;
+}
+
+.toggle-button:hover {
+  background-color: #4f46e5;
+}
+
+/* 로컬 플레이어 하이라이트 */
+.local-player {
+  border: 2px solid #6366f1;
+  background-color: rgba(99, 102, 241, 0.1);
+}
+
+.player-status {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.video-ready {
+  color: #10b981;
+}
+
+.video-loading {
+  color: #f59e0b;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
