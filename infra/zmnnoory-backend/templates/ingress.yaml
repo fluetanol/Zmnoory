@@ -11,12 +11,15 @@ metadata:
     nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
     nginx.ingress.kubernetes.io/proxy-body-size: "100m"
     
+    
 spec:
   ingressClassName: nginx
   rules:
     - host: {{ .Values.ingress.host }}
       http:
         paths:
+
+          # 기본 백엔드 API 경로 (가장 마지막에 위치)
           - path: /
             pathType: Prefix
             backend:

@@ -1,0 +1,51 @@
+{{- if .Values.ingress.enabled -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "webrtc-system.fullname" . }}-ingress
+  labels:
+    {{- include "webrtc-system.labels" . | nindent 4 }}
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    # WebSocket support for LiveKit
+    nginx.ingress.kubernetes.io/proxy-set-headers: |
+      Upgrade $http_upgrade
+      Connection "upgrade"
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- if .Values.ingress.tls }}
+  tls:
+    {{- range .Values.ingress.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
+  rules:
+    {{- range .Values.ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+        # LiveKit API 경로
+        - path: /webrtc/livekit
+          pathType: Prefix
+          backend:
+            service:
+              name: {{ include "webrtc-system.fullname" $ }}-livekit
+              port:
+                number: {{ $.Values.livekit.service.apiPort }}
+        # RTMP 경로 (필요시)
+        - path: /webrtc/rtmp
+          pathType: Prefix
+          backend:
+            service:
+              name: {{ include "webrtc-system.fullname" $ }}-livekit
+              port:
+                number: {{ $.Values.livekit.service.rtmpPort }}
+    {{- end }}
+{{- end }}

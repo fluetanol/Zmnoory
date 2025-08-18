@@ -1,0 +1,51 @@
+{{- if .Values.coturn.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "webrtc-system.fullname" . }}-coturn-config
+  labels:
+    {{- include "webrtc-system.labels" . | nindent 4 }}
+    app.kubernetes.io/component: coturn
+data:
+  turnserver.conf: |
+    # TURN server configuration for WebRTC
+    listening-port={{ .Values.coturn.service.turnPort }}
+    tls-listening-port={{ .Values.coturn.service.turnTlsPort }}
+    
+    # Realm
+    realm={{ .Values.coturn.config.realm }}
+    server-name={{ .Values.coturn.config.realm }}
+    
+    # IP configuration
+    {{- if .Values.coturn.config.externalIp }}
+    external-ip={{ .Values.coturn.config.externalIp }}
+    {{- end }}
+    
+    # Port range for media
+    min-port={{ .Values.coturn.config.minPort }}
+    max-port={{ .Values.coturn.config.maxPort }}
+    
+    # Authentication
+    use-auth-secret
+    static-auth-secret={{ .Values.coturn.config.staticAuthSecret }}
+    
+    # Security
+    fingerprint
+    lt-cred-mech
+    
+    # Logging
+    verbose={{ .Values.coturn.config.verbosity }}
+    log-file=/var/log/turnserver.log
+    no-stdout-log
+    
+    # Performance
+    total-quota=100
+    user-quota=50
+    max-bps=1000000
+    
+    # WebRTC compatibility
+    no-tcp-relay
+    no-multicast-peers
+    no-cli
+    pidfile=/var/run/turnserver.pid
+{{- end }}

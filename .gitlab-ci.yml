@@ -46,7 +46,9 @@ cache:
 # =================================================================
 # Frontend Build Stage: Vue.js 애플리케이션 빌드
 # =================================================================
-build_frontend:
+
+
+build_assets:
   stage: build
   image: node:22-alpine
   
@@ -56,10 +58,10 @@ build_frontend:
   
   script:
     - echo "Navigated to $(pwd)"
-    - echo "Starting frontend build process..."
+    - echo "Starting build process..."
     - npm install
     - npm run build
-    - echo "Frontend build successful."
+    - echo "Build successful."
   
   # 빌드 결과물(dist 폴더)을 다음 단계로 전달합니다.
   artifacts:
@@ -67,7 +69,54 @@ build_frontend:
       - frontend/zmnoory/dist/
       
   rules:
-    - if: '$CI_COMMIT_BRANCH == "frontend-dev" || $CI_COMMIT_BRANCH == "frontend-prod" || $CI_COMMIT_BRANCH == "master"'
+    - if: '$CI_COMMIT_BRANCH == "frontend-dev" || $CI_COMMIT_BRANCH == "frontend-prod"'
+
+# 2. Vercel 배포 단계 (개발 환경)
+deploy_vercel_dev:
+  stage: deploy
+  image: node:22-alpine
+  
+  before_script:
+    - cd frontend/zmnoory
+    - npm install -g vercel
+  
+  script:
+    - echo "Deploying to Vercel Development..."
+    - vercel pull -y --token=$VERCEL_TOKEN
+    - vercel build --prod --token=$VERCEL_TOKEN
+    - vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
+    - echo "Vercel Development deployment successful."
+  
+  environment:
+    name: vercel-development
+    url: $VERCEL_DEV_URL
+  
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "frontend-dev"'
+
+# 3. Vercel 배포 단계 (운영 환경)
+deploy_vercel_prod:
+  stage: deploy
+  image: node:22-alpine
+  
+  before_script:
+    - cd frontend/zmnoory
+    - npm install -g vercel
+  
+  script:
+    - echo "Deploying to Vercel Production..."
+    - vercel pull -y --token=$VERCEL_TOKEN
+    - vercel build --prod --token=$VERCEL_TOKEN
+    - vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
+    - echo "Vercel Production deployment successful."
+  
+  environment:
+    name: vercel-production
+    url: $VERCEL_PROD_URL
+  
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "frontend-prod"'
+      when: manual # 실수로 인한 운영 배포를 막기 위한 안전장치입니다.
 
 # =================================================================
 # Backend Build Stage: Spring Boot 애플리케이션 빌드 및 테스트
@@ -140,53 +189,6 @@ docker_backend:
     - build_backend
   rules:
     - if: '$CI_COMMIT_BRANCH == "backend-dev" || $CI_COMMIT_BRANCH == "backend-prod"'
-
-# =================================================================
-# Frontend Deploy Stages: S3 배포
-# =================================================================
-
-# Frontend 개발 환경 배포
-deploy_frontend_dev:
-  stage: deploy
-  image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
-  
-  script:
-    - echo "Deploying frontend to Development S3 Bucket..."
-    # dist 폴더의 내용을 개발용 S3 버킷에 동기화합니다.
-    - aws s3 sync ./frontend/zmnoory/dist s3://$DEV_S3_BUCKET --delete
-    - echo "Frontend deployment to Development S3 successful."
-  
-  environment:
-    name: development
-    url: $DEV_SITE_URL
-  
-  dependencies:
-    - build_frontend
-  
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "frontend-dev"'
-
-# Frontend 운영 환경 배포
-deploy_frontend_prod:
-  stage: deploy
-  image: registry.gitlab.com/gitlab-org/cloud-deploy/aws-base:latest
-  
-  script:
-    - echo "Deploying frontend to Production S3 Bucket..."
-    # dist 폴더의 내용을 운영용 S3 버킷에 동기화합니다.
-    - aws s3 sync ./frontend/zmnoory/dist s3://$PROD_S3_BUCKET --delete
-    - echo "Frontend deployment to Production S3 successful."
-  
-  environment:
-    name: production
-    url: $PROD_SITE_URL
-  
-  dependencies:
-    - build_frontend
-  
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "frontend-prod"'
-      when: manual # 실수로 인한 운영 배포를 막기 위한 안전장치입니다.
 
 # =================================================================
 # Backend Deploy Stages: Kubernetes 무중단 배포

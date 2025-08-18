@@ -1,0 +1,29 @@
+{{- if .Values.livekit.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "webrtc-system.fullname" . }}-livekit
+  labels:
+    {{- include "webrtc-system.labels" . | nindent 4 }}
+    app.kubernetes.io/component: livekit
+spec:
+  type: {{ .Values.livekit.service.type }}
+  ports:
+    - port: {{ .Values.livekit.service.apiPort }}
+      targetPort: api
+      protocol: TCP
+      name: api
+      {{- if eq .Values.livekit.service.type "NodePort" }}
+      nodePort: {{ .Values.livekit.service.nodePortApi }}
+      {{- end }}
+    - port: {{ .Values.livekit.service.rtmpPort }}
+      targetPort: rtmp
+      protocol: TCP
+      name: rtmp
+      {{- if eq .Values.livekit.service.type "NodePort" }}
+      nodePort: {{ .Values.livekit.service.nodePortRtmp }}
+      {{- end }}
+  selector:
+    {{- include "webrtc-system.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: livekit
+{{- end }}

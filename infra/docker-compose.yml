@@ -31,7 +31,7 @@ services:
       - "5432:5432"
     volumes:
         # 1. 데이터는 'postgres_data'라는 이름의 명명된 볼륨으로 관리
-        - postgres_data:/var/lib/postgresql/data
+        - postgres_data:/var/lib/postgresql/datadocker volume ls
 
         # 2. 호스트의 설정 파일들을 컨테이너의 임시 경로에 마운트
         - ./postgres_conf:/tmp/postgres_conf

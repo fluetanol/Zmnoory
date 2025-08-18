@@ -1,0 +1,52 @@
+🎉 WebRTC System has been successfully deployed!
+
+Your services are ready:
+
+{{- if .Values.coturn.enabled }}
+📡 COTURN TURN Server:
+{{- if eq .Values.coturn.service.type "NodePort" }}
+  - UDP: $(microk8s kubectl get nodes -o jsonpath='{.items[0].status.addresses[0].address}'):{{ .Values.coturn.service.nodePortUdp }}
+  - TCP: $(microk8s kubectl get nodes -o jsonpath='{.items[0].status.addresses[0].address}'):{{ .Values.coturn.service.nodePortTcp }}
+  - TLS: $(microk8s kubectl get nodes -o jsonpath='{.items[0].status.addresses[0].address}'):{{ .Values.coturn.service.nodePortTls }}
+{{- else }}
+  - Service: {{ include "webrtc-system.fullname" . }}-coturn.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.coturn.service.turnPort }}
+{{- end }}
+{{- end }}
+
+{{- if .Values.livekit.enabled }}
+🎥 LiveKit WebRTC Server:
+{{- if eq .Values.livekit.service.type "NodePort" }}
+  - API: http://$(microk8s kubectl get nodes -o jsonpath='{.items[0].status.addresses[0].address}'):{{ .Values.livekit.service.nodePortApi }}
+  - RTMP: rtmp://$(microk8s kubectl get nodes -o jsonpath='{.items[0].status.addresses[0].address}'):{{ .Values.livekit.service.nodePortRtmp }}
+{{- else }}
+  - API: http://{{ include "webrtc-system.fullname" . }}-livekit.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.livekit.service.apiPort }}
+{{- end }}
+{{- end }}
+
+🔑 Authentication Information:
+{{- if .Values.coturn.enabled }}
+  - TURN Secret: {{ .Values.coturn.config.staticAuthSecret }}
+{{- end }}
+{{- if .Values.livekit.enabled }}
+  - LiveKit Key: {{ .Values.livekit.config.keys.devkey }}
+{{- end }}
+
+📋 Useful Commands:
+  # Check pod status
+  microk8s kubectl get pods -n {{ .Release.Namespace }}
+  
+  # View logs
+  microk8s kubectl logs -f deployment/{{ include "webrtc-system.fullname" . }}-coturn -n {{ .Release.Namespace }}
+  microk8s kubectl logs -f deployment/{{ include "webrtc-system.fullname" . }}-livekit -n {{ .Release.Namespace }}
+  
+  # Get services
+  microk8s kubectl get svc -n {{ .Release.Namespace }}
+
+⚠️  Important Notes:
+{{- if .Values.coturn.config.externalIp }}
+  - Make sure your firewall allows UDP/TCP traffic on ports {{ .Values.coturn.service.nodePortUdp }}, {{ .Values.coturn.service.nodePortTcp }}, {{ .Values.coturn.service.nodePortTls }}
+{{- else }}
+  - Please update coturn.config.externalIp in values.yaml with your EC2 public IP for external access
+{{- end }}
+  - For production use, change the default secrets in values.yaml
+  - WebRTC requires proper network configuration for NAT traversal

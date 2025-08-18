@@ -1,0 +1,96 @@
+{{- if .Values.livekit.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "webrtc-system.fullname" . }}-livekit
+  labels:
+    {{- include "webrtc-system.labels" . | nindent 4 }}
+    app.kubernetes.io/component: livekit
+spec:
+  replicas: {{ .Values.livekit.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "webrtc-system.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: livekit
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/livekit-configmap.yaml") . | sha256sum }}
+      labels:
+        {{- include "webrtc-system.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: livekit
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "webrtc-system.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: livekit
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.livekit.image.repository }}:{{ .Values.livekit.image.tag }}"
+          imagePullPolicy: {{ .Values.livekit.image.pullPolicy }}
+          ports:
+            - name: api
+              containerPort: {{ .Values.livekit.config.port.api }}
+              protocol: TCP
+            - name: rtmp
+              containerPort: {{ .Values.livekit.config.port.rtmp }}
+              protocol: TCP
+          args:
+            - --config
+            - /etc/livekit.yaml
+          env:
+            - name: LIVEKIT_DEVELOPMENT
+              value: {{ .Values.livekit.config.development | quote }}
+          livenessProbe:
+            httpGet:
+              path: /
+              port: api
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: api
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          resources:
+            {{- toYaml .Values.livekit.resources | nindent 12 }}
+          {{- with .Values.livekit.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.livekit.volumes }}
+      volumes:
+        - name: livekit-config
+          configMap:
+            name: {{ include "webrtc-system.fullname" $ }}-livekit-config
+        {{- range . }}
+        {{- if ne .name "livekit-config" }}
+        - {{- toYaml . | nindent 10 }}
+        {{- end }}
+        {{- end }}
+      {{- end }}
+      {{- if not .Values.livekit.volumes }}
+      volumes:
+        - name: livekit-config
+          configMap:
+            name: {{ include "webrtc-system.fullname" . }}-livekit-config
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

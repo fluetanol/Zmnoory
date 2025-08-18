@@ -1,0 +1,38 @@
+{{- if .Values.livekit.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "webrtc-system.fullname" . }}-livekit-config
+  labels:
+    {{- include "webrtc-system.labels" . | nindent 4 }}
+    app.kubernetes.io/component: livekit
+data:
+  livekit.yaml: |
+    port: 7880
+    
+    # API Keys
+    keys:
+      devkey: {{ .Values.livekit.config.keys.devkey | quote }}
+    
+    # Development settings
+    development: true
+    log_level: info
+    
+    # Redis connection (for session management)
+    {{- if .Values.redis.enabled }}
+    redis:
+      address: webrtc-test-redis-master:6379
+    {{- end }}
+    
+    # WebRTC settings
+    rtc:
+      tcp_port: 7881
+      port_range_start: {{ .Values.coturn.config.minPort }}
+      port_range_end: {{ .Values.coturn.config.maxPort }}
+      use_external_ip: true
+    
+    # LiveKit 내장 TURN 서버 활성화 (UDP만 사용, TLS 인증서 없이)
+    turn:
+      enabled: true
+      udp_port: 3478
+{{- end }}

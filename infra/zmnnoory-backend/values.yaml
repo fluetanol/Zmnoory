@@ -9,7 +9,7 @@ database:
   url: "__DB_URL__"
   username: "__DB_USERNAME__"
   password: "__DB_PASSWORD__"
-  
+
 # Redis Configuration (will be overridden by CI/CD)
 redis:
   host: "__REDIS_HOST__"
@@ -63,10 +63,12 @@ serviceAccount:
 
 podAnnotations: {}
 
-podSecurityContext: {}
+podSecurityContext:
+  {}
   # fsGroup: 2000
 
-securityContext: {}
+securityContext:
+  {}
   # capabilities:
   #   drop:
   #   - ALL
@@ -81,7 +83,8 @@ service:
 ingress:
   enabled: false
   className: ""
-  annotations: {}
+  annotations:
+    {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
   hosts:
@@ -96,7 +99,8 @@ ingress:
   host: "ec2-3-38-95-2.ap-northeast-2.compute.amazonaws.com"
   path: "/"
 
-resources: {}
+resources:
+  {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following

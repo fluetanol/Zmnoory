@@ -1,0 +1,174 @@
+# WebRTC System Helm Chart Values
+# MicroK8s 환경에 최적화된 설정
+
+# Global settings
+global:
+  storageClass: "microk8s-hostpath"
+
+# Image pull secrets
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+# Service Account
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+# Pod Security Context - 권한 문제 해결
+podSecurityContext:
+  runAsUser: 0
+  runAsGroup: 0
+  fsGroup: 0
+
+# Security Context - 권한 문제 해결을 위해 수정
+securityContext:
+  runAsUser: 0
+  runAsNonRoot: false
+  allowPrivilegeEscalation: true
+  readOnlyRootFilesystem: false
+
+# Node selector, tolerations, affinity
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# Coturn TURN Server Configuration
+coturn:
+  enabled: true
+  replicaCount: 1
+  
+  image:
+    repository: coturn/coturn
+    tag: "4.6.2"
+    pullPolicy: IfNotPresent
+  
+  service:
+    type: NodePort
+    turnPort: 3478
+    turnTlsPort: 5349
+    nodePortUdp: 30478
+    nodePortTcp: 30479
+    nodePortTls: 30549
+  
+  config:
+    realm: "webrtc.local"
+    minPort: 49152
+    maxPort: 65535
+    verbosity: 3
+    staticAuthSecret: "webrtc-secret-2024"
+    externalIp: "3.38.95.2"  # EC2 퍼블릭 IP
+    
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+  volumeMounts:
+    - name: coturn-config
+      mountPath: /etc/turnserver.conf
+      subPath: turnserver.conf
+      readOnly: true
+
+  volumes:
+    - name: coturn-config
+      configMap:
+        name: coturn-config
+
+# LiveKit WebRTC Server Configuration  
+livekit:
+  enabled: true
+  replicaCount: 1
+  
+  image:
+    repository: livekit/livekit-server
+    tag: "v1.5.2"
+    pullPolicy: IfNotPresent
+    
+  service:
+    type: NodePort
+    apiPort: 7880
+    rtmpPort: 7881
+    nodePortApi: 30880
+    nodePortRtmp: 30881
+    
+  config:
+    keys:
+      devkey: "webrtc-dev-secret"
+    port:
+      api: 7880
+      rtmp: 7881
+    development: true
+    logLevel: "info"
+    
+  resources:
+    limits:
+      cpu: 1000m
+      memory: 1Gi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
+  volumeMounts:
+    - name: livekit-config
+      mountPath: /etc/livekit.yaml
+      subPath: livekit.yaml
+      readOnly: true
+
+  volumes:
+    - name: livekit-config
+      configMap:
+        name: livekit-config
+
+# Redis Configuration (LiveKit 세션 관리용)
+redis:
+  enabled: true
+  auth:
+    enabled: false
+  master:
+    persistence:
+      enabled: true
+      storageClass: "microk8s-hostpath"
+      size: 8Gi
+    resources:
+      limits:
+        cpu: 250m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+  replica:
+    persistence:
+      enabled: false
+    replicaCount: 1
+
+# Ingress Configuration
+ingress:
+  enabled: true
+  className: "nginx"  # backend-dev와 같은 ingress class 사용
+  annotations:
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, PUT, DELETE, OPTIONS"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+  hosts:
+    - host: "ec2-3-38-95-2.ap-northeast-2.compute.amazonaws.com"
+  tls: []
+
+# Autoscaling (MicroK8s에서는 비활성화)
+autoscaling:
+  enabled: false
+
+# Persistence for logs and recordings
+persistence:
+  enabled: true
+  storageClass: "microk8s-hostpath"
+  size: 10Gi
+  accessMode: ReadWriteOnce

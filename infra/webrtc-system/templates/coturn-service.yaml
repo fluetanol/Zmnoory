@@ -1,0 +1,36 @@
+{{- if .Values.coturn.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "webrtc-system.fullname" . }}-coturn
+  labels:
+    {{- include "webrtc-system.labels" . | nindent 4 }}
+    app.kubernetes.io/component: coturn
+spec:
+  type: {{ .Values.coturn.service.type }}
+  ports:
+    - port: {{ .Values.coturn.service.turnPort }}
+      targetPort: turn-udp
+      protocol: UDP
+      name: turn-udp
+      {{- if eq .Values.coturn.service.type "NodePort" }}
+      nodePort: {{ .Values.coturn.service.nodePortUdp }}
+      {{- end }}
+    - port: {{ .Values.coturn.service.turnPort }}
+      targetPort: turn-tcp
+      protocol: TCP
+      name: turn-tcp
+      {{- if eq .Values.coturn.service.type "NodePort" }}
+      nodePort: {{ .Values.coturn.service.nodePortTcp }}
+      {{- end }}
+    - port: {{ .Values.coturn.service.turnTlsPort }}
+      targetPort: turn-tls
+      protocol: TCP
+      name: turn-tls
+      {{- if eq .Values.coturn.service.type "NodePort" }}
+      nodePort: {{ .Values.coturn.service.nodePortTls }}
+      {{- end }}
+  selector:
+    {{- include "webrtc-system.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: coturn
+{{- end }}
