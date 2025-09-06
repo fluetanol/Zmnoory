@@ -1,8 +1,6 @@
 <!-- [FILEPATH] frontend/README.md -->
 # 즈믄누리(ZMNNOORY) Frontend
 
-> Vue 3 + TypeScript 기반의 Web/3D 인터랙티브 게임 프론트엔드. Three.js와 face‑api.js, WebRTC를 활용해 표정/음성/카메라 인터랙션을 실험합니다.
-
 <p align="left">
   <img alt="Vue.js" src="https://img.shields.io/badge/Vue.js-35495E?logo=vuedotjs&logoColor=4FC08D" />
   <img alt="Three.js" src="https://img.shields.io/badge/three.js-000000?logo=threedotjs&logoColor=FFFFFF" />
@@ -66,7 +64,7 @@
 
 * **MVP 출시**
 
-  * **생성형 AI**를 활용해 프로토타입 → MVP까지 속도전 전개. 얼리 유저 피드백으로 빠른 개선 사이클 구축.
+  * **생성형 AI**를 활용해 프로토타입 → MVP까지 속도전. 유저 피드백으로 빠른 개선 사이클 구축.
 
 * **독창적인 디자인 컨셉**
 
